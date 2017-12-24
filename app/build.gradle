@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "net.bingyan.coverit"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        disable 'RestrictedApi'
+    }
+}
+
+dependencies {
+    // App's dependencies, including test
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+
+    // Dependencies for local unit tests
+    testCompile "junit:junit:$rootProject.ext.junitVersion"
+    testCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    // Dependencies for Android unit tests
+    androidTestCompile "junit:junit:$rootProject.ext.junitVersion"
+    androidTestCompile "org.mockito:mockito-android:$rootProject.ext.mockitoVersion"
+
+    // Resolve conflicts between main and test APK:
+    androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    androidTestCompile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    androidTestCompile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    androidTestCompile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    androidTestCompile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "org.jetbrains.anko:anko:$anko_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //custom dependencies
+    compile 'com.github.mancj:MaterialSearchBar:0.7.5'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
+    compile 'com.github.razerdp:BasePopup:1.8.8'
+    compile 'com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar'
+}
+repositories {
+    mavenCentral()
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

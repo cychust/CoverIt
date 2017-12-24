@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.bingyan.coverit.ui.reciteother.ModifyPicActivity"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <net.bingyan.coverit.widget.TitleBar
+            android:id="@+id/titleBar"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="280dp"
+            android:background="@color/transparent"
+            android:text="@string/btn_save"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="bottom"/>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/picture_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@mipmap/logo" />
+    </FrameLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/switch_button"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_marginStart="52dp"
+            android:background="@drawable/switch_selector"
+            android:button="@null"
+            android:checked="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/see_button"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/see_selector"
+            android:button="@null"
+            android:checked="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switch_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <CheckBox
+            android:id="@+id/modify_button"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_marginEnd="52dp"
+            android:background="@drawable/modify_selector"
+            android:button="@null"
+            android:checked="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

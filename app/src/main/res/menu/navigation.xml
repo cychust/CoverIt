@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/recite_list"
+        android:icon="@drawable/list_selector"
+        android:title="@string/list"
+        />
+
+    <item
+        android:id="@+id/recite_book"
+        android:icon="@drawable/book_selector"
+        android:title="@string/book" />
+
+    <!--<item-->
+        <!--android:id="@+id/find"-->
+        <!--android:icon="@drawable/find_selector"-->
+        <!--android:title="@string/find" />-->
+    <item
+        android:id="@+id/mine"
+        android:icon="@drawable/me_selector"
+        android:title="@string/mine" />
+</menu>

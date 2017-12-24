@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.mancj.materialsearchbar.MaterialSearchBar
+        style="@style/MaterialSearchBarLight"
+        app:mt_speechMode="true"
+        app:mt_hint="搜索"
+        app:mt_maxSuggestionsCount="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchBar" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_book"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="9dp"/>
+</LinearLayout>

@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">背它</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="new_text">new text</string>
+    <string name="title">title</string>
+    <string name="content">content</string>
+    <string name="list">列表</string>
+    <string name="book">记背本</string>
+    <string name="find">发现</string>
+    <string name="mine">我的</string>
+    <string name="feedback">反馈</string>
+    <string name="score">评分</string>
+    <string name="about">关于</string>
+    <string name="hint">    您有什么意见或建议，在这里告诉我们吧！</string>
+    <string name="hint_call">    请输入您的联系方式，如12345@qq.com</string>
+    <string name="btn_submit">提交</string>
+    <string name="btn_save">保存</string>
+    <string name="sure">确定</string>
+    <string name="title_hint">    请输入标题(最多5个字)</string>
+    <string name="content_hint">    请输入正文</string>
+</resources>

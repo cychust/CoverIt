@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <net.bingyan.coverit.widget.TitleBar
+            android:id="@+id/titleBar"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            />
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/titleBar"
+            android:layout_marginTop="30dp"
+            android:background="@color/transparent"
+            android:textColor="@color/white"
+            android:text="@string/btn_submit"
+            android:textSize="16sp"/>
+    </RelativeLayout>
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey_white"
+        tools:context="net.bingyan.coverit.ui.reciteother.FeedBackActivity">
+
+        <EditText
+            android:id="@+id/et_suggestion"
+            android:layout_width="342dp"
+            android:layout_height="250dp"
+            android:textSize="14sp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/white"
+            android:gravity="top"
+            android:hint="@string/hint"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_address"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="100dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/white"
+            android:hint="@string/hint_call"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_suggestion" />
+
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>
+
+

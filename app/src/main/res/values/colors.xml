@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#54b8e5</color>
+    <color name="colorPrimaryDark">#54b8e5</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="startColor">#64d4e1</color>
+    <color name="endColor">#54b8e5</color>
+    
+    <color name="title_white">#ffffff</color>
+    <color name="grey">#96e6e6e6</color>
+    <color name="grey_white">#dfdfdf</color>
+    <color name="black">#000</color>
+    <color name="transparent">#00000000</color>
+    <color name="popup_bg">#8f000000</color>
+</resources>

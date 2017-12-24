@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/rlTimeline"
+        android:layout_width="32dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvTopLine"
+            android:layout_width="0.5dp"
+            android:layout_height="12dp"
+            android:layout_centerHorizontal="true"
+            android:background="#999" />
+
+        <TextView
+            android:id="@+id/tvDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_below="@id/tvTopLine"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cicle" />
+
+        <TextView
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tvDot"
+            android:layout_centerHorizontal="true"
+            android:background="#999" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/rlCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="6dp"
+        android:paddingTop="10dp"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/title_image"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:contentDescription="@string/title"
+                android:src="@drawable/baseplate"
+                android:scaleType="fitXY"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="2017/12/09"
+                android:textColor="@color/endColor"
+                android:textSize="12sp"
+                android:layout_marginBottom="5dp"/>
+            <LinearLayout
+                android:layout_width="110dp"
+                android:layout_height="16dp"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/project"
+                    android:layout_marginEnd="7dp"
+                    android:layout_gravity="center_vertical|start"/>
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="maljlj"
+                    android:textColor="#fff"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/iv_content"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:contentDescription="@string/content"
+            android:src="@drawable/logo_beita"
+            android:scaleType="fitXY"/>
+    </LinearLayout>
+</LinearLayout>
