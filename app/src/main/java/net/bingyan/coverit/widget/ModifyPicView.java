@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -41,6 +42,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     final public static int ZOOM = 2;
     final public static int COLOR = 1;
     final public static int PICTURE = 2;
+
+    private PorterDuffXfermode xfermode;
 
 
     public int mode = 0;
@@ -153,6 +156,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        mPaint.setXfermode(xfermode);
         mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setAlpha(255);
@@ -223,5 +227,9 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     }
     public void setCanClick(boolean canClick) {
         this.canClick = canClick;
+    }
+
+    public void setXfermode(PorterDuffXfermode xfermode) {
+        this.xfermode = xfermode;
     }
 }

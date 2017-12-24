@@ -42,7 +42,8 @@
 
         <activity android:name=".ui.reciteother.ModifyPicActivity" />
         <activity android:name=".ui.reciteother.CreateTextActivity" />
-        <activity android:name=".ui.reciteother.ModifyTextActivity"></activity>
+        <activity android:name=".ui.reciteother.ModifyTextActivity" />
+        <activity android:name=".ui.reciteother.ReciteBookDetailActivity"></activity>
     </application>
 
 </manifest>

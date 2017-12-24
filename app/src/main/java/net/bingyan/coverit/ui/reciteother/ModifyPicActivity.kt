@@ -2,12 +2,15 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
@@ -18,44 +21,46 @@ import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
-    private lateinit var btnSave:Button
+    private lateinit var btnSave: Button
 
-    private lateinit var picFrame:FrameLayout
-    private lateinit var picture:AppCompatImageView
-    private lateinit var rbSwitch:CheckBox
-    private lateinit var rbSee:CheckBox
-    private lateinit var rbModify:CheckBox
-    private lateinit var picPath:String
+    private lateinit var picFrame: FrameLayout
+    private lateinit var picture: AppCompatImageView
+    private lateinit var rbSwitch: CheckBox
+    private lateinit var rbSee: CheckBox
+    private lateinit var rbModify: CheckBox
+    private lateinit var picPath: String
     private var beginX = 0f
     private var beginY = 0f
     private var moveX: Float = 0.toFloat()
     private var moveY: Float = 0.toFloat()
     private var isNewRect: Boolean = false
 
-    private val TAG="PicView"
+    private val viewList = mutableListOf<ModifyPicView>()
+
+    private val TAG = "PicView"
     private var coverView: ModifyPicView? = null
-    private var oldCoverView:ModifyPicView? = null
+    private var oldCoverView: ModifyPicView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify)
-        picPath=intent.getStringExtra("pic")
+        picPath = intent.getStringExtra("pic")
         initView()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
-        btnSave=findViewById(R.id.btn_save)
-        picFrame=findViewById(R.id.picture_frame)
-        picture=findViewById(R.id.picture)
-        rbSwitch=findViewById(R.id.switch_button)
-        rbSee=findViewById(R.id.see_button)
-        rbModify=findViewById(R.id.modify_button)
+        btnSave = findViewById(R.id.btn_save)
+        picFrame = findViewById(R.id.picture_frame)
+        picture = findViewById(R.id.picture)
+        rbSwitch = findViewById(R.id.switch_button)
+        rbSee = findViewById(R.id.see_button)
+        rbModify = findViewById(R.id.modify_button)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
 
         titleBar.setTitle("图片记背")
-        titleBar.setTitleColor(ContextCompat.getColor(this,R.color.title_white))
+        titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
 
         btnSave.onClick {
 
@@ -73,9 +78,11 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             if (!isNewRect) {
                 oldCoverView = coverView
                 picFrame.removeView(oldCoverView)
+                viewList.remove(oldCoverView)
                 Log.d(TAG, "onTouch: view removed!")
             }
             coverView = ModifyPicView(this)
+            viewList.add(coverView!!)
             Log.d(TAG, "onTouch: view created!")
             picFrame.addView(coverView)
             when (action) {
@@ -127,15 +134,41 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
-        when(p0?.id){
-            R.id.switch_button->{
-
+        when (p0?.id) {
+            R.id.switch_button -> {
+                if (!p1) {
+                    val xfermode=PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+                    for (view:ModifyPicView in viewList) {
+                        view.setXfermode(xfermode)
+                        view.invalidate()
+                    }
+                }
+                if (p1) {
+                    val xfermode=PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+                    for (view:ModifyPicView in viewList) {
+                        view.setXfermode(xfermode)
+                        view.invalidate()
+                    }
+                }
             }
-            R.id.see_button->{
-
+            R.id.see_button -> {
+                if (p1) {
+                    for (view: View in this.viewList) {
+                        view.alpha = 0.5f
+                        view.invalidate()
+                    }
+                }
+                if (!p1) {
+                    for (view: View in this.viewList) {
+                        view.alpha = 1.0f
+                        view.invalidate()
+                    }
+                }
             }
-            R.id.modify_button->{
+            R.id.modify_button -> {
+                if (p1) {
 
+                }
             }
         }
     }
