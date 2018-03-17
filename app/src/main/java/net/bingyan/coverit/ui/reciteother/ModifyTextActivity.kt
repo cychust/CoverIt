@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
-import kotlinx.android.synthetic.main.activity_modify.*
+import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.widget.ModifyTextView
 

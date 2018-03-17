@@ -1,9 +1,10 @@
 package net.bingyan.coverit.ui.reciteother
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -15,7 +16,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.FrameLayout
-import kotlinx.android.synthetic.main.activity_modify.*
+import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -40,9 +41,11 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private val TAG = "PicView"
     private var coverView: ModifyPicView? = null
     private var oldCoverView: ModifyPicView? = null
+
+    private lateinit var bitmap:Bitmap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_modify)
+        setContentView(R.layout.activity_modify_pic)
         picPath = intent.getStringExtra("pic")
         initView()
     }
@@ -70,8 +73,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSee.setOnCheckedChangeListener(this)
         rbModify.setOnCheckedChangeListener(this)
 
-        val bitmap = BitmapFactory.decodeFile(picPath)
+        bitmap = BitmapFactory.decodeFile(picPath)
         picture.setImageBitmap(bitmap)
+
 
         picture.setOnTouchListener({ _, event ->
             val action = event.action
@@ -81,7 +85,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 viewList.remove(oldCoverView)
                 Log.d(TAG, "onTouch: view removed!")
             }
-            coverView = ModifyPicView(this)
+            coverView = ModifyPicView(this,picPath)
             viewList.add(coverView!!)
             Log.d(TAG, "onTouch: view created!")
             picFrame.addView(coverView)
@@ -137,18 +141,23 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         when (p0?.id) {
             R.id.switch_button -> {
                 if (!p1) {
-                    val xfermode=PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
-                    for (view:ModifyPicView in viewList) {
-                        view.setXfermode(xfermode)
+                    for (view:ModifyPicView in this.viewList){
+                        view.setSwitch(false)
                         view.invalidate()
                     }
+                    picture.setImageBitmap(bitmap)
+
                 }
                 if (p1) {
-                    val xfermode=PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-                    for (view:ModifyPicView in viewList) {
-                        view.setXfermode(xfermode)
+                    for (view:ModifyPicView in this.viewList){
+                        view.setSwitch(true)
+                        val widTimes=bitmap.width.toDouble()/picture.width.toDouble()
+                        val heiTimes=bitmap.height.toDouble()/picture.height.toDouble()
+                        view.setWidTimes(widTimes)
+                        view.setHeiTimes(heiTimes)
                         view.invalidate()
                     }
+                    picture.setImageDrawable(ColorDrawable(Color.WHITE))
                 }
             }
             R.id.see_button -> {

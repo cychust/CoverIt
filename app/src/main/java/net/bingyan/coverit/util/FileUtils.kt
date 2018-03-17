@@ -4,12 +4,13 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
-
+import android.view.View
 import java.io.File
 
 /**
@@ -110,5 +111,12 @@ object FileUtils {
         } else {
             Uri.fromFile(file)
         }
+    }
+    fun convertViewToBitmap(view:View):Bitmap{
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        view.buildDrawingCache()
+
+        return view.drawingCache
     }
 }
