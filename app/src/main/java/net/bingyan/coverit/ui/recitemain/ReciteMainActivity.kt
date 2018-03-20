@@ -87,6 +87,7 @@ class ReciteMainActivity : AppCompatActivity() {
                 val titleList= listOf("记背列表","记背本","发现","我的")
                 titleBar.setTitle(titleList[position])
                 titleBar.setTitleColor(ContextCompat.getColor(this@ReciteMainActivity,R.color.title_white))
+                titleBar.setTitleSize(19f)
 
                 menuItem = navigation.menu.getItem(position)
                 menuItem?.isChecked = true

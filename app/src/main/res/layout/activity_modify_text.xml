@@ -11,21 +11,19 @@
         <net.bingyan.coverit.widget.TitleBar
             android:id="@+id/titleBar"
             android:layout_width="match_parent"
-            android:layout_height="68dp"
+            android:layout_height="45dp"
             />
 
         <Button
             android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="280dp"
+            android:layout_alignEnd="@id/titleBar"
+            android:layout_marginTop="20dp"
             android:background="@color/transparent"
             android:text="@string/btn_save"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            android:gravity="bottom"/>
+            android:textSize="16sp" />
     </RelativeLayout>
         <net.bingyan.coverit.widget.ModifyTextView
             android:id="@+id/modify_text"

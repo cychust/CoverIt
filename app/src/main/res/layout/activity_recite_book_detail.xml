@@ -6,7 +6,7 @@
     <net.bingyan.coverit.widget.TitleBar
         android:id="@+id/titleBar"
         android:layout_width="match_parent"
-        android:layout_height="68dp"
+        android:layout_height="45dp"
         />
     <View
         android:layout_width="match_parent"
