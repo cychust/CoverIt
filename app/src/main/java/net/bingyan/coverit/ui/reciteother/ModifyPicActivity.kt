@@ -34,12 +34,13 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private lateinit var rbModify: CheckBox
     private lateinit var picPath: String
 
-    private val context:Context=this
+    private val context: Context = this
     private var beginX = 0f
     private var beginY = 0f
     private var moveX: Float = 0.toFloat()
     private var moveY: Float = 0.toFloat()
-    private var isNewRect: Boolean = false
+
+    private var isNewRect: Boolean = true
 
     private val viewList = mutableListOf<ModifyPicView>()
 
@@ -53,8 +54,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_pic)
-        if (intent.getStringExtra("pic")!=null)
-        picPath =intent.getStringExtra("pic")
+        if (intent.getStringExtra("pic") != null)
+            picPath = intent.getStringExtra("pic")
         initView()
     }
 
@@ -94,21 +95,17 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         Glide.with(this).load(bitmap).into(picture)
 
 
-        class PictureListener: View.OnTouchListener {
+        class PictureListener : View.OnTouchListener {
 
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
                 if (canModify) {
                     val action = p1?.action
-                    if (!isNewRect) {
-                        oldCoverView = coverView
-                        picFrame.removeView(oldCoverView)
-                        viewList.remove(oldCoverView)
-                        Log.d(TAG, "onTouch: view removed!")
+                    if (isNewRect) {
+                        coverView = ModifyPicView(context, picPath)
+                        viewList.add(coverView!!)
+                        Log.d(TAG, "onTouch: view created!")
+                        picFrame.addView(coverView)
                     }
-                    coverView = ModifyPicView(context, picPath)
-                    viewList.add(coverView!!)
-                    Log.d(TAG, "onTouch: view created!")
-                    picFrame.addView(coverView)
                     when (action) {
                         MotionEvent.ACTION_DOWN -> {
                             isNewRect = false
@@ -127,25 +124,29 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         MotionEvent.ACTION_MOVE -> {
                             isNewRect = false
                             Log.d(TAG, "onTouch: begin move")
+
+
                             moveX = p1.x
                             moveY = p1.y
+
+
                             Log.d(TAG, "onTouch: beginx$beginX")
                             Log.d(TAG, "onTouch: beginy$beginY")
-
+                            coverView!!.setMove(false)
                             coverView!!.rectTop = beginY
                             coverView!!.rectLeft = beginX
                             coverView!!.rectRight = moveX
                             coverView!!.rectDown = moveY
-                            Log.d(TAG, "onTouch: recleft" + coverView!!.rectLeft)
-                            Log.d(TAG, "onTouch: recright" + coverView!!.rectRight)
-                            Log.d(TAG, "onTouch: rectop" + coverView!!.rectTop)
-                            Log.d(TAG, "onTouch: recdown" + coverView!!.rectDown)
                             coverView!!.invalidate()
+
                         }
                         MotionEvent.ACTION_UP -> {
                             isNewRect = true
                             Log.d(TAG, "onTouch: begin up")
                             coverView!!.setCanClick(true)
+                            coverView!!.setMove(true)
+                            coverView!!.invalidate()
+                            coverView!!.setMove(false)
                             coverView!!.rectTop = beginY
                             coverView!!.rectLeft = beginX
                             coverView!!.rectRight = moveX
@@ -157,7 +158,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 } else return false
             }
         }
-        val listener=PictureListener()
+
+        val listener = PictureListener()
         picture.setOnTouchListener(listener)
     }
 
@@ -200,10 +202,10 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             }
             R.id.modify_button -> {
                 if (p1) {
-                    canModify=true
+                    canModify = true
                 }
                 if (!p1) {
-                    canModify=false
+                    canModify = false
                 }
             }
         }

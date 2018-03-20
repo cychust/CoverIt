@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
@@ -62,6 +63,9 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private boolean isTransparent;
     private boolean isLongClick;
 
+
+    private boolean isMove=false;
+
     private Rect clipSrcRect;//保存要裁剪的矩形
     private Rect clipDstRect;
 
@@ -81,6 +85,10 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float initDis = 1f;
 
     private Canvas canvas;
+
+    public void setMove(boolean move) {
+        isMove = move;
+    }
 
     public void setWidTimes(double widTimes) {
         this.widTimes = widTimes;
@@ -179,6 +187,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if(!isSwitch){
+            if(isMove)
+            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             mPaint.setColor(color);
             mPaint.setStyle(Paint.Style.FILL);
             mPaint.setAlpha(255);

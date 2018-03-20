@@ -100,6 +100,7 @@ class ReciteMainActivity : AppCompatActivity() {
         when (requestCode) {
             TAKE_PHOTO -> if (resultCode == Activity.RESULT_OK) {
                 val outputImage = File(this.externalCacheDir, "output_image.jpg")
+                if (outputImage.path!=null)
                 startActivity(intentFor<ModifyPicActivity>("pic" to outputImage.path))
             }
             CHOOSE_PHOTO -> {
@@ -124,6 +125,7 @@ class ReciteMainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                if (imagePath!=null)
                 startActivity(intentFor<ModifyPicActivity>("pic" to imagePath))
             }
 
