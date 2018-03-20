@@ -17,8 +17,10 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.FrameLayout
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
+import net.bingyan.coverit.util.LogUtil
 import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -51,7 +53,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_pic)
-        picPath = intent.getStringExtra("pic")
+        if (intent.getStringExtra("pic")!=null)
+        picPath =intent.getStringExtra("pic")
         initView()
     }
 
@@ -80,8 +83,15 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSee.setOnCheckedChangeListener(this)
         rbModify.setOnCheckedChangeListener(this)
 
+        //val myOptions = BitmapFactory.Options()
+        //myOptions.inPreferredConfig = Bitmap.Config.ARGB_4444
+        //myOptions.inSampleSize=2
+
         bitmap = BitmapFactory.decodeFile(picPath)
-        picture.setImageBitmap(bitmap)
+        LogUtil.d("the size is ${bitmap.byteCount}")
+        LogUtil.d("the width is ${bitmap.width}")
+        LogUtil.d("the height is ${bitmap.height}")
+        Glide.with(this).load(bitmap).into(picture)
 
 
         class PictureListener: View.OnTouchListener {
@@ -110,8 +120,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView!!.rectDown = beginY
                             coverView!!.rectRight = beginX
 
-                            Log.d(TAG, "onTouch: left" + beginX)
-                            Log.d(TAG, "onTouch: top" + beginY)
+                            Log.d(TAG, "onTouch: left$beginX")
+                            Log.d(TAG, "onTouch: top$beginY")
                             coverView!!.invalidate()
                         }
                         MotionEvent.ACTION_MOVE -> {
@@ -119,8 +129,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             Log.d(TAG, "onTouch: begin move")
                             moveX = p1.x
                             moveY = p1.y
-                            Log.d(TAG, "onTouch: beginx" + beginX)
-                            Log.d(TAG, "onTouch: beginy" + beginY)
+                            Log.d(TAG, "onTouch: beginx$beginX")
+                            Log.d(TAG, "onTouch: beginy$beginY")
 
                             coverView!!.rectTop = beginY
                             coverView!!.rectLeft = beginX

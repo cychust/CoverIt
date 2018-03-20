@@ -50,11 +50,11 @@
         android:orientation="horizontal">
 
         <CheckBox
-            android:id="@+id/switch_button"
+            android:id="@+id/modify_button"
             android:layout_width="wrap_content"
             android:layout_height="23dp"
             android:layout_marginStart="52dp"
-            android:background="@drawable/switch_selector"
+            android:background="@drawable/modify_selector"
             android:button="@null"
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,16 +74,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/switch_button"
+            app:layout_constraintStart_toEndOf="@+id/modify_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
         <CheckBox
-            android:id="@+id/modify_button"
+            android:id="@+id/switch_button"
             android:layout_width="wrap_content"
             android:layout_height="23dp"
             android:layout_marginEnd="52dp"
-            android:background="@drawable/modify_selector"
+            android:background="@drawable/switch_selector"
             android:button="@null"
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"

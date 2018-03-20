@@ -15,6 +15,10 @@ import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MotionEvent;
 
+import net.bingyan.coverit.data.local.bean.RedData;
+
+import java.util.ArrayList;
+
 import static android.content.ContentValues.TAG;
 import static java.lang.Math.abs;
 
@@ -34,6 +38,18 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private int newX;
     private int oldY;
     private int newY;
+
+    private ArrayList<RedData> redList=new ArrayList<>();
+    public ArrayList<RedData> getRedList() {
+        return redList;
+    }
+
+    public void setRedList(ArrayList<RedData> redList) {
+        this.redList = redList;
+    }
+
+
+
 
     public ModifyTextView(Context context) {
         super(context);
@@ -55,6 +71,16 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         setGravity(Gravity.TOP);
         setBackgroundColor(Color.WHITE);
 
+        drawRed();
+    }
+
+    public void drawRed(){
+        if(!redList.isEmpty()){
+            for (RedData redData :redList) {
+                ForegroundColorSpan redColorSpan = new ForegroundColorSpan(Color.RED);
+                getText().setSpan(redColorSpan, redData.getPrevious(), redData.getNext(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            }
+        }
     }
 
     @Override
@@ -96,22 +122,22 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, "onTouchEvent: action down");
-                oldX=(int)event.getX();
-                oldY=(int)event.getY();
+                oldX = (int) event.getX();
+                oldY = (int) event.getY();
                 line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                 offset = layout.getOffsetForHorizontal(line, (int) event.getX());
                 Selection.setSelection(getEditableText(), offset);
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "onTouchEvent: action move");
-                newX=(int)event.getX();
-                newY=(int)event.getY();
-                Log.d(TAG, "onTouchEvent: oldX"+oldX);
-                Log.d(TAG, "onTouchEvent: newX"+newX);
-                if(abs(newX-oldX)<5) {
-                    oldX=newX;
+                newX = (int) event.getX();
+                newY = (int) event.getY();
+                Log.d(TAG, "onTouchEvent: oldX" + oldX);
+                Log.d(TAG, "onTouchEvent: newX" + newX);
+                if (abs(newX - oldX) < 10) {
+                    oldX = newX;
                     this.scrollBy(0, -(newY - oldY));
-                    oldY=newY;
+                    oldY = newY;
                     return true;
                 }
 
@@ -138,20 +164,30 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         return true;
     }
 
-    public void changeText() {
+    public void calculateText() {
+        if(!redList.isEmpty()){
+            redList.clear();
+        }
         int next;
         for (int i = 0; i < getText().length(); i = next) {
             next = getText().nextSpanTransition(i, getText().length(), ForegroundColorSpan.class);
             ForegroundColorSpan[] spans = getText().getSpans(i, next, ForegroundColorSpan.class);
-            if (spans.length!=0){
+            if (spans.length != 0) {
                 ForegroundColorSpan span = spans[spans.length - 1];
                 if (span.getForegroundColor() == Color.RED) {
                     Log.d(TAG, "changeText: " + i + "::" + next);
-                    String replacedString=getText().subSequence(i,next).toString().replaceAll("[^\\p{P}]" ,"__");
-                    this.setText(getText().replace(i,next,replacedString));
+                    redList.add(new RedData(i,next));
                 }
             }
+        }
+    }
 
+    public void changeText() {
+        calculateText();
+
+        for (RedData redData :redList) {
+            String replacedString = getText().subSequence(redData.getPrevious(), redData.getNext()).toString().replaceAll("[^(\\p{P}|\n|\r|\\s)]", "_");
+            this.setText(getText().replace(redData.getPrevious(), redData.getNext(), replacedString));
         }
     }
 }
