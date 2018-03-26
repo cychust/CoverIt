@@ -1,13 +1,11 @@
 package net.bingyan.coverit.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spanned;
-import android.text.method.MovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,7 +37,17 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private int oldY;
     private int newY;
 
-    private ArrayList<RedData> redList=new ArrayList<>();
+
+    private boolean canEdit = false;
+
+
+    private boolean canModify = true;
+
+    private ArrayList<RedData> redList = new ArrayList<>();
+
+
+    private ArrayList<RedData> blackList =new ArrayList<>();
+
     public ArrayList<RedData> getRedList() {
         return redList;
     }
@@ -48,7 +56,19 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         this.redList = redList;
     }
 
+    public void setBlackList(ArrayList<RedData> blackList) {
+        this.blackList = blackList;
+    }public ArrayList<RedData> getBlackList() {
+        return blackList;
+    }
 
+    public void setCanModify(boolean canModify) {
+        this.canModify = canModify;
+    }
+
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
+    }
 
 
     public ModifyTextView(Context context) {
@@ -70,27 +90,23 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private void initLook() {
         setGravity(Gravity.TOP);
         setBackgroundColor(Color.WHITE);
-
         drawRed();
+
     }
 
-    public void drawRed(){
-        if(!redList.isEmpty()){
-            for (RedData redData :redList) {
+    public void drawBlack() {
+        ForegroundColorSpan blackColorSpan = new ForegroundColorSpan(Color.BLACK);
+        getText().setSpan(blackColorSpan, 0, getText().length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+    }
+
+    public void drawRed() {
+        if (!redList.isEmpty()) {
+            for (RedData redData : redList) {
                 ForegroundColorSpan redColorSpan = new ForegroundColorSpan(Color.RED);
                 getText().setSpan(redColorSpan, redData.getPrevious(), redData.getNext(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
         }
-    }
-
-    @Override
-    protected boolean getDefaultEditable() {
-        return super.getDefaultEditable();
-    }
-
-    @Override
-    protected MovementMethod getDefaultMovementMethod() {
-        return super.getDefaultMovementMethod();
     }
 
     @Override
@@ -104,68 +120,84 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int begin = Selection.getSelectionStart(getText());
-        int end = Selection.getSelectionEnd(getText());
-        if (begin > end) {
-            isReverse = true;
-            int swap = begin;
-            begin = end;
-            end = swap;
-        } else isReverse = false;
-        int action = event.getAction();
-        Layout layout = getLayout();
-        int line = 0;
-        switch (action) {
+    public boolean performClick() {
+        return super.performClick();
+    }
 
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onTouchEvent: action down");
-                oldX = (int) event.getX();
-                oldY = (int) event.getY();
-                line = layout.getLineForVertical(getScrollY() + (int) event.getY());
-                offset = layout.getOffsetForHorizontal(line, (int) event.getX());
-                Selection.setSelection(getEditableText(), offset);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "onTouchEvent: action move");
-                newX = (int) event.getX();
-                newY = (int) event.getY();
-                Log.d(TAG, "onTouchEvent: oldX" + oldX);
-                Log.d(TAG, "onTouchEvent: newX" + newX);
-                if (abs(newX - oldX) < 10) {
-                    oldX = newX;
-                    this.scrollBy(0, -(newY - oldY));
-                    oldY = newY;
-                    return true;
-                }
-
-                if (oldmSelectionForegroundColorSpan != null && !isNewText)
-                    getText().removeSpan(oldmSelectionForegroundColorSpan);
-                mSelectionForegroundColorSpan = new ForegroundColorSpan(isReverse ? Color.BLACK : Color.RED);
-                oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
-                isNewText = false;
-
-                line = layout.getLineForVertical(getScrollY() + (int) event.getY());
-                int curMoveOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
-                Selection.setSelection(getEditableText(), offset, curMoveOffset);
-                getText().setSpan(mSelectionForegroundColorSpan, begin, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                break;
-
-            case MotionEvent.ACTION_UP:
-                Log.d(TAG, "onTouchEvent: action up");
-                line = layout.getLineForVertical(getScrollY() + (int) event.getY());
-                int curOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
-                Selection.setSelection(getEditableText(), offset, curOffset);
-                isNewText = true;
-                break;
-        }
+    @Override
+    protected boolean getDefaultEditable() {
         return true;
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (canModify) {
+            int begin = Selection.getSelectionStart(getText());
+            int end = Selection.getSelectionEnd(getText());
+            if (begin > end) {
+                isReverse = true;
+                int swap = begin;
+                begin = end;
+                end = swap;
+            } else isReverse = false;
+            int action = event.getAction();
+            Layout layout = getLayout();
+            int line;
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d(TAG, "onTouchEvent: action down");
+                    oldX = (int) event.getX();
+                    oldY = (int) event.getY();
+                    line = layout.getLineForVertical(getScrollY() + (int) event.getY());
+                    offset = layout.getOffsetForHorizontal(line, (int) event.getX());
+                    Selection.setSelection(getEditableText(), offset);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.d(TAG, "onTouchEvent: action move");
+                    newX = (int) event.getX();
+                    newY = (int) event.getY();
+                    Log.d(TAG, "onTouchEvent: oldX" + oldX);
+                    Log.d(TAG, "onTouchEvent: newX" + newX);
+
+                    if (abs(newX - oldX) < 10) {
+                        oldX = newX;
+                        this.scrollBy(0, -(newY - oldY));
+                        oldY = newY;
+                        return true;
+                    }
+
+                    if (oldmSelectionForegroundColorSpan != null && !isNewText)
+                        getText().removeSpan(oldmSelectionForegroundColorSpan);
+                    mSelectionForegroundColorSpan = new ForegroundColorSpan(isReverse ? Color.BLACK : Color.RED);
+                    oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
+                    isNewText = false;
+
+                    line = layout.getLineForVertical(getScrollY() + (int) event.getY());
+                    int curMoveOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
+                    Selection.setSelection(getEditableText(), offset, curMoveOffset);
+                    getText().setSpan(mSelectionForegroundColorSpan, begin, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    Log.d(TAG, "onTouchEvent: action up");
+                    line = layout.getLineForVertical(getScrollY() + (int) event.getY());
+                    int curOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
+                    Selection.setSelection(getEditableText(), offset, curOffset);
+                    isNewText = true;
+                    break;
+            }
+            if (canEdit) {
+                super.onTouchEvent(event);
+                return true;
+            } else return true;
+        } else if(canEdit){
+            return super.onTouchEvent(event);
+        }else return true;
+    }
+
     public void calculateText() {
-        if(!redList.isEmpty()){
+        if (!redList.isEmpty()) {
             redList.clear();
         }
         int next;
@@ -175,8 +207,11 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             if (spans.length != 0) {
                 ForegroundColorSpan span = spans[spans.length - 1];
                 if (span.getForegroundColor() == Color.RED) {
-                    Log.d(TAG, "changeText: " + i + "::" + next);
-                    redList.add(new RedData(i,next));
+                    Log.d(TAG, "changeRedText: " + i + "::" + next);
+                    redList.add(new RedData(i, next));
+                }else {
+                    Log.d(TAG, "changeBlackText: " + i + "::" + next);
+                    blackList.add(new RedData(i,next));
                 }
             }
         }
@@ -185,9 +220,11 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     public void changeText() {
         calculateText();
 
-        for (RedData redData :redList) {
-            String replacedString = getText().subSequence(redData.getPrevious(), redData.getNext()).toString().replaceAll("[^(\\p{P}|\n|\r|\\s)]", "_");
+        for (RedData redData : redList) {
+            String replacedString = getText().subSequence(redData.getPrevious(), redData.getNext()).toString().replaceAll("[^(\\p{P}|\\n|\\r|\\s)]", "_");
             this.setText(getText().replace(redData.getPrevious(), redData.getNext(), replacedString));
         }
     }
+
+
 }
