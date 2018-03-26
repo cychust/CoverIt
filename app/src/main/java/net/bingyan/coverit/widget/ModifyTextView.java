@@ -31,7 +31,6 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private ForegroundColorSpan mSelectionForegroundColorSpan;
     private ForegroundColorSpan oldmSelectionForegroundColorSpan;
     private boolean isNewText = false;
-    private boolean isReverse = false;
     private int oldX;
     private int newX;
     private int oldY;
@@ -136,11 +135,10 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             int begin = Selection.getSelectionStart(getText());
             int end = Selection.getSelectionEnd(getText());
             if (begin > end) {
-                isReverse = true;
                 int swap = begin;
                 begin = end;
                 end = swap;
-            } else isReverse = false;
+            }
             int action = event.getAction();
             Layout layout = getLayout();
             int line;
@@ -166,16 +164,17 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                         oldY = newY;
                         return true;
                     }
-
                     if (oldmSelectionForegroundColorSpan != null && !isNewText)
                         getText().removeSpan(oldmSelectionForegroundColorSpan);
-                    mSelectionForegroundColorSpan = new ForegroundColorSpan(isReverse ? Color.BLACK : Color.RED);
-                    oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
+
                     isNewText = false;
 
                     line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                     int curMoveOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
                     Selection.setSelection(getEditableText(), offset, curMoveOffset);
+                    ForegroundColorSpan[] spans = getText().getSpans(offset, offset+1, ForegroundColorSpan.class);
+                    mSelectionForegroundColorSpan = new ForegroundColorSpan(spans[spans.length-1].getForegroundColor()==Color.RED? Color.BLACK : Color.RED);
+                    oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
                     getText().setSpan(mSelectionForegroundColorSpan, begin, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     break;
 
@@ -219,7 +218,6 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
     public void changeText() {
         calculateText();
-
         for (RedData redData : redList) {
             String replacedString = getText().subSequence(redData.getPrevious(), redData.getNext()).toString().replaceAll("[^(\\p{P}|\\n|\\r|\\s)]", "_");
             this.setText(getText().replace(redData.getPrevious(), redData.getNext(), replacedString));

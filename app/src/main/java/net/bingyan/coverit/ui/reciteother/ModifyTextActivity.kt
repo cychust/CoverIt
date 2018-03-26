@@ -108,6 +108,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             R.id.see_button -> {
                 if (p1) {
                     modifyText.setText(content)
+                    modifyText.drawBlack()
                     modifyText.drawRed()
                 }
 
@@ -115,6 +116,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     val curY = modifyText.scrollY
                     val curX = modifyText.scrollX
                     modifyText.changeText()
+                    modifyText.drawRed()
                     modifyText.scrollTo(curX, curY)
                     redList=modifyText.redList
                 }
