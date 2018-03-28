@@ -10,7 +10,7 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
-import net.bingyan.coverit.data.local.bean.RedData
+import net.bingyan.coverit.data.local.dataadapter.RedData
 import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
 import java.util.*

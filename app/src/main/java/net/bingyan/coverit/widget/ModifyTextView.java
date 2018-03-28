@@ -13,7 +13,7 @@ import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MotionEvent;
 
-import net.bingyan.coverit.data.local.bean.RedData;
+import net.bingyan.coverit.data.local.dataadapter.RedData;
 
 import java.util.ArrayList;
 

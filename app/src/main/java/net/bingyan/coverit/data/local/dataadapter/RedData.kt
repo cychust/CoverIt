@@ -1,4 +1,4 @@
-package net.bingyan.coverit.data.local.bean
+package net.bingyan.coverit.data.local.dataadapter
 
 /**
  * Author       zdlly
