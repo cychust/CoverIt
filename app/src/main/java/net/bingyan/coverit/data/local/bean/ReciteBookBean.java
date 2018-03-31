@@ -1,5 +1,7 @@
 package net.bingyan.coverit.data.local.bean;
 
+import com.contrarywind.interfaces.IPickerViewData;
+
 import java.util.Date;
 
 import io.realm.RealmList;
@@ -11,7 +13,7 @@ import io.realm.RealmObject;
  * Time         22:43
  */
 
-public class ReciteBookBean extends RealmObject {
+public class ReciteBookBean extends RealmObject implements IPickerViewData{
     private String bookTitle;
     private int textNum;
     private int picNum;
@@ -74,5 +76,10 @@ public class ReciteBookBean extends RealmObject {
 
     public void setPicList(RealmList<RecitePicBean> picList) {
         this.picList = picList;
+    }
+
+    @Override
+    public String getPickerViewText() {
+        return bookTitle;
     }
 }

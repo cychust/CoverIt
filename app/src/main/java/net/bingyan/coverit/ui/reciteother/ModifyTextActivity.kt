@@ -5,15 +5,25 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.CompoundButton
+import android.widget.*
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener
+import com.bigkoo.pickerview.view.OptionsPickerView
+import io.realm.Realm
+import io.realm.RealmList
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
+import net.bingyan.coverit.data.local.bean.ReciteBookBean
+import net.bingyan.coverit.data.local.bean.ReciteTextBean
+import net.bingyan.coverit.data.local.bean.TextConfigBean
 import net.bingyan.coverit.data.local.dataadapter.RedData
 import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
+import kotlin.collections.ArrayList
+
 
 class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
     private lateinit var btnSave: Button
@@ -27,13 +37,21 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var content: String
 
+    private lateinit var pvCustomOptions:OptionsPickerView<ReciteBookBean>
+
     private var redList = ArrayList<RedData>()
+
+    private lateinit var textRealm:Realm
+    private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
         title = intent.getStringExtra("title")
         content = intent.getStringExtra("content")
 
+        textRealm= Realm.getDefaultInstance()
         initView()
     }
 
@@ -70,7 +88,73 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         modifyText.drawBlack()
 
+        btnSave.onClick {
+            saveText()
+            reciteBookResults=textRealm.where(ReciteBookBean::class.java)
+                    .findAll()
+            initCustomOptionPicker()
+            pvCustomOptions.show()
+        }
+
         setDefaultMethod()
+    }
+
+    private fun saveText() {
+        var mTextConfigList:RealmList<TextConfigBean> = RealmList()
+
+        for (redData:RedData in redList){
+            val textConfig=TextConfigBean()
+            textConfig.previous=redData.previous
+            textConfig.next=redData.next
+            mTextConfigList.add(textConfig)
+        }
+
+
+        textRealm.beginTransaction()
+        val textItem=textRealm.createObject(ReciteTextBean::class.java)
+        textItem.text=content
+        textItem.textDate=Date(System.currentTimeMillis())
+        textItem.textTitle=title
+        textItem.textConfigList=mTextConfigList
+        textRealm.commitTransaction()
+    }
+
+    private fun initCustomOptionPicker() {//条件选择器初始化，自定义布局
+        /**
+         * @description
+         *
+         * 注意事项：
+         * 自定义布局中，id为 optionspicker 或者 timepicker 的布局以及其子控件必须要有，否则会报空指针。
+         * 具体可参考demo 里面的两个自定义layout布局。
+         */
+         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
+            //返回的是选中位置
+
+        })
+                .setLayoutRes(R.layout.pickerview_custom_options) { v ->
+                    val tvSubmit = v.findViewById(R.id.tv_finish) as TextView
+                    val tvAdd = v.findViewById(R.id.tv_add) as TextView
+                    val ivCancel = v.findViewById(R.id.iv_cancel) as ImageView
+                    tvSubmit.setOnClickListener {
+                        pvCustomOptions.returnData()
+                        pvCustomOptions.dismiss()
+                    }
+
+                    ivCancel.setOnClickListener { pvCustomOptions.dismiss() }
+
+                    tvAdd.setOnClickListener {
+                        addNewReciteBook()
+                        pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
+                    }
+                }
+                .isDialog(true)
+                .build()
+
+        pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))//添加数据
+    }
+
+    private fun addNewReciteBook() {
+
     }
 
     private fun setDefaultMethod() {
@@ -146,5 +230,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
 
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        textRealm.close()
     }
 }

@@ -33,7 +33,11 @@ class SlideFromBottomPopup(activityContext: Activity,val activity: Activity) : B
     }
 
     override fun initShowAnimation(): Animation {
-        return getTranslateAnimation(250 * 2, 0, 300)
+        return getTranslateVerticalAnimation(1f, 0f, 500)
+    }
+
+    override fun initExitAnimation(): Animation {
+        return getTranslateVerticalAnimation(0f,1f,500)
     }
 
     override fun getClickToDismissView(): View {

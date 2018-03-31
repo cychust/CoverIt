@@ -14,7 +14,7 @@ import io.realm.RealmObject;
 public class ReciteTextBean extends RealmObject {
     private String textTitle;
     private Date textDate;
-    private String textPath;
+    private String text;
     private boolean isTop;
     private RealmList<TextConfigBean> textConfigList;
 
@@ -34,12 +34,12 @@ public class ReciteTextBean extends RealmObject {
         this.textDate = textDate;
     }
 
-    public String getTextPath() {
-        return textPath;
+    public String getText() {
+        return text;
     }
 
-    public void setTextPath(String textPath) {
-        this.textPath = textPath;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public boolean isTop() {

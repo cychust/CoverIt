@@ -316,7 +316,7 @@ class TitleBar : ViewGroup, View.OnClickListener {
      * @return a view
      */
     private fun inflateAction(action: Action): View {
-        var view: View? = null
+        val view: View?
         if (TextUtils.isEmpty(action.text)) {
             val img = ImageView(context)
             img.setImageResource(action.drawable)
