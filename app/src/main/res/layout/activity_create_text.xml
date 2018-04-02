@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -33,12 +33,12 @@
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:maxLength="5"
-        android:gravity="top"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="9dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/white"
+        android:gravity="top"
         android:hint="@string/title_hint"
+        android:maxLength="5"
         android:textColor="@color/black"
         android:textSize="16sp" />
 
@@ -46,16 +46,19 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/grey" />
+
     <EditText
         android:id="@+id/et_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/white"
+        android:gravity="top"
         android:hint="@string/content_hint"
+        android:inputType="textMultiLine"
         android:textColor="@color/black"
-        android:textSize="16sp"
-        android:gravity="top"/>
+        android:textSize="16sp" />
+
 </LinearLayout>
 
 

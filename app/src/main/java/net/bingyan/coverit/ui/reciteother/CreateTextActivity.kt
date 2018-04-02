@@ -3,6 +3,7 @@ package net.bingyan.coverit.ui.reciteother
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_create_text.*
@@ -20,6 +21,7 @@ class CreateTextActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_text)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         initView()
     }
 

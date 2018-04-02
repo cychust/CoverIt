@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tv_finish"
             android:layout_toEndOf="@+id/iv_cancel"
-            android:layout_marginStart="90dp"
+            android:layout_marginStart="60dp"
             android:textColor="@color/colorPrimary"
             android:text="选择记背本" />
 

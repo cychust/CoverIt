@@ -2,9 +2,12 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.TextInputEditText
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
+import android.view.WindowManager
 import android.widget.*
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener
@@ -25,6 +28,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+
+
 class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
     private lateinit var btnSave: Button
 
@@ -43,6 +48,8 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var textRealm:Realm
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
+
+    private lateinit var resultText:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +151,6 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
                     tvAdd.setOnClickListener {
                         addNewReciteBook()
-                        pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
                     }
                 }
                 .isDialog(true)
@@ -154,7 +160,45 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     }
 
     private fun addNewReciteBook() {
+        showCustomDialog()
+    }
 
+    private fun showCustomDialog() {
+        val builder=AlertDialog.Builder(this)
+        builder.setTitle("创建记背本")
+
+        val dialogContent=layoutInflater.inflate(R.layout.custom_dialog,null)
+        builder.setView(dialogContent)
+
+        val textInput=dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+
+        builder.setCancelable(false)
+
+
+        builder.setPositiveButton("确定", { dialog, which ->
+            run {
+                resultText = textInput.text.toString()
+                if (!resultText.trim().isEmpty()){
+                    textRealm.beginTransaction()
+                    val bookItem=textRealm.createObject(ReciteBookBean::class.java)
+                    bookItem.bookTitle=resultText
+                    bookItem.textNum=0
+                    bookItem.picNum=0
+                    bookItem.isTop=false
+                    bookItem.bookDate= Date(System.currentTimeMillis())
+                    textRealm.commitTransaction()
+                }
+                pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
+                dialog.dismiss()
+            }
+        })
+        builder.setNegativeButton("取消", { dialog, which -> run {
+            resultText = ""
+            dialog.dismiss()
+        } })
+        val dialog=builder.create()
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        dialog.show()
     }
 
     private fun setDefaultMethod() {

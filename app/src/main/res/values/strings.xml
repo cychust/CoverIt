@@ -20,4 +20,5 @@
     <string name="sure">确定</string>
     <string name="title_hint">    请输入标题(最多5个字)</string>
     <string name="content_hint">    请输入正文</string>
+    <string name="recite_tip">请输入记背本名称</string>
 </resources>
