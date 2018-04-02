@@ -13,7 +13,6 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener
 import com.bigkoo.pickerview.view.OptionsPickerView
 import io.realm.Realm
-import io.realm.RealmList
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
@@ -50,6 +49,8 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
 
     private lateinit var resultText:String
+
+    private lateinit var textItem:ReciteTextBean
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,22 +108,20 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     }
 
     private fun saveText() {
-        var mTextConfigList:RealmList<TextConfigBean> = RealmList()
+        modifyText.calculateText()
+        redList=modifyText.redList
 
+        textRealm.beginTransaction()
+        textItem=textRealm.createObject(ReciteTextBean::class.java)
+        textItem.text=content
+        textItem.textDate=Date(System.currentTimeMillis())
+        textItem.textTitle=title
         for (redData:RedData in redList){
             val textConfig=TextConfigBean()
             textConfig.previous=redData.previous
             textConfig.next=redData.next
-            mTextConfigList.add(textConfig)
+            textItem.textConfigList.add(textConfig)
         }
-
-
-        textRealm.beginTransaction()
-        val textItem=textRealm.createObject(ReciteTextBean::class.java)
-        textItem.text=content
-        textItem.textDate=Date(System.currentTimeMillis())
-        textItem.textTitle=title
-        textItem.textConfigList=mTextConfigList
         textRealm.commitTransaction()
     }
 
@@ -135,7 +134,17 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
          * 具体可参考demo 里面的两个自定义layout布局。
          */
          pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
-            //返回的是选中位置
+            val selectedItem=reciteBookResults[options1]
+             textRealm.executeTransaction({
+                     //先查找后得到对象
+                    val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",selectedItem!!.pickerViewText).findFirst()
+                    user!!.textNum +=1
+                    user!!.textList.add(textItem)
+                    user.bookDate= Date(System.currentTimeMillis())
+                    Toast.makeText(this,"已成功添加",Toast.LENGTH_SHORT).show()
+                    finish()
+             })
+
 
         })
                 .setLayoutRes(R.layout.pickerview_custom_options) { v ->
@@ -150,6 +159,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     ivCancel.setOnClickListener { pvCustomOptions.dismiss() }
 
                     tvAdd.setOnClickListener {
+                        pvCustomOptions.dismiss()
                         addNewReciteBook()
                     }
                 }
@@ -190,14 +200,18 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 }
                 pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
                 dialog.dismiss()
+                pvCustomOptions.setSelectOptions(reciteBookResults.size-1)
+                pvCustomOptions.show()
             }
         })
         builder.setNegativeButton("取消", { dialog, which -> run {
             resultText = ""
             dialog.dismiss()
+            pvCustomOptions.show()
         } })
         val dialog=builder.create()
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+
         dialog.show()
     }
 

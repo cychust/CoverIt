@@ -1,20 +1,26 @@
 package net.bingyan.coverit.ui.recitemain.recitebook
 
+import io.realm.Realm
+import net.bingyan.coverit.data.local.bean.ReciteBookBean
+
 /**
  * Author       zdlly
  * Date         2017.12.9
  * Time         0:38
  */
-class ReciteBookPresenter(val reciteBookFragment: ReciteBookContract.View) :ReciteBookContract.Presenter{
+class ReciteBookPresenter(private val reciteBookFragment: ReciteBookContract.View) :ReciteBookContract.Presenter{
+    private var reciteBookRealm:Realm = Realm.getDefaultInstance()
     override fun start() {
         loadBookData()
     }
     init {
         reciteBookFragment.presenter=this
+        reciteBookFragment.bookRealm=reciteBookRealm
     }
 
     private fun loadBookData() {
-        reciteBookFragment.loadBookData()
+        val bookList=reciteBookRealm.where(ReciteBookBean::class.java).findAll()
+        reciteBookFragment.loadBookData(bookList)
     }
 
     override fun deleteBook() {

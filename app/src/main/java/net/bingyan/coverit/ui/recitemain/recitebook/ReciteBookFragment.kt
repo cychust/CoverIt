@@ -8,8 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mancj.materialsearchbar.MaterialSearchBar
+import io.realm.Realm
+import io.realm.RealmResults
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteBookAdapter
+import net.bingyan.coverit.data.local.bean.ReciteBookBean
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Author       zdlly
@@ -17,15 +22,26 @@ import net.bingyan.coverit.adapter.uiadapter.ReciteBookAdapter
  * Time         0:37
  */
 class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar.OnSearchActionListener {
+
+
+    override lateinit var bookRealm: Realm
+
     override lateinit var presenter: ReciteBookContract.Presenter
 
     private lateinit var searchBar:MaterialSearchBar
 
     private lateinit var  lastSearches:List<String>
     private lateinit var rvBookList:RecyclerView
+
+
     override fun onResume() {
         super.onResume()
         presenter.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bookRealm.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,13 +52,21 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         }
         searchBar.setOnSearchActionListener(this)
         searchBar.setPlaceHolder("搜索你想要的记背本...")
-        loadBookData()
         return root
     }
-    override fun loadBookData() {
-        lastSearches= listOf("111","222","333","444","555","666","777","888","999")
+    override fun loadBookData(realmResults: RealmResults<ReciteBookBean>) {
+        val titleList:MutableList<String> = mutableListOf()
+        val textNumList:MutableList<String> = mutableListOf()
+        val picNumList:MutableList<String> = mutableListOf()
+        val dateList:MutableList<String> = mutableListOf()
+        for (realmResult:ReciteBookBean in realmResults){
+            titleList.add((bookRealm.copyFromRealm(realmResult)).bookTitle.toString())
+            textNumList.add((bookRealm.copyFromRealm(realmResult)).textNum.toString())
+            picNumList.add((bookRealm.copyFromRealm(realmResult)).picNum.toString())
+            dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((bookRealm.copyFromRealm(realmResult)).bookDate))
+        }
         rvBookList.layoutManager= GridLayoutManager(context,2)
-        rvBookList.adapter= ReciteBookAdapter(context,lastSearches,lastSearches,lastSearches,lastSearches)
+        rvBookList.adapter= ReciteBookAdapter(context,titleList ,textNumList,picNumList,dateList)
     }
 
     override fun onButtonClicked(buttonCode: Int) {
@@ -56,4 +80,6 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
     override fun onSearchConfirmed(text: CharSequence?) {
 
     }
+
+
 }

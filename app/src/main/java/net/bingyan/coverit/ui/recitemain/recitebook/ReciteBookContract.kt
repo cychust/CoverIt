@@ -1,7 +1,10 @@
 package net.bingyan.coverit.ui.recitemain.recitebook
 
+import io.realm.Realm
+import io.realm.RealmResults
 import net.bingyan.coverit.BasePresenter
 import net.bingyan.coverit.BaseView
+import net.bingyan.coverit.data.local.bean.ReciteBookBean
 
 /**
  * Author       zdlly
@@ -10,7 +13,8 @@ import net.bingyan.coverit.BaseView
  */
 interface ReciteBookContract {
     interface View: BaseView<Presenter> {
-        fun loadBookData()
+        var bookRealm:Realm
+        fun loadBookData(realmResults: RealmResults<ReciteBookBean>)
     }
 
     interface  Presenter: BasePresenter {

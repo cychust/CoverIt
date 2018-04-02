@@ -40,6 +40,7 @@ class CreateTextActivity : AppCompatActivity() {
             val title=etTitle.text.toString().trim()
             val content=etContent.text.toString().trim()
             startActivity(intentFor<ModifyTextActivity>("title" to title,"content" to content))
+            finish()
         }
     }
 }

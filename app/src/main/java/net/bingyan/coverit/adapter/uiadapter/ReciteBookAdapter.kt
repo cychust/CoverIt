@@ -12,22 +12,22 @@ import net.bingyan.coverit.adapter.viewholder.ReciteBookViewHolder
  * Date         2017.12.10
  * Time         18:24
  */
-class ReciteBookAdapter (private val context:Context?,
-                         val titleList: List<String>,
-                         val textNumList: List<String>,
-                         val picNumList: List<String>,
-                         val timeList: List<String>): RecyclerView.Adapter<ReciteBookViewHolder>() {
+class ReciteBookAdapter(private val context: Context?,
+                        val titleList: List<String>,
+                        val textNumList: List<String>,
+                        val picNumList: List<String>,
+                        val timeList: List<String>) : RecyclerView.Adapter<ReciteBookViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReciteBookViewHolder {
-        return ReciteBookViewHolder(LayoutInflater.from(context).inflate(R.layout.item_book, parent, false),context)
+        return ReciteBookViewHolder(LayoutInflater.from(context).inflate(R.layout.item_book, parent, false), context)
 
     }
 
     override fun onBindViewHolder(holder: ReciteBookViewHolder, position: Int) {
-        holder?.apply {
-            // tvTitle.text = titleList[position]
-            //tvTextNum.text=textNumList[position]
-            // tvPicNum.text=picNumList[position]
-            // tvTime.text=timeList[position]
+        holder.apply {
+            tvTitle.text = titleList[position]
+            tvTextNum.text = textNumList[position]
+            tvPicNum.text = picNumList[position]
+            tvTime.text = timeList[position]
         }
     }
 
