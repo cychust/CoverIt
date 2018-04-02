@@ -181,6 +181,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         builder.setView(dialogContent)
 
         val textInput=dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+        textInput.hint="请输入记背本名称"
 
         builder.setCancelable(false)
 

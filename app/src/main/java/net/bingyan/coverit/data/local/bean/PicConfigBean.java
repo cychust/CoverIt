@@ -12,7 +12,7 @@ public class PicConfigBean extends RealmObject {
     private int left;
     private int top;
     private int right;
-    private int down;
+    private int bottom;
 
     public int getLeft() {
         return left;
@@ -38,11 +38,11 @@ public class PicConfigBean extends RealmObject {
         this.right = right;
     }
 
-    public int getDown() {
-        return down;
+    public int getBottom() {
+        return bottom;
     }
 
-    public void setDown(int down) {
-        this.down = down;
+    public void setBottom(int bottom) {
+        this.bottom = bottom;
     }
 }

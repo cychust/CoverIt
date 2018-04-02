@@ -12,6 +12,9 @@ import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.view.View
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 /**
  * Author       zdlly
@@ -119,4 +122,23 @@ object FileUtils {
 
         return view.drawingCache
     }
+
+    private lateinit var out:FileOutputStream
+    fun saveBitmap(bitmap:Bitmap):String{
+        val file = File(Environment.getExternalStorageDirectory(), System.currentTimeMillis().toString()+".jpg")
+        try {
+            out = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+        } catch (e:FileNotFoundException) {
+            e.printStackTrace()
+        }
+        try {
+            out.flush()
+            out.close()
+        } catch (e:IOException) {
+            e.printStackTrace()
+        }
+        return file.path
+    }
 }
+
