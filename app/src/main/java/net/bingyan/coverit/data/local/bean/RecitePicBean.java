@@ -16,7 +16,17 @@ public class RecitePicBean extends RealmObject {
     private Date picDate;
     private String picPath;
     private boolean isTop;
+    private String belonging;
     private RealmList<PicConfigBean> picConfigList;
+
+
+    public String getBelonging() {
+        return belonging;
+    }
+
+    public void setBelonging(String belonging) {
+        this.belonging = belonging;
+    }
 
     public String getPicTitle() {
         return picTitle;

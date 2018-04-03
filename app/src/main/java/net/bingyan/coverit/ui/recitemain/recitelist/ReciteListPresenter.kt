@@ -57,6 +57,7 @@ class ReciteListPresenter(private val reciteListView: ReciteListContract.View, v
             parentItem.isTop=textResult.isTop
             parentItem.text=textResult.text
             parentItem.picpath=""
+            parentItem.belonging=textResult.belonging
             reciteListRealm.commitTransaction()
         }
         for (picResult in picResultList){
@@ -67,6 +68,7 @@ class ReciteListPresenter(private val reciteListView: ReciteListContract.View, v
             parentItem.isTop=picResult.isTop
             parentItem.text=""
             parentItem.picpath=picResult.picPath
+            parentItem.belonging=picResult.belonging
             reciteListRealm.commitTransaction()
         }
 

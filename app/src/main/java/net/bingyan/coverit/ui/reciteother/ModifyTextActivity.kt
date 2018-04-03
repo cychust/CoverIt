@@ -135,6 +135,9 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
          */
          pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
             val selectedItem=reciteBookResults[options1]
+             textRealm.executeTransaction {
+                 textItem.belonging=selectedItem!!.pickerViewText
+             }
              textRealm.executeTransaction({
                      //先查找后得到对象
                     val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",selectedItem!!.pickerViewText).findFirst()

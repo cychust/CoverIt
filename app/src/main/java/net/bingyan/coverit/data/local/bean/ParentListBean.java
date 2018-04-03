@@ -15,6 +15,16 @@ public class ParentListBean extends RealmObject {
     private String text;
     private boolean isTop;
     private String picpath;
+    private String belonging;
+
+
+    public String getBelonging() {
+        return belonging;
+    }
+
+    public void setBelonging(String belonging) {
+        this.belonging = belonging;
+    }
 
     public String getTitle() {
         return title;

@@ -27,7 +27,10 @@ class ReciteBookViewHolder(book: View, val context:Context?): RecyclerView.ViewH
 
     override fun onClick(p0: View?) {
 
-        context?.startActivity(Intent(context,ReciteBookDetailActivity::class.java))
+        val detailIntent=Intent()
+        detailIntent.putExtra("bookTitle",tvTitle.text)
+        detailIntent.setClass(context,ReciteBookDetailActivity::class.java)
+        context?.startActivity(detailIntent)
     }
 
 }

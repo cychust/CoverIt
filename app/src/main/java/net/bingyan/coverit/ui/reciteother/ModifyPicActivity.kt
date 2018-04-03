@@ -188,6 +188,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private fun initCustomOptionPicker() {
         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
             val selectedItem=reciteBookResults[options1]
+            picRealm.executeTransaction {
+                picItem.belonging=selectedItem!!.pickerViewText
+            }
             picRealm.executeTransaction({
                 //先查找后得到对象
                 val user = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",selectedItem!!.pickerViewText).findFirst()

@@ -16,7 +16,17 @@ public class ReciteTextBean extends RealmObject {
     private Date textDate;
     private String text;
     private boolean isTop;
+    private String belonging;
     private RealmList<TextConfigBean> textConfigList;
+
+
+    public String getBelonging() {
+        return belonging;
+    }
+
+    public void setBelonging(String belonging) {
+        this.belonging = belonging;
+    }
 
     public String getTextTitle() {
         return textTitle;
