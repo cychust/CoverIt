@@ -306,10 +306,10 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
         for (modifyPicView:ModifyPicView in viewList){
             val picConfig=PicConfigBean()
-            picConfig.left=modifyPicView.left
-            picConfig.top=modifyPicView.top
-            picConfig.right=modifyPicView.right
-            picConfig.bottom =modifyPicView.bottom
+            picConfig.left=modifyPicView.rectLeft
+            picConfig.top=modifyPicView.rectTop
+            picConfig.right=modifyPicView.rectRight
+            picConfig.bottom =modifyPicView.rectDown
             picItem.picConfigList.add(picConfig)
         }
 

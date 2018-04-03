@@ -9,40 +9,40 @@ import io.realm.RealmObject;
  */
 
 public class PicConfigBean extends RealmObject {
-    private int left;
-    private int top;
-    private int right;
-    private int bottom;
+    private float left;
+    private float top;
+    private float right;
+    private float bottom;
 
-    public int getLeft() {
+    public float getLeft() {
         return left;
     }
 
-    public void setLeft(int left) {
+    public void setLeft(float left) {
         this.left = left;
     }
 
-    public int getTop() {
+    public float getTop() {
         return top;
     }
 
-    public void setTop(int top) {
+    public void setTop(float top) {
         this.top = top;
     }
 
-    public int getRight() {
+    public float getRight() {
         return right;
     }
 
-    public void setRight(int right) {
+    public void setRight(float right) {
         this.right = right;
     }
 
-    public int getBottom() {
+    public float getBottom() {
         return bottom;
     }
 
-    public void setBottom(int bottom) {
+    public void setBottom(float bottom) {
         this.bottom = bottom;
     }
 }
