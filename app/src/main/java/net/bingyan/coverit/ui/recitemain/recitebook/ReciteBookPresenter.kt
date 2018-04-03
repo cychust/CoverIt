@@ -15,7 +15,7 @@ class ReciteBookPresenter(private val reciteBookFragment: ReciteBookContract.Vie
     }
     init {
         reciteBookFragment.presenter=this
-        reciteBookFragment.bookRealm=reciteBookRealm
+        reciteBookFragment.reciteBookRealm=reciteBookRealm
     }
 
     private fun loadBookData() {

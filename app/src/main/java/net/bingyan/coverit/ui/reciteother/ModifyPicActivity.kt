@@ -302,7 +302,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         picItem.picTitle=resultText
         picItem.isTop=false
         picItem.picDate= Date(System.currentTimeMillis())
-        picItem.picPath=FileUtils.saveBitmap(bitmap)
+        picItem.picPath=FileUtils.saveBitmap(bitmap,this)
 
         for (modifyPicView:ModifyPicView in viewList){
             val picConfig=PicConfigBean()
@@ -310,6 +310,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             picConfig.top=modifyPicView.top
             picConfig.right=modifyPicView.right
             picConfig.bottom =modifyPicView.bottom
+            picItem.picConfigList.add(picConfig)
         }
 
         picRealm.commitTransaction()

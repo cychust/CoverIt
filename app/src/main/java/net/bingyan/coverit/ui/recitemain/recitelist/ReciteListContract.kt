@@ -1,7 +1,9 @@
 package net.bingyan.coverit.ui.recitemain.recitelist
 
+import io.realm.Realm
 import net.bingyan.coverit.BasePresenter
 import net.bingyan.coverit.BaseView
+import net.bingyan.coverit.data.local.bean.ParentListBean
 
 /**
  * Author       zdlly
@@ -10,7 +12,8 @@ import net.bingyan.coverit.BaseView
  */
 interface ReciteListContract {
     interface View:BaseView<Presenter>{
-        fun loadListData()
+        var reciteListRealm:Realm
+        fun loadListData(parentList: MutableList<ParentListBean>)
         fun startTextActivity()
     }
 

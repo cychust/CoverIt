@@ -37,19 +37,21 @@
         android:id="@+id/rlCenter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:paddingBottom="6dp"
-        android:paddingTop="10dp"
-        android:orientation="vertical">
+        android:paddingTop="10dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/title_image"
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
                 android:contentDescription="@string/title"
-                android:src="@drawable/baseplate"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:src="@drawable/baseplate" />
 
             <TextView
                 android:id="@+id/tv_time"
@@ -57,40 +59,52 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginBottom="5dp"
                 android:text="2018/01/01"
                 android:textColor="@color/endColor"
-                android:textSize="12sp"
-                android:layout_marginBottom="5dp"/>
+                android:textSize="12sp" />
+
             <LinearLayout
                 android:layout_width="110dp"
                 android:layout_height="16dp"
                 android:layout_alignParentEnd="true"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/project"
+                    android:layout_gravity="center_vertical|start"
                     android:layout_marginEnd="5dp"
-                    android:layout_gravity="center_vertical|start"/>
+                    android:src="@drawable/project" />
+
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="placeholder"
-                    android:textSize="12sp"
-                    android:textColor="#fff"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:layout_marginBottom="2dp"/>
+                    android:text="placeholder"
+                    android:textColor="#fff"
+                    android:textSize="12sp" />
             </LinearLayout>
         </RelativeLayout>
+
         <ImageView
-            android:id="@+id/iv_content"
+            android:id="@+id/iv_content_pic"
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:contentDescription="@string/content"
-            android:src="@drawable/logo_beita"
-            android:scaleType="fitXY"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_beita" />
+
+        <TextView
+            android:id="@+id/tv_content_text"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:visibility="gone"
+            android:background="@color/grey"
+            android:maxEms="100"/>
     </LinearLayout>
 </LinearLayout>

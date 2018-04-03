@@ -8,10 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import io.realm.Realm
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
+import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.ui.reciteother.CreateTextActivity
 import org.jetbrains.anko.support.v4.intentFor
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Author       zdlly
@@ -19,6 +23,7 @@ import org.jetbrains.anko.support.v4.intentFor
  * Time         0:30
  */
 class ReciteListFragment: Fragment(),ReciteListContract.View {
+    override lateinit var reciteListRealm: Realm
     private val TAKE_PHOTO=1
 
     private val SELECT_ALBUM=2
@@ -27,11 +32,25 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
 
     private lateinit var rvList:RecyclerView
 
+    private var titleList= mutableListOf<String>()
+    private var timeList= mutableListOf<String>()
+    private var picPathList= mutableListOf<String>()
+    private var textList= mutableListOf<String>()
+
+
+
     override lateinit var presenter: ReciteListContract.Presenter
+
     override fun onResume() {
         super.onResume()
         presenter.start()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reciteListRealm.close()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
        val root=inflater.inflate(R.layout.fragment_recitelist,container,false)
         with(root){
@@ -51,11 +70,19 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         startActivity(intentFor<CreateTextActivity>())
     }
 
-    override fun loadListData() {
-        val timeList= listOf("2017-10-01","2017-10-02","2017-10-03","2017-10-04","2017-10-05")
-        val nameList= listOf("马克思主义原理","马克思主义原理","马克思主义原理","马克思主义原理","马克思主义原理")
+    override fun loadListData(parentList: MutableList<ParentListBean>) {
         rvList.layoutManager= LinearLayoutManager(context)
-        rvList.adapter= ReciteListAdapter(this.context!!,timeList,nameList,nameList)
+        timeList.clear()
+        titleList.clear()
+        picPathList.clear()
+        textList.clear()
+        parentList.forEach {
+            timeList.add(SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(it.date))
+            titleList.add(it.title)
+            picPathList.add(it.picpath)
+            textList.add(it.text)
+        }
+        rvList.adapter= ReciteListAdapter(this.context!!,timeList,titleList,picPathList,textList)
     }
 
 }

@@ -24,7 +24,7 @@ import java.util.*
 class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar.OnSearchActionListener {
 
 
-    override lateinit var bookRealm: Realm
+    override lateinit var reciteBookRealm: Realm
 
     override lateinit var presenter: ReciteBookContract.Presenter
 
@@ -41,7 +41,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
 
     override fun onDestroy() {
         super.onDestroy()
-        bookRealm.close()
+        reciteBookRealm.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,10 +60,10 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         val picNumList:MutableList<String> = mutableListOf()
         val dateList:MutableList<String> = mutableListOf()
         for (realmResult:ReciteBookBean in realmResults){
-            titleList.add((bookRealm.copyFromRealm(realmResult)).bookTitle.toString())
-            textNumList.add((bookRealm.copyFromRealm(realmResult)).textNum.toString())
-            picNumList.add((bookRealm.copyFromRealm(realmResult)).picNum.toString())
-            dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((bookRealm.copyFromRealm(realmResult)).bookDate))
+            titleList.add((reciteBookRealm.copyFromRealm(realmResult)).bookTitle.toString())
+            textNumList.add((reciteBookRealm.copyFromRealm(realmResult)).textNum.toString())
+            picNumList.add((reciteBookRealm.copyFromRealm(realmResult)).picNum.toString())
+            dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((reciteBookRealm.copyFromRealm(realmResult)).bookDate))
         }
         rvBookList.layoutManager= GridLayoutManager(context,2)
         rvBookList.adapter= ReciteBookAdapter(context,titleList ,textNumList,picNumList,dateList)

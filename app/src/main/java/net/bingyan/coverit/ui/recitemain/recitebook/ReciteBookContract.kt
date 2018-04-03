@@ -13,7 +13,7 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
  */
 interface ReciteBookContract {
     interface View: BaseView<Presenter> {
-        var bookRealm:Realm
+        var reciteBookRealm:Realm
         fun loadBookData(realmResults: RealmResults<ReciteBookBean>)
     }
 

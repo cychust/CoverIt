@@ -50,6 +50,6 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         val timeList= listOf("2017-10-01","2017-10-02","2017-10-03","2017-10-04","2017-10-05")
         val nameList= listOf("马克思主义原理","马克思主义原理","马克思主义原理","马克思主义原理","马克思主义原理")
         rvList.layoutManager= LinearLayoutManager(this)
-        rvList.adapter= ReciteListAdapter(this,timeList,nameList,nameList)
+        rvList.adapter= ReciteListAdapter(this,timeList,nameList,nameList,timeList)
     }
 }
