@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/popup_contianer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:id="@+id/ll_new_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+            <ImageView
+                android:id="@+id/tx_1"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/text"
+                android:gravity="center" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="   新文本"/>
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="100dp"
+            android:layout_height="0.5dp"
+            android:background="#6c6c6c"/>
+
+    <LinearLayout
+        android:id="@+id/ll_new_pic"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/tx_2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/photo"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="   新图片"/>
+    </LinearLayout>
+
+    </LinearLayout>
