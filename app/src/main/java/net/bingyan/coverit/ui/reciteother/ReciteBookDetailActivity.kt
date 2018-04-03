@@ -16,7 +16,7 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_recite_book_detail.*
 import net.bingyan.coverit.R
-import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
+import net.bingyan.coverit.adapter.uiadapter.ReciteBookDetailAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.widget.MenuPopup
 import org.jetbrains.anko.intentFor
@@ -76,14 +76,14 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         picPathList.clear()
         textList.clear()
         parentList.forEach {
-            timeList.add(SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(it.date))
+            timeList.add(SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).format(it.date))
             titleList.add(it.title)
             picPathList.add(it.picpath)
             textList.add(it.text)
         }
 
         rvList.layoutManager= LinearLayoutManager(this)
-        rvList.adapter= ReciteListAdapter(this,timeList,titleList,picPathList,textList)
+        rvList.adapter= ReciteBookDetailAdapter(this,timeList,titleList,picPathList,textList)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

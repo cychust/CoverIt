@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:id="@+id/rlCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="5dp"
+                android:text="2018.01.01"
+                android:textColor="@color/endColor"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="110dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:gravity="center|end"
+                    android:text="placeholder"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_content_pic"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:contentDescription="@string/content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_beita" />
+
+        <TextView
+            android:id="@+id/tv_content_text"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:visibility="gone"
+            android:background="@color/grey"
+            android:maxEms="100"/>
+    </LinearLayout>
+</LinearLayout>
