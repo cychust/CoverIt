@@ -73,7 +73,7 @@ class ReciteListAdapter(private var context: Context, var timeList: List<String>
 
     class ViewHolder(list: View) : RecyclerView.ViewHolder(list) {
         init {
-            TODO()
+
         }
         val tvTime = list.findViewById<TextView>(R.id.tv_time)
         val tvTitle = list.findViewById<TextView>(R.id.tv_title)

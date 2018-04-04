@@ -81,5 +81,9 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
 
     }
 
+    fun invalidateData(){
+        presenter.start()
+        rvBookList.adapter.notifyDataSetChanged()
+    }
 
 }
