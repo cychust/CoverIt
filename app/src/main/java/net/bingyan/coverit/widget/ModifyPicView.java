@@ -16,7 +16,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.azeesoft.lib.colorpicker.ColorPickerDialog;
+import net.bingyan.coverit.ui.reciteother.ModifyPicActivity;
 
 /**
  * Author       zdlly
@@ -27,7 +27,6 @@ import com.azeesoft.lib.colorpicker.ColorPickerDialog;
 public class ModifyPicView extends android.support.v7.widget.AppCompatImageView {
 
     private static final String TAG = "ModifyView";
-    private ColorPickerDialog colorPickerDialog;
 
     private int isReload = 0;
     private int mSides = 3;
@@ -72,19 +71,25 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private static Bitmap bitmap;
 
 
-
     private double widTimes;
+
     private double heiTimes;
 
     private boolean isSwitch=false;
 
     private long downTime;
 
-
     private PointF mid = new PointF();
+
     private float initDis = 1f;
 
     private Canvas canvas;
+
+    private ModifyPicActivity thisActivity;
+
+    public void setThisActivity(ModifyPicActivity thisActivity) {
+        this.thisActivity = thisActivity;
+    }
 
     public void setMove(boolean move) {
         isMove = move;
@@ -93,13 +98,13 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     public void setWidTimes(double widTimes) {
         this.widTimes = widTimes;
     }
-
     public void setHeiTimes(double heiTimes) {
         this.heiTimes = heiTimes;
     }
     public void setSwitch(boolean aSwitch) {
         this.isSwitch = aSwitch;
     }
+
     public void setColor(int color) {
         this.color = color;
     }
@@ -232,6 +237,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                     if (event.getEventTime() - downTime > 1000) {
                         isLongClick=true;
                         onLongClick();
+
                     }else if (Math.abs(lastX - firstX) <= 1 && Math.abs(lastY - firstY) <= 1) {
                         performClick();
                     }
@@ -250,21 +256,21 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     }
 
-
     private void onLongClick() {
-        colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext());
-        colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-            @Override
-            public void onColorPicked(int color, String hexVal) {
-                setColor(color);
-                invalidate();
-            }
-        });
-        colorPickerDialog.setHexaDecimalTextColor(Color.parseColor("#ffffff"));
-        colorPickerDialog.show();
+        thisActivity.removeView(this);
+//        colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext());
+//        colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
+//            @Override
+//            public void onColorPicked(int color, String hexVal) {
+//                setColor(color);
+//                invalidate();
+//            }
+//        });
+//        colorPickerDialog.setHexaDecimalTextColor(Color.parseColor("#ffffff"));
+//        colorPickerDialog.show();
     }
+
     public void setCanClick(boolean canClick) {
         this.canClick = canClick;
     }
-
 }

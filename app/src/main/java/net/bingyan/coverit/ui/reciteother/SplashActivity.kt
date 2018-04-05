@@ -3,6 +3,7 @@ package net.bingyan.coverit.ui.reciteother
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import io.realm.Realm
 import io.realm.RealmResults
 import net.bingyan.coverit.R
@@ -16,6 +17,9 @@ private lateinit var realm:Realm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
         realm=Realm.getDefaultInstance()
         val bookResult:RealmResults<ReciteBookBean> = realm.where(ReciteBookBean::class.java)
                 .equalTo("bookTitle","未命名分组")

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -11,6 +12,8 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import io.realm.Realm
 import io.realm.Sort
@@ -19,9 +22,12 @@ import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteBookDetailAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.widget.MenuPopup
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.intentFor
 import java.io.File
 import java.util.*
+
+
 
 class ReciteBookDetailActivity : AppCompatActivity() {
     private lateinit var addNewView:ImageView
@@ -41,6 +47,18 @@ class ReciteBookDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recite_book_detail)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
+            val decorView = window.decorView
+            val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            decorView.systemUiVisibility = option
+            window.statusBarColor = resources.getColor(R.color.transparent)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4到5.0
+            val localLayoutParams = window.attributes
+            localLayoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags
+        }
+
+        //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+
         bookTitle=intent.getStringExtra("bookTitle")
         initView()
         loadListData()
@@ -84,7 +102,7 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         rvList.layoutManager= LinearLayoutManager(this)
         rvList.adapter= ReciteBookDetailAdapter(this,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
-            rvList.background= ContextCompat.getDrawable(this,R.drawable.nothing)
+            rvList.backgroundResource=R.drawable.nothing_bg
         }
     }
 

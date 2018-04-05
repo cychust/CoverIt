@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="9dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         android:gravity="top"
         android:hint="@string/title_hint"
@@ -50,7 +50,7 @@
     <EditText
         android:id="@+id/et_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:background="@color/white"
         android:gravity="top"
@@ -58,7 +58,6 @@
         android:inputType="textMultiLine"
         android:textColor="@color/black"
         android:textSize="16sp" />
-
 </LinearLayout>
 
 

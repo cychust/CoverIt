@@ -31,6 +31,7 @@ import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListFragment
 import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListPresenter
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.util.BottomNavigationViewHelper
+import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.widget.TitleBar
 import org.jetbrains.anko.intentFor
 import java.io.File
@@ -89,6 +90,10 @@ class ReciteMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+
         mainRealm = Realm.getDefaultInstance()
         titleBar = findViewById(R.id.title_bar)
         creatBookView = findViewById(R.id.create_book)
@@ -97,7 +102,7 @@ class ReciteMainActivity : AppCompatActivity() {
 
         BottomNavigationViewHelper.disableShiftMode(navigation)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
+        navigation.fitsSystemWindows=FileUtils.checkDeviceHasNavigationBar(this)
         creatBookView.setOnClickListener {
             showCustomDialog()
         }
@@ -176,12 +181,11 @@ class ReciteMainActivity : AppCompatActivity() {
             CHOOSE_PHOTO -> {
                 var imagePath: String? = null
                 if (data != null) {
-                    val uri = data.data
+                    val uri = geturi(data)
                     if (DocumentsContract.isDocumentUri(this, uri)) {
                         val docId = DocumentsContract.getDocumentId(uri)
-                        assert(uri != null)
                         when {
-                            "com.android.providers.media.documents" == uri!!.authority -> {
+                            "com.android.providers.media.documents" == uri.authority -> {
                                 val id = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
                                 val selection = MediaStore.Images.Media._ID + "=" + id
                                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
@@ -193,6 +197,16 @@ class ReciteMainActivity : AppCompatActivity() {
                             "content".equals(uri.scheme, ignoreCase = true) -> imagePath = getImagePath(uri, null)
                             "file".equals(uri.scheme, ignoreCase = true) -> imagePath = uri.path
                         }
+                    }else{
+                        val proj = arrayOf<String>(MediaStore.Images.Media.DATA)
+                        val cursor = this.contentResolver.query(uri, proj, null, null, null)
+                        if (cursor != null)
+                        {
+                            val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                            cursor.moveToFirst()
+                            imagePath = cursor.getString(column_index)// 图片的路径
+                        }
+                        cursor.close()
                     }
                 }
                 if (imagePath != null)
@@ -204,6 +218,41 @@ class ReciteMainActivity : AppCompatActivity() {
         }
     }
 
+    fun geturi(intent: android.content.Intent): Uri {
+        var uri = intent.data
+        val type = intent.type
+        if (uri!!.scheme == "file" && type!!.contains("image/*")) {
+            var path: String? = uri.encodedPath
+            if (path != null) {
+                path = Uri.decode(path)
+                val cr = this.contentResolver
+                val buff = StringBuffer()
+                buff.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=")
+                        .append("'$path'").append(")")
+                val cur = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        arrayOf(MediaStore.Images.ImageColumns._ID),
+                        buff.toString(), null, null)
+                var index = 0
+                cur!!.moveToFirst()
+                while (!cur.isAfterLast) {
+                    index = cur.getColumnIndex(MediaStore.Images.ImageColumns._ID)
+                    // set _id value
+                    index = cur.getInt(index)
+                    cur.moveToNext()
+                }
+                if (index == 0) {
+                    // do nothing
+                } else {
+                    val uri_temp = Uri.parse("content://media/external/images/media/$index")
+                    if (uri_temp != null) {
+                        uri = uri_temp
+                    }
+                }
+                cur.close()
+            }
+        }
+        return uri
+    }
     private fun getImagePath(uri: Uri, selection: String?): String? {
         var path: String? = null
         val cursor = contentResolver.query(uri, null, selection, null, null)

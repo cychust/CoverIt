@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -20,6 +21,7 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
 import net.bingyan.coverit.data.local.dataadapter.RedData
+import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -51,10 +53,15 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var textItem:ReciteTextBean
 
+    private lateinit var lcText:ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+
         title = intent.getStringExtra("title")
         content = intent.getStringExtra("content")
 
@@ -69,12 +76,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         cbSee = findViewById(R.id.see_button)
         cbWrite = findViewById(R.id.write_button)
         cbModify = findViewById(R.id.modify_button)
+        lcText=findViewById(R.id.cl_text)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
 
         titleBar.setTitle(title)
         titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
+        lcText.fitsSystemWindows= FileUtils.checkDeviceHasNavigationBar(this)
 
         cbSwitch.setOnCheckedChangeListener(this)
         cbSee.setOnCheckedChangeListener(this)

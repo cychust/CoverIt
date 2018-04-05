@@ -2,18 +2,19 @@ package net.bingyan.coverit.ui.recitemain.recitelist
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import io.realm.Realm
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.ui.reciteother.CreateTextActivity
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.intentFor
 import java.util.*
 
@@ -31,6 +32,8 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
     private lateinit var ivNewPic:ImageView
 
     private lateinit var rvList:RecyclerView
+
+    private lateinit var llList:LinearLayout
 
     private var titleList= mutableListOf<String>()
     private var timeList= mutableListOf<Date>()
@@ -57,6 +60,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
             ivNewText=findViewById(R.id.iv_new_text)
             ivNewPic=findViewById(R.id.iv_new_pic)
             rvList=findViewById(R.id.rv_list)
+            llList=findViewById(R.id.ll_list)
         }
         ivNewText.setOnClickListener {
             presenter.createNewText()
@@ -84,7 +88,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         }
         rvList.adapter= ReciteListAdapter(this.context!!,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
-            rvList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
+            llList.backgroundResource=R.drawable.nothing_bg
         }
     }
 

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -55,6 +56,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private val viewList = mutableListOf<ModifyPicView>()
 
     private val TAG = "PicView"
+
+    private var removeView: ModifyPicView? =null
     private lateinit var coverView: ModifyPicView
 
     private var canModify = true
@@ -70,12 +73,16 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
 
     private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
+    private lateinit var lcPic:ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_pic)
         if (intent.getStringExtra("pic") != null)
             picPath = intent.getStringExtra("pic")
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
 
         picRealm= Realm.getDefaultInstance()
         initView()
@@ -89,6 +96,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSwitch = findViewById(R.id.switch_button)
         rbSee = findViewById(R.id.see_button)
         rbModify = findViewById(R.id.modify_button)
+        lcPic=findViewById(R.id.cl_pic)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
@@ -96,6 +104,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         titleBar.setTitle("图片记背")
         titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
 
+        lcPic.fitsSystemWindows=FileUtils.checkDeviceHasNavigationBar(this)
         rbModify.isChecked = true
 
         btnSave.onClick {
@@ -106,17 +115,17 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSee.setOnCheckedChangeListener(this)
         rbModify.setOnCheckedChangeListener(this)
 
-        //val myOptions = BitmapFactory.Options()
-        //myOptions.inPreferredConfig = Bitmap.Config.ARGB_4444
-        //myOptions.inSampleSize=2
+        val myOptions = BitmapFactory.Options()
+        myOptions.inPreferredConfig = Bitmap.Config.ARGB_4444
+        myOptions.inSampleSize=2
 
-        bitmap = BitmapFactory.decodeFile(picPath)
+        bitmap = BitmapFactory.decodeFile(picPath,myOptions)
         LogUtil.d("the size is ${bitmap.byteCount}")
         LogUtil.d("the width is ${bitmap.width}")
         LogUtil.d("the height is ${bitmap.height}")
         Glide.with(this).load(bitmap).into(picture)
 
-
+    if(intent.getSerializableExtra("picData")!=null){
         val redDataList=intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
 
         redDataList.forEach {
@@ -129,8 +138,10 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             coverView.rectDown = it.bottom
             coverView.rectRight = it.right
             coverView.setCanClick(true)
+            coverView.setThisActivity(this)
             coverView.invalidate()
         }
+    }
 
         class PictureListener : View.OnTouchListener {
 
@@ -139,7 +150,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                     val action = p1?.action
                     if (isNewRect) {
                         coverView = ModifyPicView(context, picPath)
-                        viewList.add(coverView!!)
+                        coverView.setThisActivity(this@ModifyPicActivity)
+                        viewList.add(coverView)
                         Log.d(TAG, "onTouch: view created!")
                         picFrame.addView(coverView)
                     }
@@ -198,6 +210,12 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
         val listener = PictureListener()
         picture.setOnTouchListener(listener)
+    }
+
+    public fun removeView(view:ModifyPicView){
+        viewList.remove(view)
+        picFrame.removeView(view)
+        picture.invalidate()
     }
 
     private fun initCustomOptionPicker() {
