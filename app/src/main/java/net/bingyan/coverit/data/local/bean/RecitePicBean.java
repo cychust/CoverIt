@@ -1,5 +1,6 @@
 package net.bingyan.coverit.data.local.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmList;
@@ -11,7 +12,7 @@ import io.realm.RealmObject;
  * Time         23:39
  */
 
-public class RecitePicBean extends RealmObject {
+public class RecitePicBean extends RealmObject implements Serializable {
     private String picTitle;
     private Date picDate;
     private String picPath;

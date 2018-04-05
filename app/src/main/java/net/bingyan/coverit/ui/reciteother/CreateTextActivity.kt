@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_create_text.*
 import net.bingyan.coverit.R
+import net.bingyan.coverit.data.local.dataadapter.RedData
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -39,7 +40,7 @@ class CreateTextActivity : AppCompatActivity() {
         btnSave.onClick {
             val title=etTitle.text.toString().trim()
             val content=etContent.text.toString().trim()
-            startActivity(intentFor<ModifyTextActivity>("title" to title,"content" to content))
+            startActivity(intentFor<ModifyTextActivity>("title" to title,"content" to content,"redData" to mutableListOf<RedData>()))
             finish()
         }
     }

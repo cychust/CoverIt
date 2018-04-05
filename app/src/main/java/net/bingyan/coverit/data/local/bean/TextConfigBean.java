@@ -1,5 +1,7 @@
 package net.bingyan.coverit.data.local.bean;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 
 /**
@@ -8,7 +10,7 @@ import io.realm.RealmObject;
  * Time         23:00
  */
 
-public class TextConfigBean extends RealmObject {
+public class TextConfigBean extends RealmObject implements Serializable {
     private int previous;
     private int next;
 

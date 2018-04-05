@@ -24,7 +24,6 @@ import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 
@@ -43,7 +42,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var pvCustomOptions:OptionsPickerView<ReciteBookBean>
 
-    private var redList = ArrayList<RedData>()
+    private var redList = mutableListOf<RedData>()
 
     private lateinit var textRealm:Realm
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
@@ -96,6 +95,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         modifyText.drawBlack()
 
+        val redDataList=intent.getSerializableExtra("redData") as MutableList<TextConfigBean>
+
+        redDataList.forEach {
+            redList.add(RedData(it.previous,it.next))
+        }
+
+        modifyText.redList=redList as ArrayList<RedData>
+        modifyText.drawRed()
         btnSave.onClick {
             saveText()
             reciteBookResults=textRealm.where(ReciteBookBean::class.java)

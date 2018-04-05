@@ -1,5 +1,6 @@
 package net.bingyan.coverit.data.local.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmList;
@@ -11,7 +12,7 @@ import io.realm.RealmObject;
  * Time         22:56
  */
 
-public class ReciteTextBean extends RealmObject {
+public class ReciteTextBean extends RealmObject implements Serializable{
     private String textTitle;
     private Date textDate;
     private String text;

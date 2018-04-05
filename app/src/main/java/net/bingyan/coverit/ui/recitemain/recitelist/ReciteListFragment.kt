@@ -14,7 +14,6 @@ import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.ui.reciteother.CreateTextActivity
 import org.jetbrains.anko.support.v4.intentFor
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -33,7 +32,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
     private lateinit var rvList:RecyclerView
 
     private var titleList= mutableListOf<String>()
-    private var timeList= mutableListOf<String>()
+    private var timeList= mutableListOf<Date>()
     private var picPathList= mutableListOf<String>()
     private var textList= mutableListOf<String>()
 
@@ -77,7 +76,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         picPathList.clear()
         textList.clear()
         parentList.forEach {
-            timeList.add(SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(it.date))
+            timeList.add(it.date)
             titleList.add(it.title)
             picPathList.add(it.picpath)
             textList.add(it.text)

@@ -1,5 +1,7 @@
 package net.bingyan.coverit.data.local.bean;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 
 /**
@@ -8,7 +10,7 @@ import io.realm.RealmObject;
  * Time         23:01
  */
 
-public class PicConfigBean extends RealmObject {
+public class PicConfigBean extends RealmObject implements Serializable {
     private float left;
     private float top;
     private float right;

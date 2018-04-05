@@ -14,14 +14,14 @@ class MinePresenter(val mineFragment: MineContract.View):MineContract.Presenter 
     }
 
     override fun onClickFeedback() {
-        TODO("not implemented")
+
     }
 
     override fun onClickScore() {
-        TODO("not implemented")
+
     }
 
     override fun onClickAbout() {
-        TODO("not implemented")
+
     }
 }

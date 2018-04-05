@@ -228,7 +228,6 @@ class ReciteMainActivity : AppCompatActivity() {
         }
         viewpager.adapter = viewPagerAdapter
 
-//todo
         ReciteListPresenter(reciteListFragment, this)
         ReciteBookPresenter(reciteBookFragment)
         MinePresenter(mineFragment)

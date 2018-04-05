@@ -1,5 +1,6 @@
 package net.bingyan.coverit.data.local.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -9,7 +10,7 @@ import io.realm.RealmObject;
  * Date         2018.4.2
  * Time         23:41
  */
-public class ParentListBean extends RealmObject {
+public class ParentListBean extends RealmObject implements Serializable {
     private String title;
     private Date date;
     private String text;

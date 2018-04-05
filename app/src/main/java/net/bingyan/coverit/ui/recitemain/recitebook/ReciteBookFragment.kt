@@ -65,7 +65,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
             picNumList.add((reciteBookRealm.copyFromRealm(realmResult)).picNum.toString())
             dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((reciteBookRealm.copyFromRealm(realmResult)).bookDate))
         }
-        rvBookList.layoutManager= GridLayoutManager(context,2)
+        rvBookList.layoutManager= GridLayoutManager(context,2) as RecyclerView.LayoutManager?
         rvBookList.adapter= ReciteBookAdapter(context,titleList ,textNumList,picNumList,dateList)
     }
 
