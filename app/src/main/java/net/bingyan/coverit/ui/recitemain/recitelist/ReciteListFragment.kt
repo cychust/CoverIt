@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.recitemain.recitelist
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -82,6 +83,9 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
             textList.add(it.text)
         }
         rvList.adapter= ReciteListAdapter(this.context!!,timeList,titleList,picPathList,textList)
+        if (rvList.adapter.itemCount==0){
+            rvList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
+        }
     }
 
 }

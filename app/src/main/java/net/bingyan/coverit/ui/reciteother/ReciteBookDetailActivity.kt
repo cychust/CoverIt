@@ -21,7 +21,6 @@ import net.bingyan.coverit.data.local.bean.ParentListBean
 import net.bingyan.coverit.widget.MenuPopup
 import org.jetbrains.anko.intentFor
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ReciteBookDetailActivity : AppCompatActivity() {
@@ -84,6 +83,9 @@ class ReciteBookDetailActivity : AppCompatActivity() {
 
         rvList.layoutManager= LinearLayoutManager(this)
         rvList.adapter= ReciteBookDetailAdapter(this,timeList,titleList,picPathList,textList)
+        if (rvList.adapter.itemCount==0){
+            rvList.background= ContextCompat.getDrawable(this,R.drawable.nothing)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

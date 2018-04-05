@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.recitemain.recitebook
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -68,6 +69,9 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         }
         rvBookList.layoutManager= GridLayoutManager(context,2) as RecyclerView.LayoutManager?
         rvBookList.adapter= ReciteBookAdapter(context,titleList ,textNumList,picNumList,dateList)
+        if (rvBookList.adapter.itemCount==0){
+            rvBookList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
+        }
     }
 
     override fun onButtonClicked(buttonCode: Int) {
