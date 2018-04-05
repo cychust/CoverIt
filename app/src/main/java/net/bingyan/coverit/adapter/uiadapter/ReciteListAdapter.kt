@@ -12,8 +12,11 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import io.realm.Realm
 import net.bingyan.coverit.R
+import net.bingyan.coverit.data.local.bean.PicConfigBean
+import net.bingyan.coverit.data.local.bean.RecitePicBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
+import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -37,7 +40,13 @@ class ReciteListAdapter(var context: Context, var timeList: List<Date>, var titl
         with(holder){
             this.listItem.setOnClickListener{
                 if (textList[position].trim().isEmpty()){
-
+                    val itemResult=listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
+                    val picIntent=Intent(context,ModifyPicActivity::class.java)
+                    picIntent.putExtra("pic",listRealm.copyFromRealm(itemResult!!).picPath)
+                    val configList= mutableListOf<PicConfigBean>()
+                    configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
+                    picIntent.putExtra("picData",configList as Serializable)
+                    context.startActivity(picIntent)
                 }else{
                     val itemResult=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
                     val textIntent=Intent(context,ModifyTextActivity::class.java)

@@ -11,7 +11,6 @@ import net.bingyan.coverit.ui.reciteother.ReciteBookDetailActivity
 
 class ReciteBookViewHolder(book: View, val context:Context?): RecyclerView.ViewHolder(book), View.OnClickListener, View.OnLongClickListener {
     val tvTitle=book.findViewById<TextView>(R.id.book_title)
-
     val tvTextNum=book.findViewById<TextView>(R.id.text_num)
     val tvPicNum=book.findViewById<TextView>(R.id.pic_num)
     val tvTime=book.findViewById<TextView>(R.id.book_time)

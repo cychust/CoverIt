@@ -52,6 +52,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         }
         searchBar.setOnSearchActionListener(this)
         searchBar.setPlaceHolder("搜索你想要的记背本...")
+        searchBar.visibility=View.GONE//todo
         return root
     }
     override fun loadBookData(realmResults: RealmResults<ReciteBookBean>) {

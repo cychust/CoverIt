@@ -55,8 +55,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private val viewList = mutableListOf<ModifyPicView>()
 
     private val TAG = "PicView"
-    private var coverView: ModifyPicView? = null
-    private var oldCoverView: ModifyPicView? = null
+    private lateinit var coverView: ModifyPicView
 
     private var canModify = true
 
@@ -77,6 +76,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         setContentView(R.layout.activity_modify_pic)
         if (intent.getStringExtra("pic") != null)
             picPath = intent.getStringExtra("pic")
+
         picRealm= Realm.getDefaultInstance()
         initView()
     }
@@ -117,6 +117,21 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         Glide.with(this).load(bitmap).into(picture)
 
 
+        val redDataList=intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
+
+        redDataList.forEach {
+            coverView = ModifyPicView(context, picPath)
+            viewList.add(coverView)
+            Log.d(TAG, "onTouch: view created!")
+            picFrame.addView(coverView)
+            coverView.rectLeft = it.left
+            coverView.rectTop = it.top
+            coverView.rectDown = it.bottom
+            coverView.rectRight = it.right
+            coverView.setCanClick(true)
+            coverView.invalidate()
+        }
+
         class PictureListener : View.OnTouchListener {
 
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
@@ -134,14 +149,14 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             Log.d(TAG, "onTouch: begin down")
                             beginX = p1.x
                             beginY = p1.y
-                            coverView!!.rectLeft = beginX
-                            coverView!!.rectTop = beginY
-                            coverView!!.rectDown = beginY
-                            coverView!!.rectRight = beginX
+                            coverView.rectLeft = beginX
+                            coverView.rectTop = beginY
+                            coverView.rectDown = beginY
+                            coverView.rectRight = beginX
 
                             Log.d(TAG, "onTouch: left$beginX")
                             Log.d(TAG, "onTouch: top$beginY")
-                            coverView!!.invalidate()
+                            coverView.invalidate()
                         }
                         MotionEvent.ACTION_MOVE -> {
                             isNewRect = false
@@ -154,26 +169,26 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
                             Log.d(TAG, "onTouch: beginx$beginX")
                             Log.d(TAG, "onTouch: beginy$beginY")
-                            coverView!!.setMove(false)
-                            coverView!!.rectTop = beginY
-                            coverView!!.rectLeft = beginX
-                            coverView!!.rectRight = moveX
-                            coverView!!.rectDown = moveY
-                            coverView!!.invalidate()
+                            coverView.setMove(false)
+                            coverView.rectTop = beginY
+                            coverView.rectLeft = beginX
+                            coverView.rectRight = moveX
+                            coverView.rectDown = moveY
+                            coverView.invalidate()
 
                         }
                         MotionEvent.ACTION_UP -> {
                             isNewRect = true
                             Log.d(TAG, "onTouch: begin up")
-                            coverView!!.setCanClick(true)
-                            coverView!!.setMove(true)
-                            coverView!!.invalidate()
-                            coverView!!.setMove(false)
-                            coverView!!.rectTop = beginY
-                            coverView!!.rectLeft = beginX
-                            coverView!!.rectRight = moveX
-                            coverView!!.rectDown = moveY
-                            coverView!!.invalidate()
+                            coverView.setCanClick(true)
+                            coverView.setMove(true)
+                            coverView.invalidate()
+                            coverView.setMove(false)
+                            coverView.rectTop = beginY
+                            coverView.rectLeft = beginX
+                            coverView.rectRight = moveX
+                            coverView.rectDown = moveY
+                            coverView.invalidate()
                         }
                     }
                     return true

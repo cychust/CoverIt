@@ -29,7 +29,7 @@ class ReciteBookDetailActivity : AppCompatActivity() {
 
     private lateinit var rvList: RecyclerView
     private var titleList= mutableListOf<String>()
-    private var timeList= mutableListOf<String>()
+    private var timeList= mutableListOf<Date>()
     private var picPathList= mutableListOf<String>()
     private var textList= mutableListOf<String>()
 
@@ -76,7 +76,7 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         picPathList.clear()
         textList.clear()
         parentList.forEach {
-            timeList.add(SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).format(it.date))
+            timeList.add(it.date)
             titleList.add(it.title)
             picPathList.add(it.picpath)
             textList.add(it.text)
