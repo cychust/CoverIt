@@ -45,7 +45,7 @@ class TitleBar : ViewGroup, View.OnClickListener {
      * @return action count
      */
     val actionCount: Int
-        get() = mRightLayout!!.childCount
+        get() = mRightLayout.childCount
 
     constructor(context: Context) : super(context) {
         init(context)

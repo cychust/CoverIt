@@ -56,20 +56,27 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float rectTop;
     private float rectDown;
 
+    private float calRectLeft;
+
+    private float calRectRight;
+    private float calRectTop;
+    private float calRectDown;
     private float firstX, firstY;
+
     private float lastX, lastY;
     private boolean canClick = false;
     private boolean isTransparent;
     private boolean isLongClick;
 
-
     private boolean isMove=false;
 
+    private boolean canModify=true;
+
     private Rect clipSrcRect;//保存要裁剪的矩形
+
     private Rect clipDstRect;
 
     private static Bitmap bitmap;
-
 
     private double widTimes;
 
@@ -87,8 +94,28 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     private ModifyPicActivity thisActivity;
 
+    public void setCalRectLeft(float calRectLeft) {
+        this.calRectLeft = calRectLeft;
+    }
+
+    public void setCalRectRight(float calRectRight) {
+        this.calRectRight = calRectRight;
+    }
+
+    public void setCalRectTop(float calRectTop) {
+        this.calRectTop = calRectTop;
+    }
+
+    public void setCalRectDown(float calRectDown) {
+        this.calRectDown = calRectDown;
+    }
+
     public void setThisActivity(ModifyPicActivity thisActivity) {
         this.thisActivity = thisActivity;
+    }
+
+    public void setCanModify(boolean canModify) {
+        this.canModify = canModify;
     }
 
     public void setMove(boolean move) {
@@ -199,7 +226,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
             mPaint.setAlpha(255);
             canvas.drawRect(rectLeft, rectTop, rectRight, rectDown, mPaint);
         }else{
-            clipSrcRect=new Rect((int)(rectLeft*widTimes), (int)(rectTop*heiTimes), (int)(rectRight*widTimes), (int)(rectDown*heiTimes));
+            clipSrcRect=new Rect((int)(calRectLeft*widTimes), (int)(calRectTop*heiTimes), (int)(calRectRight*widTimes), (int)(calRectDown*heiTimes));
             clipDstRect=new Rect((int)rectLeft, (int)rectTop, (int)rectRight, (int)rectDown);
 
             canvas.drawBitmap(bitmap,clipSrcRect,clipDstRect,null);
@@ -209,7 +236,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getX() >= rectLeft && event.getX() <= rectRight && event.getY() >= rectTop && event.getY() <= rectDown) {
+        if ((event.getX() >= rectLeft && event.getX() <= rectRight && event.getY() >= rectTop && event.getY() <= rectDown)||(event.getX() >= rectLeft && event.getX() <= rectRight && event.getY() >= rectDown && event.getY() <= rectTop)) {
             int action = event.getAction();
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
@@ -257,17 +284,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     }
 
     private void onLongClick() {
+        if(canModify)
         thisActivity.removeView(this);
-//        colorPickerDialog = ColorPickerDialog.createColorPickerDialog(getContext());
-//        colorPickerDialog.setOnColorPickedListener(new ColorPickerDialog.OnColorPickedListener() {
-//            @Override
-//            public void onColorPicked(int color, String hexVal) {
-//                setColor(color);
-//                invalidate();
-//            }
-//        });
-//        colorPickerDialog.setHexaDecimalTextColor(Color.parseColor("#ffffff"));
-//        colorPickerDialog.show();
     }
 
     public void setCanClick(boolean canClick) {

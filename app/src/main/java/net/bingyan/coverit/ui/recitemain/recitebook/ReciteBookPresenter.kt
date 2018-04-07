@@ -1,5 +1,6 @@
 package net.bingyan.coverit.ui.recitemain.recitebook
 
+import android.app.Activity
 import io.realm.Realm
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 
@@ -8,7 +9,7 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
  * Date         2017.12.9
  * Time         0:38
  */
-class ReciteBookPresenter(private val reciteBookFragment: ReciteBookContract.View) :ReciteBookContract.Presenter{
+class ReciteBookPresenter(private val reciteBookFragment: ReciteBookContract.View, parent: Activity) :ReciteBookContract.Presenter{
     private var reciteBookRealm:Realm = Realm.getDefaultInstance()
     override fun start() {
         loadBookData()

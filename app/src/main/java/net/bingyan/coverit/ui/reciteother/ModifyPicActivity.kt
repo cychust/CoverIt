@@ -116,13 +116,13 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbModify.setOnCheckedChangeListener(this)
 
         val myOptions = BitmapFactory.Options()
-        myOptions.inPreferredConfig = Bitmap.Config.ARGB_4444
-        myOptions.inSampleSize=2
+        myOptions.inPreferredConfig = Bitmap.Config.RGB_565
 
         bitmap = BitmapFactory.decodeFile(picPath,myOptions)
         LogUtil.d("the size is ${bitmap.byteCount}")
         LogUtil.d("the width is ${bitmap.width}")
         LogUtil.d("the height is ${bitmap.height}")
+
         Glide.with(this).load(bitmap).into(picture)
 
     if(intent.getSerializableExtra("picData")!=null){
@@ -200,6 +200,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView.rectLeft = beginX
                             coverView.rectRight = moveX
                             coverView.rectDown = moveY
+
                             coverView.invalidate()
                         }
                     }
@@ -301,6 +302,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
 
     private fun addPicTitle() {
+        LogUtil.d("the viewWidth is ${picture.width}")
+        LogUtil.d("the viewHeight is ${picture.height}")
         val builder= AlertDialog.Builder(this)
         builder.setTitle("给这张图片起个名字吧")
 
@@ -359,6 +362,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
         when (p0?.id) {
             R.id.switch_button -> {
+
                 if (!p1) {
                     for (view: ModifyPicView in this.viewList) {
                         view.setSwitch(false)
@@ -370,10 +374,25 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 if (p1) {
                     for (view: ModifyPicView in this.viewList) {
                         view.setSwitch(true)
-                        val widTimes = bitmap.width.toDouble() / picture.width.toDouble()
-                        val heiTimes = bitmap.height.toDouble() / picture.height.toDouble()
-                        view.setWidTimes(widTimes)
-                        view.setHeiTimes(heiTimes)
+                        val preWidTimes = bitmap.width.toDouble() / picture.width.toDouble()
+                        val preHeiTimes = bitmap.height.toDouble() / picture.height.toDouble()
+                        if(preWidTimes>=preHeiTimes){
+                            val freeHeiSpace=(picture.height-bitmap.height/preWidTimes)/2
+                            view.setCalRectLeft(view.rectLeft)
+                            view.setCalRectTop((view.rectTop-freeHeiSpace).toFloat())
+                            view.setCalRectRight(view.rectRight)
+                            view.setCalRectDown((view.rectDown-freeHeiSpace).toFloat())
+                            view.setWidTimes(preWidTimes)
+                            view.setHeiTimes(preWidTimes)
+                        }else{
+                            val freeWidSpace=(picture.width-bitmap.width/preHeiTimes)/2
+                            view.setCalRectLeft((view.rectLeft-freeWidSpace).toFloat())
+                            view.setCalRectTop(view.rectTop)
+                            view.setCalRectRight((view.rectRight-freeWidSpace).toFloat())
+                            view.setCalRectDown(view.rectDown)
+                            view.setWidTimes(preHeiTimes)
+                            view.setHeiTimes(preHeiTimes)
+                        }
                         view.invalidate()
                     }
                     picture.setImageDrawable(ColorDrawable(Color.WHITE))
@@ -395,9 +414,15 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             }
             R.id.modify_button -> {
                 if (p1) {
+                    for (view: ModifyPicView in this.viewList) {
+                       view.setCanModify(true)
+                    }
                     canModify = true
                 }
                 if (!p1) {
+                    for (view: ModifyPicView in this.viewList) {
+                        view.setCanModify(false)
+                    }
                     canModify = false
                 }
             }
