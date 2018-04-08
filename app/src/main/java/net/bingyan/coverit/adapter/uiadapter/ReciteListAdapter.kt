@@ -1,5 +1,6 @@
 package net.bingyan.coverit.adapter.uiadapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -16,8 +17,10 @@ import net.bingyan.coverit.data.local.bean.PicConfigBean
 import net.bingyan.coverit.data.local.bean.RecitePicBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
+import net.bingyan.coverit.listener.PopupCallBack
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
+import net.bingyan.coverit.widget.DeleteTopPopup
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,10 +31,11 @@ import java.util.*
  * Date         2017.12.9
  * Time         16:56
  */
-class ReciteListAdapter(var context: Context, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>() {
+class ReciteListAdapter(var context: Context,val parentActivity: Activity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>(), PopupCallBack {
     val TYPE_TOP: Int = 0
 
     val TYPE_NORMAL: Int = 1
+
     private var listRealm: Realm= Realm.getDefaultInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_list, parent, false))
@@ -60,6 +64,9 @@ class ReciteListAdapter(var context: Context, var timeList: List<Date>, var titl
 
             }
             this.listItem.setOnLongClickListener{
+                val deleteTopPopup=DeleteTopPopup(parentActivity,this@ReciteListAdapter,false)
+                deleteTopPopup.setTipVisibility(View.GONE)
+                deleteTopPopup.showPopupWindow()
                 return@setOnLongClickListener true
             }
         }
@@ -99,12 +106,11 @@ class ReciteListAdapter(var context: Context, var timeList: List<Date>, var titl
             }
         }
     }
-
-
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         listRealm.close()
     }
+
 
     override fun getItemCount(): Int {
         return titleList.size
@@ -114,6 +120,18 @@ class ReciteListAdapter(var context: Context, var timeList: List<Date>, var titl
         return if (position == 0) {
             TYPE_TOP
         } else TYPE_NORMAL
+    }
+
+    override fun onTopClicked() {
+        TODO("not implemented")
+    }
+
+    override fun onRenameClicked() {
+        TODO("not implemented")
+    }
+
+    override fun onDeleteClicked() {
+        TODO("not implemented")
     }
 
     class ViewHolder(list: View) : RecyclerView.ViewHolder(list){

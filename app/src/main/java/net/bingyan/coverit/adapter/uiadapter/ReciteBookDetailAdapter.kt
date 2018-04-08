@@ -1,5 +1,6 @@
 package net.bingyan.coverit.adapter.uiadapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -16,8 +17,10 @@ import net.bingyan.coverit.data.local.bean.PicConfigBean
 import net.bingyan.coverit.data.local.bean.RecitePicBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
+import net.bingyan.coverit.listener.PopupCallBack
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
+import net.bingyan.coverit.widget.DeleteTopPopup
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,12 +30,12 @@ import java.util.*
  * Date         2018.4.4
  * Time         1:22
  */
-class ReciteBookDetailAdapter(private var context: Context, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteBookDetailAdapter.ViewHolder>() {
+class ReciteBookDetailAdapter(private var context: Context,val parentActivity: Activity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteBookDetailAdapter.ViewHolder>(), PopupCallBack {
     private var listRealm: Realm = Realm.getDefaultInstance()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_book_detail, parent, false))
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder){
             this.listItem.setOnClickListener{
@@ -57,6 +60,9 @@ class ReciteBookDetailAdapter(private var context: Context, var timeList: List<D
 
             }
             this.listItem.setOnLongClickListener{
+                val deleteTopPopup= DeleteTopPopup(parentActivity,this@ReciteBookDetailAdapter,false)
+                deleteTopPopup.setTipVisibility(View.GONE)
+                deleteTopPopup.showPopupWindow()
                 return@setOnLongClickListener true
             }
         }
@@ -74,6 +80,18 @@ class ReciteBookDetailAdapter(private var context: Context, var timeList: List<D
             this.tvTime.text = SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).format(timeList[position])
             this.tvTitle.text = titleList[position]
         }
+    }
+
+    override fun onTopClicked() {
+        TODO("not implemented")
+    }
+
+    override fun onRenameClicked() {
+        TODO("not implemented")
+    }
+
+    override fun onDeleteClicked() {
+        TODO("not implemented")
     }
 
     override fun getItemCount(): Int {

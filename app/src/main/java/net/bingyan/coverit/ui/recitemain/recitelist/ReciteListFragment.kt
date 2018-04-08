@@ -86,7 +86,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
             picPathList.add(it.picpath)
             textList.add(it.text)
         }
-        rvList.adapter= ReciteListAdapter(this.context!!,timeList,titleList,picPathList,textList)
+        rvList.adapter= ReciteListAdapter(this.context!!,activity!!,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
             llList.backgroundResource=R.drawable.nothing_bg
         }

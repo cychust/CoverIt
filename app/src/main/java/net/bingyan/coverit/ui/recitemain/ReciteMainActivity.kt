@@ -283,5 +283,9 @@ class ReciteMainActivity : AppCompatActivity() {
 
     }
 
+    fun refreshData() {
+        reciteBookFragment.invalidateData()
+    }
+
 
 }

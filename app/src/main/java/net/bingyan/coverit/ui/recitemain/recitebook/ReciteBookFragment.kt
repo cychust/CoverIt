@@ -3,6 +3,7 @@ package net.bingyan.coverit.ui.recitemain.recitebook
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import io.realm.RealmResults
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteBookAdapter
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
+import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -62,13 +64,21 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         val picNumList:MutableList<String> = mutableListOf()
         val dateList:MutableList<String> = mutableListOf()
         for (realmResult:ReciteBookBean in realmResults){
-            titleList.add((reciteBookRealm.copyFromRealm(realmResult)).bookTitle.toString())
-            textNumList.add((reciteBookRealm.copyFromRealm(realmResult)).textNum.toString())
-            picNumList.add((reciteBookRealm.copyFromRealm(realmResult)).picNum.toString())
-            dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((reciteBookRealm.copyFromRealm(realmResult)).bookDate))
+            if(reciteBookRealm.copyFromRealm(realmResult).isTop){
+                titleList.add(0,(reciteBookRealm.copyFromRealm(realmResult)).bookTitle.toString())
+                textNumList.add(0,(reciteBookRealm.copyFromRealm(realmResult)).textNum.toString())
+                picNumList.add(0,(reciteBookRealm.copyFromRealm(realmResult)).picNum.toString())
+                dateList.add(0,SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((reciteBookRealm.copyFromRealm(realmResult)).bookDate))
+            }else{
+                titleList.add((reciteBookRealm.copyFromRealm(realmResult)).bookTitle.toString())
+                textNumList.add((reciteBookRealm.copyFromRealm(realmResult)).textNum.toString())
+                picNumList.add((reciteBookRealm.copyFromRealm(realmResult)).picNum.toString())
+                dateList.add(SimpleDateFormat("yy.MM.dd", Locale.CHINA).format((reciteBookRealm.copyFromRealm(realmResult)).bookDate))
+            }
         }
         rvBookList.layoutManager= GridLayoutManager(context,2) as RecyclerView.LayoutManager?
-        rvBookList.adapter= ReciteBookAdapter(context,activity!!,titleList ,textNumList,picNumList,dateList)
+        rvBookList.adapter= ReciteBookAdapter(context, (activity  as ReciteMainActivity?)!!,titleList ,textNumList,picNumList,dateList)
+        rvBookList.itemAnimator=DefaultItemAnimator()
         if (rvBookList.adapter.itemCount==0){
             rvBookList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
         }
