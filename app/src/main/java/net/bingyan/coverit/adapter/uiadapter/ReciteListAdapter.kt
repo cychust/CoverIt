@@ -2,10 +2,13 @@ package net.bingyan.coverit.adapter.uiadapter
 
 import android.content.Context
 import android.content.Intent
+import android.support.design.widget.TextInputEditText
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -138,47 +141,77 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) {
-            TYPE_TOP
-        } else TYPE_NORMAL
+        if (textList[position].trim().isEmpty()){
+            val topItem = listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
+            return if(listRealm.copyFromRealm(topItem!!).isTop){
+                TYPE_TOP
+            }else TYPE_NORMAL
+        }else{
+            val topItem = listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
+            return if (listRealm.copyFromRealm(topItem!!).isTop){
+                TYPE_TOP
+            }else TYPE_NORMAL
+        }
     }
 
     override fun onTopClicked() {
-        TODO("not implemented")
+        if(curType== TYPE_TEXT){
+            val topItem=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",curDate).findFirst()
+            listRealm.executeTransaction {
+                topItem!!.isTop= !topItem.isTop
+            }
+        }else{
+            val topItem=listRealm.where(RecitePicBean::class.java).equalTo("picDate",curDate).findFirst()
+            listRealm.executeTransaction {
+                topItem!!.isTop= !topItem.isTop
+            }
+        }
+        deleteTopPopup.dismiss()
+        parentActivity.refreshListData()
     }
 
     override fun onRenameClicked() {
-//        val builder = AlertDialog.Builder(context)
-//        builder.setTitle("重命名")
-//
-//        val dialogContent = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
-//        builder.setView(dialogContent)
-//
-//        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
-//        textInput.hint = "请输入新的名称"
-//
-//        builder.setCancelable(false)
-//
-//        builder.setPositiveButton("确定", { dialog, which ->
-//            run {
-//                val resultText = textInput.text.toString()
-//                if (!resultText.trim().isEmpty()) {
-//                    listRealm.executeTransaction {
-//                        renameBook.bookTitle = resultText
-//                    }
-//                }
-//                dialog.dismiss()
-//                parentActivity.refreshData()
-//            }
-//        })
-//        builder.setNegativeButton("取消", { dialog, which ->
-//            run {
-//                dialog.dismiss()
-//            }
-//        })
-//        val dialog = builder.create()
-//        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-//        dialog.show()
+        deleteTopPopup.dismiss()
+        parentActivity.refreshListData()
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("重命名")
+
+        val dialogContent = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
+        builder.setView(dialogContent)
+
+        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+        textInput.hint = "请输入新的名称"
+
+        builder.setCancelable(false)
+
+        builder.setPositiveButton("确定", { dialog, which ->
+            run {
+                val resultText = textInput.text.toString()
+                if (!resultText.trim().isEmpty()) {
+                    if(curType== TYPE_TEXT){
+                        val renameItem=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",curDate).findFirst()
+                        listRealm.executeTransaction {
+                            renameItem?.textTitle=textInput.text.toString()
+                        }
+                    }else{
+                        val renameItem=listRealm.where(RecitePicBean::class.java).equalTo("picDate",curDate).findFirst()
+                        listRealm.executeTransaction {
+                            renameItem?.picTitle=textInput.text.toString()
+                        }
+                    }
+                    parentActivity.refreshListData()
+                }
+                dialog.dismiss()
+            }
+        })
+        builder.setNegativeButton("取消", { dialog, which ->
+            run {
+                dialog.dismiss()
+            }
+        })
+        val dialog = builder.create()
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        dialog.show()
     }
 
     override fun onDeleteClicked() {
