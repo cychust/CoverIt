@@ -53,7 +53,6 @@ class ReciteBookAdapter(private val context: Context?,
                 val topBook = bookRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", bookTitle.text.toString()).findFirst()
                 deleteTopPopup = if(bookRealm.copyFromRealm(topBook!!).isTop) {
                     DeleteTopPopup(activityContext = parentActivity, popupCallBack = this@ReciteBookAdapter,isTop = true)
-
                 }else{
                     DeleteTopPopup(activityContext = parentActivity, popupCallBack = this@ReciteBookAdapter,isTop = false)
                 }
@@ -83,7 +82,7 @@ class ReciteBookAdapter(private val context: Context?,
             topBook?.isTop= !topBook!!.isTop
         }
         deleteTopPopup.dismiss()
-        parentActivity.refreshData()
+        parentActivity.refreshBookData()
     }
 
     override fun onRenameClicked() {
@@ -111,7 +110,7 @@ class ReciteBookAdapter(private val context: Context?,
                         }
                     }
                     dialog.dismiss()
-                    parentActivity.refreshData()
+                    parentActivity.refreshBookData()
                 }
             })
             builder.setNegativeButton("取消", { dialog, which ->
@@ -137,7 +136,7 @@ class ReciteBookAdapter(private val context: Context?,
         }else Toast.makeText(context,"未命名分组不可以删除!",Toast.LENGTH_SHORT).show()
 
         deleteTopPopup.dismiss()
-        parentActivity.refreshData()
+        parentActivity.refreshBookData()
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

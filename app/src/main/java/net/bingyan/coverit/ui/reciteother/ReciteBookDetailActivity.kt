@@ -103,7 +103,7 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         rvList.adapter= ReciteBookDetailAdapter(this,this,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
             rvList.backgroundResource=R.drawable.nothing_bg
-        }
+        }else rvList.backgroundResource=R.color.white
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

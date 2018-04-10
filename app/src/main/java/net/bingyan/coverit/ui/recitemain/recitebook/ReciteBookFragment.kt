@@ -16,6 +16,7 @@ import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteBookAdapter
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
+import org.jetbrains.anko.backgroundResource
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -81,7 +82,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         rvBookList.itemAnimator=DefaultItemAnimator()
         if (rvBookList.adapter.itemCount==0){
             rvBookList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
-        }
+        }else rvBookList.backgroundResource=R.color.white
     }
 
     override fun onButtonClicked(buttonCode: Int) {

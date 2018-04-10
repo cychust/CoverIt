@@ -1,18 +1,14 @@
 package net.bingyan.coverit.util
 
-import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.view.View
 import java.io.File
@@ -129,9 +125,6 @@ object FileUtils {
 
     private lateinit var out:FileOutputStream
     fun saveBitmap(bitmap:Bitmap,activity: Activity):String{
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-        }
         val file = File(Environment.getExternalStorageDirectory(), System.currentTimeMillis().toString()+".jpg")
         try {
             out = FileOutputStream(file)

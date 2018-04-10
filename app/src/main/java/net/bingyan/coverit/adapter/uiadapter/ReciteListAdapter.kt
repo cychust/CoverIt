@@ -1,6 +1,5 @@
 package net.bingyan.coverit.adapter.uiadapter
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -13,11 +12,9 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import io.realm.Realm
 import net.bingyan.coverit.R
-import net.bingyan.coverit.data.local.bean.PicConfigBean
-import net.bingyan.coverit.data.local.bean.RecitePicBean
-import net.bingyan.coverit.data.local.bean.ReciteTextBean
-import net.bingyan.coverit.data.local.bean.TextConfigBean
+import net.bingyan.coverit.data.local.bean.*
 import net.bingyan.coverit.listener.PopupCallBack
+import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
 import net.bingyan.coverit.widget.DeleteTopPopup
@@ -31,11 +28,20 @@ import java.util.*
  * Date         2017.12.9
  * Time         16:56
  */
-class ReciteListAdapter(var context: Context,val parentActivity: Activity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>(), PopupCallBack {
+class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActivity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>(), PopupCallBack {
     val TYPE_TOP: Int = 0
 
     val TYPE_NORMAL: Int = 1
 
+    val TYPE_PIC=0
+
+    val TYPE_TEXT=1
+
+    private var curType=0
+
+    private lateinit var curDate: Date
+
+    private lateinit var deleteTopPopup:DeleteTopPopup
     private var listRealm: Realm= Realm.getDefaultInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_list, parent, false))
@@ -46,7 +52,7 @@ class ReciteListAdapter(var context: Context,val parentActivity: Activity, var t
                 if (textList[position].trim().isEmpty()){
                     val itemResult=listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
                     val picIntent=Intent(context,ModifyPicActivity::class.java)
-                    picIntent.putExtra("pic",listRealm.copyFromRealm(itemResult!!).picPath)
+                     picIntent.putExtra("pic",listRealm.copyFromRealm(itemResult!!).picPath)
                     val configList= mutableListOf<PicConfigBean>()
                     configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
                     picIntent.putExtra("picData",configList as Serializable)
@@ -64,7 +70,22 @@ class ReciteListAdapter(var context: Context,val parentActivity: Activity, var t
 
             }
             this.listItem.setOnLongClickListener{
-                val deleteTopPopup=DeleteTopPopup(parentActivity,this@ReciteListAdapter,false)
+                if (textList[position].trim().isEmpty()){
+                    curType=TYPE_PIC//pic
+                    val topItem = listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
+                    deleteTopPopup = if (listRealm.copyFromRealm(topItem!!).isTop){
+                        DeleteTopPopup(parentActivity,this@ReciteListAdapter,true)
+                    }else DeleteTopPopup(parentActivity,this@ReciteListAdapter,false)
+                    curDate=timeList[position]
+                }
+                else{
+                    curType=TYPE_TEXT//text
+                    val topItem = listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
+                    deleteTopPopup = if (listRealm.copyFromRealm(topItem!!).isTop){
+                        DeleteTopPopup(parentActivity,this@ReciteListAdapter,true)
+                    }else DeleteTopPopup(parentActivity,this@ReciteListAdapter,false)
+                }
+                curDate=timeList[position]
                 deleteTopPopup.setTipVisibility(View.GONE)
                 deleteTopPopup.showPopupWindow()
                 return@setOnLongClickListener true
@@ -127,11 +148,60 @@ class ReciteListAdapter(var context: Context,val parentActivity: Activity, var t
     }
 
     override fun onRenameClicked() {
-        TODO("not implemented")
+//        val builder = AlertDialog.Builder(context)
+//        builder.setTitle("重命名")
+//
+//        val dialogContent = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
+//        builder.setView(dialogContent)
+//
+//        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+//        textInput.hint = "请输入新的名称"
+//
+//        builder.setCancelable(false)
+//
+//        builder.setPositiveButton("确定", { dialog, which ->
+//            run {
+//                val resultText = textInput.text.toString()
+//                if (!resultText.trim().isEmpty()) {
+//                    listRealm.executeTransaction {
+//                        renameBook.bookTitle = resultText
+//                    }
+//                }
+//                dialog.dismiss()
+//                parentActivity.refreshData()
+//            }
+//        })
+//        builder.setNegativeButton("取消", { dialog, which ->
+//            run {
+//                dialog.dismiss()
+//            }
+//        })
+//        val dialog = builder.create()
+//        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+//        dialog.show()
     }
 
     override fun onDeleteClicked() {
-        TODO("not implemented")
+        if(curType== TYPE_TEXT){
+            val deleteItem=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",curDate).findFirst()
+            val deleteBookTitle=listRealm.copyFromRealm(deleteItem!!).belonging
+            val textNumBook=listRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",deleteBookTitle).findFirst()
+                listRealm.executeTransaction {
+                    deleteItem.deleteFromRealm()
+                    textNumBook!!.textNum-=1
+                }
+        }else{
+            val deleteItem=listRealm.where(RecitePicBean::class.java).equalTo("picDate",curDate).findFirst()
+            val deleteBookTitle=listRealm.copyFromRealm(deleteItem!!).belonging
+            val picNumBook=listRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",deleteBookTitle).findFirst()
+                listRealm.executeTransaction {
+                    deleteItem.deleteFromRealm()
+                    picNumBook!!.picNum-=1
+                }
+        }
+        deleteTopPopup.dismiss()
+        parentActivity.refreshListData()
+        parentActivity.refreshBookData()
     }
 
     class ViewHolder(list: View) : RecyclerView.ViewHolder(list){

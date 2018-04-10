@@ -13,6 +13,7 @@ import io.realm.Realm
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
+import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
 import net.bingyan.coverit.ui.reciteother.CreateTextActivity
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.intentFor
@@ -25,24 +26,24 @@ import java.util.*
  */
 class ReciteListFragment: Fragment(),ReciteListContract.View {
     override lateinit var reciteListRealm: Realm
-    private val TAKE_PHOTO=1
 
+    private val TAKE_PHOTO=1
     private val SELECT_ALBUM=2
+
     private lateinit var ivNewText:ImageView
     private lateinit var ivNewPic:ImageView
-
     private lateinit var rvList:RecyclerView
 
     private lateinit var llList:LinearLayout
 
     private var titleList= mutableListOf<String>()
+
     private var timeList= mutableListOf<Date>()
     private var picPathList= mutableListOf<String>()
     private var textList= mutableListOf<String>()
-
-
-
     override lateinit var presenter: ReciteListContract.Presenter
+
+
 
     override fun onResume() {
         super.onResume()
@@ -70,12 +71,11 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         }
         return root
     }
+
     override fun startTextActivity() {
         startActivity(intentFor<CreateTextActivity>())
     }
-
     override fun loadListData(parentList: MutableList<ParentListBean>) {
-        rvList.layoutManager= LinearLayoutManager(context)
         timeList.clear()
         titleList.clear()
         picPathList.clear()
@@ -86,10 +86,16 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
             picPathList.add(it.picpath)
             textList.add(it.text)
         }
-        rvList.adapter= ReciteListAdapter(this.context!!,activity!!,timeList,titleList,picPathList,textList)
+        rvList.layoutManager= LinearLayoutManager(context)
+        rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
             llList.backgroundResource=R.drawable.nothing_bg
-        }
+        }else llList.backgroundResource=R.color.white
+    }
+
+    fun invalidateData() {
+        presenter.start()
+        rvList.adapter.notifyDataSetChanged()
     }
 
 }

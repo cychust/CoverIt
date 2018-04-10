@@ -1,14 +1,17 @@
 package net.bingyan.coverit.ui.recitemain
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TextInputEditText
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
@@ -78,7 +81,6 @@ class ReciteMainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        setupViewPager(viewpager = viewpager)
         if (currentItem != -1) viewpager.currentItem = currentItem
     }
 
@@ -90,6 +92,11 @@ class ReciteMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
 
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
@@ -106,6 +113,7 @@ class ReciteMainActivity : AppCompatActivity() {
         creatBookView.setOnClickListener {
             showCustomDialog()
         }
+        setupViewPager(viewpager = viewpager)
         viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -266,6 +274,7 @@ class ReciteMainActivity : AppCompatActivity() {
     }
 
     private fun setupViewPager(viewpager: ViewPager) {
+
         reciteListFragment = ReciteListFragment()
         reciteBookFragment = ReciteBookFragment()
         mineFragment = MineFragment()
@@ -280,12 +289,13 @@ class ReciteMainActivity : AppCompatActivity() {
         ReciteListPresenter(reciteListFragment, this)
         ReciteBookPresenter(reciteBookFragment,this)
         MinePresenter(mineFragment)
-
     }
 
-    fun refreshData() {
+    fun refreshListData() {
+        reciteListFragment.invalidateData()
+    }
+    fun refreshBookData(){
         reciteBookFragment.invalidateData()
     }
-
 
 }
