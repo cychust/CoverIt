@@ -141,14 +141,14 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (textList[position].trim().isEmpty()){
+        return if (textList[position].trim().isEmpty()){
             val topItem = listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
-            return if(listRealm.copyFromRealm(topItem!!).isTop){
+            if(listRealm.copyFromRealm(topItem!!).isTop){
                 TYPE_TOP
             }else TYPE_NORMAL
         }else{
             val topItem = listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
-            return if (listRealm.copyFromRealm(topItem!!).isTop){
+            if (listRealm.copyFromRealm(topItem!!).isTop){
                 TYPE_TOP
             }else TYPE_NORMAL
         }
@@ -238,12 +238,12 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
     }
 
     class ViewHolder(list: View) : RecyclerView.ViewHolder(list){
-        val listItem=list.findViewById<LinearLayout>(R.id.ll_item)
-        val tvTime = list.findViewById<TextView>(R.id.tv_time)
-        val tvTitle = list.findViewById<TextView>(R.id.tv_title)
-        val ivContent = list.findViewById<ImageView>(R.id.iv_content_pic)
-        val tvContent = list.findViewById<TextView>(R.id.tv_content_text)
-        val tvDot = list.findViewById<TextView>(R.id.tvDot)
-        val tvLine = list.findViewById<TextView>(R.id.tvTopLine)
+        val listItem: LinearLayout =list.findViewById(R.id.ll_item)
+        val tvTime: TextView = list.findViewById(R.id.tv_time)
+        val tvTitle: TextView = list.findViewById(R.id.tv_title)
+        val ivContent: ImageView = list.findViewById(R.id.iv_content_pic)
+        val tvContent: TextView = list.findViewById(R.id.tv_content_text)
+        val tvDot: TextView = list.findViewById(R.id.tvDot)
+        val tvLine: TextView = list.findViewById(R.id.tvTopLine)
     }
 }

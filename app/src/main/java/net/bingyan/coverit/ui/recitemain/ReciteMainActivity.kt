@@ -297,5 +297,4 @@ class ReciteMainActivity : AppCompatActivity() {
     fun refreshBookData(){
         reciteBookFragment.invalidateData()
     }
-
 }

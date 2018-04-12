@@ -56,13 +56,18 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float rectTop;
     private float rectDown;
 
+    private float priRectLeft;
+    private float priRectRight;
+    private float priRectTop;
+    private float pirRectDown;
+
     private float calRectLeft;
 
     private float calRectRight;
     private float calRectTop;
     private float calRectDown;
     private float firstX, firstY;
-
+    private float moveX,moveY;
     private float lastX, lastY;
     private boolean canClick = false;
     private boolean isTransparent;
@@ -71,6 +76,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private boolean isMove=false;
 
     private boolean canModify=true;
+
+    private boolean isDragging=false;
 
     private Rect clipSrcRect;//保存要裁剪的矩形
 
@@ -242,16 +249,35 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                 case MotionEvent.ACTION_DOWN:
                     firstX = event.getX();
                     firstY = event.getY();
+
+                    priRectLeft=this.rectLeft;
+                    priRectRight=this.rectRight;
+                    priRectTop=this.rectTop;
+                    pirRectDown=this.rectDown;
+
                     downTime=event.getDownTime();
-                    Log.d(TAG, "onTouchEvent: myView down");
                     break;
 
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    Log.d(TAG, "onTouchEvent: myVIew MUL down");
+
                     break;
 
                 case MotionEvent.ACTION_MOVE: {
-                    Log.d(TAG, "onTouchEvent: myView move");
+                    moveX=event.getX();
+
+                    moveY=event.getY();
+
+                    if(moveX-firstX>3||moveY-firstY>3){
+                        isDragging=true;
+                        float distanceX=moveX-firstX;
+                        float distanceY=moveY-firstY;
+                        this.rectLeft=priRectLeft+distanceX;
+                        this.rectRight=priRectRight+distanceX;
+                        this.rectTop=priRectTop+distanceY;
+                        this.rectDown=pirRectDown+distanceY;
+
+                        this.invalidate();
+                    }
                 }
                 break;
 
@@ -261,7 +287,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                     Log.d(TAG, "onTouchEvent: myView up");
                     Log.d(TAG, "onTouchEvent: " + Math.abs(lastX - firstX));
                     Log.d(TAG, "onTouchEvent: " + Math.abs(lastY - firstY));
-                    if (event.getEventTime() - downTime > 1000) {
+                    if (event.getEventTime() - downTime > 1000&& !isDragging) {
                         isLongClick=true;
                         onLongClick();
 
