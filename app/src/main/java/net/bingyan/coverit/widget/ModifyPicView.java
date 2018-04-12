@@ -44,6 +44,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     final public static int COLOR = 1;
     final public static int PICTURE = 2;
 
+    private int curState=DRAG;
 
     public int mode = 0;
 
@@ -247,6 +248,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
             int action = event.getAction();
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
+                    curState=DRAG;
                     firstX = event.getX();
                     firstY = event.getY();
 
@@ -259,7 +261,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                     break;
 
                 case MotionEvent.ACTION_POINTER_DOWN:
-
+                    curState=ZOOM;
                     break;
 
                 case MotionEvent.ACTION_MOVE: {
