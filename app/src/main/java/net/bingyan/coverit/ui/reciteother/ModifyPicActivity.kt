@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -131,7 +130,6 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         redDataList.forEach {
             coverView = ModifyPicView(context, picPath)
             viewList.add(coverView)
-            Log.d(TAG, "onTouch: view created!")
             picFrame.addView(coverView)
             coverView.rectLeft = it.left
             coverView.rectTop = it.top
@@ -152,13 +150,13 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         coverView = ModifyPicView(context, picPath)
                         coverView.setThisActivity(this@ModifyPicActivity)
                         viewList.add(coverView)
-                        Log.d(TAG, "onTouch: view created!")
+
                         picFrame.addView(coverView)
                     }
                     when (action) {
                         MotionEvent.ACTION_DOWN -> {
                             isNewRect = false
-                            Log.d(TAG, "onTouch: begin down")
+
                             beginX = p1.x
                             beginY = p1.y
                             coverView.rectLeft = beginX
@@ -166,21 +164,16 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView.rectDown = beginY
                             coverView.rectRight = beginX
 
-                            Log.d(TAG, "onTouch: left$beginX")
-                            Log.d(TAG, "onTouch: top$beginY")
                             coverView.invalidate()
                         }
                         MotionEvent.ACTION_MOVE -> {
                             isNewRect = false
-                            Log.d(TAG, "onTouch: begin move")
 
 
                             moveX = p1.x
                             moveY = p1.y
 
 
-                            Log.d(TAG, "onTouch: beginx$beginX")
-                            Log.d(TAG, "onTouch: beginy$beginY")
                             coverView.setMove(false)
                             coverView.rectTop = beginY
                             coverView.rectLeft = beginX
@@ -191,7 +184,6 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         }
                         MotionEvent.ACTION_UP -> {
                             isNewRect = true
-                            Log.d(TAG, "onTouch: begin up")
                             coverView.setCanClick(true)
                             coverView.setMove(true)
                             coverView.invalidate()
@@ -302,8 +294,6 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
 
     private fun addPicTitle() {
-        LogUtil.d("the viewWidth is ${picture.width}")
-        LogUtil.d("the viewHeight is ${picture.height}")
         val builder= AlertDialog.Builder(this)
         builder.setTitle("给这张图片起个名字吧")
 

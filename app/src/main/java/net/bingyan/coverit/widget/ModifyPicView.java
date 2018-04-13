@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity;
+import net.bingyan.coverit.util.ToolScaleViewUtil;
 
 /**
  * Author       zdlly
@@ -44,7 +45,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     final public static int COLOR = 1;
     final public static int PICTURE = 2;
 
-    private int curState=DRAG;
+    private int curState = DRAG;
 
     public int mode = 0;
 
@@ -60,7 +61,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float priRectLeft;
     private float priRectRight;
     private float priRectTop;
-    private float pirRectDown;
+    private float priRectDown;
 
     private float calRectLeft;
 
@@ -68,17 +69,19 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float calRectTop;
     private float calRectDown;
     private float firstX, firstY;
-    private float moveX,moveY;
+    private float moveX, moveY;
     private float lastX, lastY;
     private boolean canClick = false;
     private boolean isTransparent;
     private boolean isLongClick;
 
-    private boolean isMove=false;
+    private boolean isMove = false;
 
-    private boolean canModify=true;
+    private boolean canModify = true;
 
-    private boolean isDragging=false;
+    private boolean isDragging = false;
+
+    private boolean isScaling = false;
 
     private Rect clipSrcRect;//保存要裁剪的矩形
 
@@ -90,7 +93,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     private double heiTimes;
 
-    private boolean isSwitch=false;
+    private boolean isSwitch = false;
 
     private long downTime;
 
@@ -133,9 +136,11 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     public void setWidTimes(double widTimes) {
         this.widTimes = widTimes;
     }
+
     public void setHeiTimes(double heiTimes) {
         this.heiTimes = heiTimes;
     }
+
     public void setSwitch(boolean aSwitch) {
         this.isSwitch = aSwitch;
     }
@@ -180,15 +185,15 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         this.rectDown = rectDown;
     }
 
-    public ModifyPicView(Context context,String picPath) {
-        this(context, null,picPath);
+    public ModifyPicView(Context context, String picPath) {
+        this(context, null, picPath);
     }
 
-    public ModifyPicView(Context context, AttributeSet attrs,String picPath) {
-        this(context, attrs, 0,picPath);
+    public ModifyPicView(Context context, AttributeSet attrs, String picPath) {
+        this(context, attrs, 0, picPath);
     }
 
-    public ModifyPicView(Context context, AttributeSet attrs, int defStyleAttr,String picPath) {
+    public ModifyPicView(Context context, AttributeSet attrs, int defStyleAttr, String picPath) {
         super(context, attrs, defStyleAttr);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -226,80 +231,108 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(!isSwitch){
-            if(isMove)
-            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        if (!isSwitch) {
+            if (isMove)
+                canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             mPaint.setColor(color);
             mPaint.setStyle(Paint.Style.FILL);
             mPaint.setAlpha(255);
             canvas.drawRect(rectLeft, rectTop, rectRight, rectDown, mPaint);
-        }else{
-            clipSrcRect=new Rect((int)(calRectLeft*widTimes), (int)(calRectTop*heiTimes), (int)(calRectRight*widTimes), (int)(calRectDown*heiTimes));
-            clipDstRect=new Rect((int)rectLeft, (int)rectTop, (int)rectRight, (int)rectDown);
+        } else {
+            clipSrcRect = new Rect((int) (calRectLeft * widTimes), (int) (calRectTop * heiTimes), (int) (calRectRight * widTimes), (int) (calRectDown * heiTimes));
+            clipDstRect = new Rect((int) rectLeft, (int) rectTop, (int) rectRight, (int) rectDown);
 
-            canvas.drawBitmap(bitmap,clipSrcRect,clipDstRect,null);
+            canvas.drawBitmap(bitmap, clipSrcRect, clipDstRect, null);
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        if ((event.getX() >= rectLeft && event.getX() <= rectRight && event.getY() >= rectTop && event.getY() <= rectDown)||(event.getX() >= rectLeft && event.getX() <= rectRight && event.getY() >= rectDown && event.getY() <= rectTop)) {
+        boolean isInRect = false;
+        if ((event.getX() > Math.min(rectLeft, rectRight) && event.getX() < Math.max(rectLeft, rectRight)) && ((event.getY() > Math.min(rectTop, rectDown) && (event.getY() < Math.max(rectTop, rectDown)))))
+            isInRect = true;
+        if (isInRect) {
             int action = event.getAction();
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
-                    curState=DRAG;
+                    curState = DRAG;
                     firstX = event.getX();
                     firstY = event.getY();
 
-                    priRectLeft=this.rectLeft;
-                    priRectRight=this.rectRight;
-                    priRectTop=this.rectTop;
-                    pirRectDown=this.rectDown;
+                    priRectLeft = this.rectLeft;
+                    priRectRight = this.rectRight;
+                    priRectTop = this.rectTop;
+                    priRectDown = this.rectDown;
 
-                    downTime=event.getDownTime();
+                    downTime = event.getDownTime();
                     break;
 
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    curState=ZOOM;
+                    if (event.getPointerCount() >= 2) {
+                        curState = ZOOM;
+
+                        priRectLeft = this.rectLeft;
+                        priRectRight = this.rectRight;
+                        priRectTop = this.rectTop;
+                        priRectDown = this.rectDown;
+
+                        initDis = ToolScaleViewUtil.spacing(event);
+                        mid = ToolScaleViewUtil.midPoint(event);
+                    }
                     break;
 
                 case MotionEvent.ACTION_MOVE: {
-                    moveX=event.getX();
+                    if (curState == DRAG) {
+                        moveX = event.getX();
 
-                    moveY=event.getY();
+                        moveY = event.getY();
 
-                    if(moveX-firstX>3||moveY-firstY>3){
-                        isDragging=true;
-                        float distanceX=moveX-firstX;
-                        float distanceY=moveY-firstY;
-                        this.rectLeft=priRectLeft+distanceX;
-                        this.rectRight=priRectRight+distanceX;
-                        this.rectTop=priRectTop+distanceY;
-                        this.rectDown=pirRectDown+distanceY;
+                        if (moveX - firstX > 3 || moveY - firstY > 3) {
+                            isDragging = true;
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectLeft = priRectLeft + distanceX;
+                            this.rectRight = priRectRight + distanceX;
+                            this.rectTop = priRectTop + distanceY;
+                            this.rectDown = priRectDown + distanceY;
 
-                        this.invalidate();
+                            this.invalidate();
+                        }
+                    } else {
+                        if (event.getPointerCount() >= 2) {
+                            isScaling = true;
+                            float newDis = ToolScaleViewUtil.spacing(event);
+
+                            float scale = newDis / initDis;
+                            float preWidth = priRectRight - priRectLeft;
+                            float preHeight = priRectDown - priRectTop;
+
+                            this.rectLeft = mid.x - preWidth * scale / 2;
+                            this.rectRight = mid.x + preWidth * scale / 2;
+                            this.rectTop = mid.y - preHeight * scale / 2;
+                            this.rectDown = mid.y + preHeight * scale / 2;
+
+                            this.invalidate();
+                        }
                     }
                 }
+
                 break;
 
                 case MotionEvent.ACTION_UP:
                     lastX = event.getX();
                     lastY = event.getY();
-                    Log.d(TAG, "onTouchEvent: myView up");
-                    Log.d(TAG, "onTouchEvent: " + Math.abs(lastX - firstX));
-                    Log.d(TAG, "onTouchEvent: " + Math.abs(lastY - firstY));
-                    if (event.getEventTime() - downTime > 1000&& !isDragging) {
-                        isLongClick=true;
-                        onLongClick();
 
-                    }else if (Math.abs(lastX - firstX) <= 1 && Math.abs(lastY - firstY) <= 1) {
-                        performClick();
+
+                    if (Math.abs(lastX - firstX) <= 1 && Math.abs(lastY - firstY) <= 1) {
+                        if (event.getEventTime() - downTime > 1000) {
+                            isLongClick = true;
+                            onLongClick();
+                            isLongClick = false;
+                        } else performClick();
                     }
-                    isLongClick=false;
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
-
                     break;
                 case MotionEvent.ACTION_OUTSIDE:
                     break;
@@ -312,8 +345,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     }
 
     private void onLongClick() {
-        if(canModify)
-        thisActivity.removeView(this);
+        if (canModify)
+            thisActivity.removeView(this);
     }
 
     public void setCanClick(boolean canClick) {
