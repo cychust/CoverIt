@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -21,7 +22,6 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
 import net.bingyan.coverit.data.local.dataadapter.RedData
-import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -59,8 +59,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+        window.decorView.fitsSystemWindows=true
 
         title = intent.getStringExtra("title")
         content = intent.getStringExtra("content")
@@ -83,7 +82,6 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         titleBar.setTitle(title)
         titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
-        lcText.fitsSystemWindows= FileUtils.checkDeviceHasNavigationBar(this)
 
         cbSwitch.setOnCheckedChangeListener(this)
         cbSee.setOnCheckedChangeListener(this)
@@ -193,46 +191,57 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     }
 
     private fun showCustomDialog() {
-        val builder=AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("创建记背本")
 
-        val dialogContent=layoutInflater.inflate(R.layout.custom_dialog,null)
+        val dialogContent = layoutInflater.inflate(R.layout.custom_dialog, null)
         builder.setView(dialogContent)
 
-        val textInput=dialogContent.findViewById<TextInputEditText>(R.id.input_text)
-        textInput.hint="请输入记背本名称"
+        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+        val textInputLayout = dialogContent.findViewById<TextInputLayout>(R.id.input_text_layout)
+        textInputLayout.hint = "请输入记背本名称"
 
         builder.setCancelable(false)
 
 
-        builder.setPositiveButton("确定", { dialog, which ->
+        builder.setPositiveButton("确定", null)
+        builder.setNegativeButton("取消", { dialog, which ->
             run {
+                resultText = ""
+                dialog.dismiss()
+                pvCustomOptions.show()
+            }
+        })
+        val dialog = builder.create()
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        dialog.show()
+        if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 resultText = textInput.text.toString()
-                if (!resultText.trim().isEmpty()){
-                    textRealm.beginTransaction()
-                    val bookItem=textRealm.createObject(ReciteBookBean::class.java)
-                    bookItem.bookTitle=resultText
-                    bookItem.textNum=0
-                    bookItem.picNum=0
-                    bookItem.isTop=false
-                    bookItem.bookDate= Date(System.currentTimeMillis())
-                    textRealm.commitTransaction()
+                if (!resultText.trim().isEmpty()) {
+                    if(textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",resultText).findAll().isEmpty()){
+                        textRealm.beginTransaction()
+                        val bookItem = textRealm.createObject(ReciteBookBean::class.java)
+                        bookItem.bookTitle = resultText
+                        bookItem.textNum = 0
+                        bookItem.picNum = 0
+                        bookItem.isTop = false
+                        bookItem.bookDate = Date(System.currentTimeMillis())
+                        textRealm.commitTransaction()
+                    }else {
+                        textInput.error="记背本已存在,不能重复创建!"
+                        return@setOnClickListener
+                    }
+                }else {
+                    textInput.error = "记背本名称不能为空!"
+                    return@setOnClickListener
                 }
                 pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
                 dialog.dismiss()
                 pvCustomOptions.setSelectOptions(reciteBookResults.size-1)
                 pvCustomOptions.show()
             }
-        })
-        builder.setNegativeButton("取消", { dialog, which -> run {
-            resultText = ""
-            dialog.dismiss()
-            pvCustomOptions.show()
-        } })
-        val dialog=builder.create()
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-
-        dialog.show()
+        }
     }
 
     private fun setDefaultMethod() {

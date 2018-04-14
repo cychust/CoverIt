@@ -17,9 +17,5 @@ interface ReciteBookContract {
         fun loadBookData(realmResults: RealmResults<ReciteBookBean>)
     }
 
-    interface  Presenter: BasePresenter {
-        fun deleteBook()
-        fun addBook()
-        fun modifyBook()
-    }
+    interface  Presenter: BasePresenter
 }

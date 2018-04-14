@@ -231,6 +231,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         if (!isSwitch) {
             if (isMove)
                 canvas.drawColor(0, PorterDuff.Mode.CLEAR);

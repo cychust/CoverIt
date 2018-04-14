@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_create_text.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.dataadapter.RedData
@@ -23,8 +24,7 @@ class CreateTextActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_text)
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+        window.decorView.fitsSystemWindows=true
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         initView()
@@ -44,8 +44,15 @@ class CreateTextActivity : AppCompatActivity() {
         btnSave.onClick {
             val title=etTitle.text.toString().trim()
             val content=etContent.text.toString().trim()
-            startActivity(intentFor<ModifyTextActivity>("title" to title,"content" to content,"redData" to mutableListOf<RedData>()))
-            finish()
+            when {
+                title.isEmpty() -> Toast.makeText(this@CreateTextActivity,"标题不能为空!", Toast.LENGTH_SHORT).show()
+                content.isEmpty() -> Toast.makeText(this@CreateTextActivity,"内容不能为空!", Toast.LENGTH_SHORT).show()
+                else -> {
+                    startActivity(intentFor<ModifyTextActivity>("title" to title,"content" to content,"redData" to mutableListOf<RedData>()))
+                    finish()
+                }
+            }
+
         }
     }
 }

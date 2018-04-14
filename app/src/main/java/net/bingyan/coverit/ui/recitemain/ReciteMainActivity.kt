@@ -11,6 +11,7 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
@@ -34,7 +35,6 @@ import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListFragment
 import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListPresenter
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.util.BottomNavigationViewHelper
-import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.widget.TitleBar
 import org.jetbrains.anko.intentFor
 import java.io.File
@@ -98,8 +98,7 @@ class ReciteMainActivity : AppCompatActivity() {
         }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+        window.decorView.fitsSystemWindows=true
 
         mainRealm = Realm.getDefaultInstance()
         titleBar = findViewById(R.id.title_bar)
@@ -108,8 +107,8 @@ class ReciteMainActivity : AppCompatActivity() {
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
 
         BottomNavigationViewHelper.disableShiftMode(navigation)
+
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        navigation.fitsSystemWindows=FileUtils.checkDeviceHasNavigationBar(this)
         creatBookView.setOnClickListener {
             showCustomDialog()
         }
@@ -146,28 +145,13 @@ class ReciteMainActivity : AppCompatActivity() {
         builder.setView(dialogContent)
 
         val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
-        textInput.hint = "请输入记背本名称"
+        val textInputLayout = dialogContent.findViewById<TextInputLayout>(R.id.input_text_layout)
+        textInputLayout.hint = "请输入记背本名称"
 
         builder.setCancelable(false)
 
 
-        builder.setPositiveButton("确定", { dialog, which ->
-            run {
-                resultText = textInput.text.toString()
-                if (!resultText.trim().isEmpty()) {
-                    mainRealm.beginTransaction()
-                    val bookItem = mainRealm.createObject(ReciteBookBean::class.java)
-                    bookItem.bookTitle = resultText
-                    bookItem.textNum = 0
-                    bookItem.picNum = 0
-                    bookItem.isTop = false
-                    bookItem.bookDate = Date(System.currentTimeMillis())
-                    mainRealm.commitTransaction()
-                }
-                reciteBookFragment.invalidateData()
-                dialog.dismiss()
-            }
-        })
+        builder.setPositiveButton("确定", null)
         builder.setNegativeButton("取消", { dialog, which ->
             run {
                 resultText = ""
@@ -177,6 +161,31 @@ class ReciteMainActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
+        if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            resultText = textInput.text.toString()
+            if (!resultText.trim().isEmpty()) {
+                        if(mainRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",resultText).findAll().isEmpty()){
+                            mainRealm.beginTransaction()
+                            val bookItem = mainRealm.createObject(ReciteBookBean::class.java)
+                            bookItem.bookTitle = resultText
+                            bookItem.textNum = 0
+                            bookItem.picNum = 0
+                            bookItem.isTop = false
+                            bookItem.bookDate = Date(System.currentTimeMillis())
+                            mainRealm.commitTransaction()
+                            reciteBookFragment.invalidateData()
+                            dialog.dismiss()
+                        }else {
+                            textInput.error="记背本已存在,不能重复创建!"
+                            return@setOnClickListener
+                        }
+                    }else {
+                        textInput.error = "记背本名称不能为空!"
+                        return@setOnClickListener
+                    }
+        }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

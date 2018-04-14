@@ -12,7 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:resizeableActivity="true">
         <activity
             android:name=".ui.reciteother.SplashActivity"
             android:label="@string/app_name">
@@ -26,6 +27,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
 
         <activity android:name=".ui.reciteother.FeedBackActivity" />
         <activity android:name=".ui.reciteother.AboutActivity" />

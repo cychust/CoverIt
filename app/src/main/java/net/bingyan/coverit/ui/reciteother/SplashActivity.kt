@@ -19,8 +19,8 @@ private lateinit var realm:Realm
         setContentView(R.layout.activity_splash)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
+        window.decorView.fitsSystemWindows=true
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
         realm=Realm.getDefaultInstance()
         val bookResult:RealmResults<ReciteBookBean> = realm.where(ReciteBookBean::class.java)
                 .equalTo("bookTitle","未命名分组")

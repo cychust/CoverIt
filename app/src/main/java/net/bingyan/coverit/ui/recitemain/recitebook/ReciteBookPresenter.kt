@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.recitemain.recitebook
 
 import android.app.Activity
 import io.realm.Realm
+import io.realm.Sort
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 
 /**
@@ -20,20 +21,7 @@ class ReciteBookPresenter(private val reciteBookFragment: ReciteBookContract.Vie
     }
 
     private fun loadBookData() {
-        val bookList=reciteBookRealm.where(ReciteBookBean::class.java).findAll()
+        val bookList=reciteBookRealm.where(ReciteBookBean::class.java).findAll().sort("bookDate",Sort.DESCENDING)
         reciteBookFragment.loadBookData(bookList)
     }
-
-    override fun deleteBook() {
-        TODO("not implemented")
-    }
-
-    override fun addBook() {
-        TODO("not implemented")
-    }
-
-    override fun modifyBook() {
-        TODO("not implemented")
-    }
-
 }

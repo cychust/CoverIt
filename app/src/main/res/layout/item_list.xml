@@ -87,6 +87,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="placeholder"
+                    android:maxEms="10"
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>

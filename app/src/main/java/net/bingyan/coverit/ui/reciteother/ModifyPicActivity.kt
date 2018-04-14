@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -80,8 +81,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         if (intent.getStringExtra("pic") != null)
             picPath = intent.getStringExtra("pic")
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)//B
+        window.decorView.fitsSystemWindows=true
 
         picRealm= Realm.getDefaultInstance()
         initView()
@@ -103,7 +103,6 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         titleBar.setTitle("图片记背")
         titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
 
-        lcPic.fitsSystemWindows=FileUtils.checkDeviceHasNavigationBar(this)
         rbModify.isChecked = true
 
         btnSave.onClick {
@@ -142,9 +141,12 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     }
 
         class PictureListener : View.OnTouchListener {
-
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
                 if (canModify) {
+                    val preWidTimes = bitmap.width.toDouble() / picture.width.toDouble()
+                    val preHeiTimes = bitmap.height.toDouble() / picture.height.toDouble()
+                    val freeHeiSpace=(picture.height-bitmap.height/preWidTimes)/2
+                    val freeWidSpace=(picture.width-bitmap.width/preHeiTimes)/2
                     val action = p1?.action
                     if (isNewRect) {
                         coverView = ModifyPicView(context, picPath)
@@ -159,6 +161,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
                             beginX = p1.x
                             beginY = p1.y
+
                             coverView.rectLeft = beginX
                             coverView.rectTop = beginY
                             coverView.rectDown = beginY
@@ -169,18 +172,17 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         MotionEvent.ACTION_MOVE -> {
                             isNewRect = false
 
-
                             moveX = p1.x
                             moveY = p1.y
 
-
                             coverView.setMove(false)
+
                             coverView.rectTop = beginY
                             coverView.rectLeft = beginX
                             coverView.rectRight = moveX
                             coverView.rectDown = moveY
-                            coverView.invalidate()
 
+                            coverView.invalidate()
                         }
                         MotionEvent.ACTION_UP -> {
                             isNewRect = true
@@ -188,11 +190,35 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView.setMove(true)
                             coverView.invalidate()
                             coverView.setMove(false)
-                            coverView.rectTop = beginY
-                            coverView.rectLeft = beginX
-                            coverView.rectRight = moveX
-                            coverView.rectDown = moveY
 
+                            if(preWidTimes>=preHeiTimes){
+                                coverView.rectTop = when{
+                                    beginY-freeHeiSpace<0->freeHeiSpace
+                                    beginY+freeHeiSpace>picture.height->picture.height-freeHeiSpace
+                                    else->beginY.toDouble()
+                                }.toFloat()
+                                coverView.rectLeft = beginX
+                                coverView.rectRight = moveX
+                                coverView.rectDown = when{
+                                    moveY-freeHeiSpace<0->freeHeiSpace
+                                    moveY+freeHeiSpace>picture.height->picture.height-freeHeiSpace
+                                    else->moveY.toDouble()
+                                }.toFloat()
+                            }else{
+                                coverView.rectTop = beginY
+                                coverView.rectLeft = when{
+                                    beginX-freeWidSpace<0->freeWidSpace
+                                    beginX+freeWidSpace>picture.width->picture.width-freeWidSpace
+                                    else->beginX.toDouble()
+                                }.toFloat()
+                                coverView.rectRight = when{
+                                    moveX-freeWidSpace<0->freeWidSpace
+                                    moveX+freeWidSpace>picture.width->picture.width-freeWidSpace
+                                    else->moveX.toDouble()
+                                }.toFloat()
+                                coverView.rectDown = moveY
+                            }
+                            LogUtil.d(coverView.rectTop.toString()+"\n"+coverView.rectLeft.toString()+"\n"+coverView.rectRight.toString()+"\n"+coverView.rectDown.toString())
                             coverView.invalidate()
                         }
                     }
@@ -250,46 +276,57 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     }
 
     private fun addNewReciteBook() {
-        val builder=AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("创建记背本")
 
-        val dialogContent=layoutInflater.inflate(R.layout.custom_dialog,null)
+        val dialogContent = layoutInflater.inflate(R.layout.custom_dialog, null)
         builder.setView(dialogContent)
 
-        val textInput=dialogContent.findViewById<TextInputEditText>(R.id.input_text)
-        textInput.hint="请输入记背本名称"
+        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+        val textInputLayout = dialogContent.findViewById<TextInputLayout>(R.id.input_text_layout)
+        textInputLayout.hint = "请输入记背本名称"
 
         builder.setCancelable(false)
 
 
-        builder.setPositiveButton("确定", { dialog, which ->
+        builder.setPositiveButton("确定", null)
+        builder.setNegativeButton("取消", { dialog, which ->
             run {
+                resultText = ""
+                dialog.dismiss()
+                pvCustomOptions.show()
+            }
+        })
+        val dialog = builder.create()
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        dialog.show()
+        if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 resultText = textInput.text.toString()
-                if (!resultText.trim().isEmpty()){
-                    picRealm.beginTransaction()
-                    val bookItem=picRealm.createObject(ReciteBookBean::class.java)
-                    bookItem.bookTitle=resultText
-                    bookItem.textNum=0
-                    bookItem.picNum=0
-                    bookItem.isTop=false
-                    bookItem.bookDate= Date(System.currentTimeMillis())
-                    picRealm.commitTransaction()
+                if (!resultText.trim().isEmpty()) {
+                    if(picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",resultText).findAll().isEmpty()){
+                        picRealm.beginTransaction()
+                        val bookItem = picRealm.createObject(ReciteBookBean::class.java)
+                        bookItem.bookTitle = resultText
+                        bookItem.textNum = 0
+                        bookItem.picNum = 0
+                        bookItem.isTop = false
+                        bookItem.bookDate = Date(System.currentTimeMillis())
+                        picRealm.commitTransaction()
+                    }else {
+                        textInput.error="记背本已存在,不能重复创建!"
+                        return@setOnClickListener
+                    }
+                }else {
+                    textInput.error = "记背本名称不能为空!"
+                    return@setOnClickListener
                 }
                 pvCustomOptions.setPicker(picRealm.copyFromRealm(reciteBookResults))
                 dialog.dismiss()
                 pvCustomOptions.setSelectOptions(reciteBookResults.size-1)
                 pvCustomOptions.show()
             }
-        })
-        builder.setNegativeButton("取消", { dialog, which -> run {
-            resultText = ""
-            dialog.dismiss()
-            pvCustomOptions.show()
-        } })
-        val dialog=builder.create()
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-
-        dialog.show()
+        }
     }
 
 
@@ -313,7 +350,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 if (!resultText.trim().isEmpty()){
                     dialog.dismiss()
                     savePic()
-                }else textInput.error = "内容不能为空！"
+                }else Toast.makeText(this,"图片名称不能为空!",Toast.LENGTH_SHORT).show()
             }
         })
         builder.setNegativeButton("取消", { dialog, which -> run {
@@ -369,16 +406,32 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         if(preWidTimes>=preHeiTimes){
                             val freeHeiSpace=(picture.height-bitmap.height/preWidTimes)/2
                             view.setCalRectLeft(view.rectLeft)
-                            view.setCalRectTop((view.rectTop-freeHeiSpace).toFloat())
+                            view.setCalRectTop(when{
+                                view.rectTop-freeHeiSpace<0->freeHeiSpace
+                                view.rectTop+freeHeiSpace>picture.height->picture.height-freeHeiSpace
+                                else->view.rectTop-freeHeiSpace
+                            }.toFloat())
                             view.setCalRectRight(view.rectRight)
-                            view.setCalRectDown((view.rectDown-freeHeiSpace).toFloat())
+                            view.setCalRectDown(when{
+                                view.rectDown-freeHeiSpace<0->freeHeiSpace
+                                view.rectDown+freeHeiSpace>picture.height->picture.height-freeHeiSpace
+                                else->view.rectDown-freeHeiSpace
+                            }.toFloat())
                             view.setWidTimes(preWidTimes)
                             view.setHeiTimes(preWidTimes)
                         }else{
                             val freeWidSpace=(picture.width-bitmap.width/preHeiTimes)/2
-                            view.setCalRectLeft((view.rectLeft-freeWidSpace).toFloat())
+                            view.setCalRectLeft(when{
+                                view.rectLeft-freeWidSpace<0->freeWidSpace
+                                view.rectLeft+freeWidSpace>picture.width->picture.width-freeWidSpace
+                                else->view.rectLeft-freeWidSpace
+                            }.toFloat())
                             view.setCalRectTop(view.rectTop)
-                            view.setCalRectRight((view.rectRight-freeWidSpace).toFloat())
+                            view.setCalRectRight(when{
+                                view.rectRight-freeWidSpace<0->freeWidSpace
+                                view.rectRight+freeWidSpace>picture.width->picture.width-freeWidSpace
+                                else->view.rectRight-freeWidSpace
+                            }.toFloat())
                             view.setCalRectDown(view.rectDown)
                             view.setWidTimes(preHeiTimes)
                             view.setHeiTimes(preHeiTimes)

@@ -34,6 +34,7 @@
                 android:layout_marginTop="18dp"
                 android:fontFamily="@font/noto_sans"
                 android:text="马克思基本原理"
+                android:maxEms="8"
                 android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
