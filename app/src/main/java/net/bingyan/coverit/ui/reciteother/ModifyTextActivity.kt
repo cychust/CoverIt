@@ -28,12 +28,11 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
 
 
-
-
 class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
     private lateinit var btnSave: Button
 
     private lateinit var modifyText: ModifyTextView
+    private lateinit var modifyTitle: EditText
     private lateinit var cbSwitch: CheckBox
     private lateinit var cbSee: CheckBox
     private lateinit var cbWrite: CheckBox
@@ -42,45 +41,46 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var content: String
 
-    private lateinit var pvCustomOptions:OptionsPickerView<ReciteBookBean>
+    private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
 
     private var redList = mutableListOf<RedData>()
 
-    private lateinit var textRealm:Realm
+    private lateinit var textRealm: Realm
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
 
-    private lateinit var resultText:String
+    private lateinit var resultText: String
 
-    private lateinit var textItem:ReciteTextBean
+    private lateinit var textItem: ReciteTextBean
 
-    private lateinit var lcText:ConstraintLayout
+    private lateinit var lcText: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-        window.decorView.fitsSystemWindows=true
+        window.decorView.fitsSystemWindows = true
 
         title = intent.getStringExtra("title")
         content = intent.getStringExtra("content")
 
-        textRealm= Realm.getDefaultInstance()
+        textRealm = Realm.getDefaultInstance()
         initView()
     }
 
     private fun initView() {
         btnSave = findViewById(R.id.btn_save)
         modifyText = findViewById(R.id.modify_text)
+        modifyTitle = findViewById(R.id.modify_title)
         cbSwitch = findViewById(R.id.switch_button)
         cbSee = findViewById(R.id.see_button)
         cbWrite = findViewById(R.id.write_button)
         cbModify = findViewById(R.id.modify_button)
-        lcText=findViewById(R.id.cl_text)
+        lcText = findViewById(R.id.cl_text)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
 
-        titleBar.setTitle(title)
+        titleBar.setTitle("文本记背")
         titleBar.setTitleColor(ContextCompat.getColor(this, R.color.title_white))
 
         cbSwitch.setOnCheckedChangeListener(this)
@@ -88,34 +88,41 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         cbWrite.setOnCheckedChangeListener(this)
         cbModify.setOnCheckedChangeListener(this)
 
-        cbWrite.isChecked=false
-        cbSee.isChecked=true
-        cbModify.isChecked=true
-        cbSwitch.isChecked=false
+        cbWrite.isChecked = false
+        cbSee.isChecked = true
+        cbModify.isChecked = true
+        cbSwitch.isChecked = false
 
-
+        modifyTitle.setText(title)
         modifyText.setText(content)
+
         modifyText.backgroundColor = Color.WHITE
-        modifyText.isCursorVisible=false
-        modifyText.movementMethod=ScrollingMovementMethod()
-        modifyText.isLongClickable=false
+        modifyText.isCursorVisible = false
+        modifyText.movementMethod = ScrollingMovementMethod()
+        modifyText.isLongClickable = false
 
         modifyText.drawBlack()
 
-        val redDataList=intent.getSerializableExtra("redData") as MutableList<TextConfigBean>
+        val redDataList = intent.getSerializableExtra("redData") as MutableList<TextConfigBean>
 
         redDataList.forEach {
-            redList.add(RedData(it.previous,it.next))
+            redList.add(RedData(it.previous, it.next))
         }
 
-        modifyText.redList=redList as ArrayList<RedData>
+        modifyText.redList = redList as ArrayList<RedData>
         modifyText.drawRed()
         btnSave.onClick {
-            saveText()
-            reciteBookResults=textRealm.where(ReciteBookBean::class.java)
-                    .findAll()
-            initCustomOptionPicker()
-            pvCustomOptions.show()
+            when {
+                modifyTitle.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "标题不能为空!", Toast.LENGTH_SHORT).show()
+                modifyText.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "内容不能为空!", Toast.LENGTH_SHORT).show()
+                else -> {
+                    saveText()
+                    reciteBookResults = textRealm.where(ReciteBookBean::class.java)
+                            .findAll()
+                    initCustomOptionPicker()
+                    pvCustomOptions.show()
+                }
+            }
         }
 
         setDefaultMethod()
@@ -123,17 +130,17 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private fun saveText() {
         modifyText.calculateText()
-        redList=modifyText.redList
+        redList = modifyText.redList
 
         textRealm.beginTransaction()
-        textItem=textRealm.createObject(ReciteTextBean::class.java)
-        textItem.text=content
-        textItem.textDate=Date(System.currentTimeMillis())
-        textItem.textTitle=title
-        for (redData:RedData in redList){
-            val textConfig=TextConfigBean()
-            textConfig.previous=redData.previous
-            textConfig.next=redData.next
+        textItem = textRealm.createObject(ReciteTextBean::class.java)
+        textItem.text = content
+        textItem.textDate = Date(System.currentTimeMillis())
+        textItem.textTitle = modifyTitle.text.trim().toString()
+        for (redData: RedData in redList) {
+            val textConfig = TextConfigBean()
+            textConfig.previous = redData.previous
+            textConfig.next = redData.next
             textItem.textConfigList.add(textConfig)
         }
         textRealm.commitTransaction()
@@ -147,20 +154,20 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
          * 自定义布局中，id为 optionspicker 或者 timepicker 的布局以及其子控件必须要有，否则会报空指针。
          * 具体可参考demo 里面的两个自定义layout布局。
          */
-         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
-            val selectedItem=reciteBookResults[options1]
-             textRealm.executeTransaction {
-                 textItem.belonging=selectedItem!!.pickerViewText
-             }
-             textRealm.executeTransaction({
-                     //先查找后得到对象
-                    val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",selectedItem!!.pickerViewText).findFirst()
-                    user!!.textNum +=1
-                    user!!.textList.add(textItem)
-                    user.bookDate= Date(System.currentTimeMillis())
-                    Toast.makeText(this,"已成功添加",Toast.LENGTH_SHORT).show()
-                    finish()
-             })
+        pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
+            val selectedItem = reciteBookResults[options1]
+            textRealm.executeTransaction {
+                textItem.belonging = selectedItem!!.pickerViewText
+            }
+            textRealm.executeTransaction({
+                //先查找后得到对象
+                val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", selectedItem!!.pickerViewText).findFirst()
+                user!!.textNum += 1
+                user!!.textList.add(textItem)
+                user.bookDate = Date(System.currentTimeMillis())
+                Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
+                finish()
+            })
 
 
         })
@@ -215,11 +222,11 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         val dialog = builder.create()
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
-        if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 resultText = textInput.text.toString()
                 if (!resultText.trim().isEmpty()) {
-                    if(textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",resultText).findAll().isEmpty()){
+                    if (textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", resultText).findAll().isEmpty()) {
                         textRealm.beginTransaction()
                         val bookItem = textRealm.createObject(ReciteBookBean::class.java)
                         bookItem.bookTitle = resultText
@@ -228,49 +235,49 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                         bookItem.isTop = false
                         bookItem.bookDate = Date(System.currentTimeMillis())
                         textRealm.commitTransaction()
-                    }else {
-                        textInput.error="记背本已存在,不能重复创建!"
+                    } else {
+                        textInput.error = "记背本已存在,不能重复创建!"
                         return@setOnClickListener
                     }
-                }else {
+                } else {
                     textInput.error = "记背本名称不能为空!"
                     return@setOnClickListener
                 }
                 pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))
                 dialog.dismiss()
-                pvCustomOptions.setSelectOptions(reciteBookResults.size-1)
+                pvCustomOptions.setSelectOptions(reciteBookResults.size - 1)
                 pvCustomOptions.show()
             }
         }
     }
 
     private fun setDefaultMethod() {
-        modifyText.isCursorVisible=false
-        modifyText.highlightColor=Color.WHITE
+        modifyText.isCursorVisible = false
+        modifyText.highlightColor = Color.WHITE
         modifyText.setCanEdit(false)
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
         when (p0?.id) {
             R.id.write_button -> {
-                if(p1){
-                    modifyText.isCursorVisible=true
+                if (p1) {
+                    modifyText.isCursorVisible = true
                     modifyText.setCanEdit(true)
-                    modifyText.highlightColor=Color.WHITE
+                    modifyText.highlightColor = Color.WHITE
                 }
 
-                if(!p1){
-                    modifyText.isCursorVisible=false
+                if (!p1) {
+                    modifyText.isCursorVisible = false
                     modifyText.setCanEdit(false)
                 }
             }
 
             R.id.modify_button -> {
-                if(p1){
+                if (p1) {
                     modifyText.setCanModify(true)
                 }
 
-                if(!p1){
+                if (!p1) {
                     modifyText.setCanModify(false)
                 }
 
@@ -289,26 +296,26 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     modifyText.changeText()
                     modifyText.drawRed()
                     modifyText.scrollTo(curX, curY)
-                    redList=modifyText.redList
+                    redList = modifyText.redList
                 }
             }
 
 
             R.id.switch_button -> {
-                if(p1){
-                    val changeList=modifyText.blackList
-                    modifyText.blackList=modifyText.redList
-                    modifyText.redList=changeList
+                if (p1) {
+                    val changeList = modifyText.blackList
+                    modifyText.blackList = modifyText.redList
+                    modifyText.redList = changeList
 
                     modifyText.setText(content)
                     modifyText.drawBlack()
                     modifyText.drawRed()
                 }
 
-                if(!p1){
-                    val changeList=modifyText.blackList
-                    modifyText.blackList=modifyText.redList
-                    modifyText.redList=changeList
+                if (!p1) {
+                    val changeList = modifyText.blackList
+                    modifyText.blackList = modifyText.redList
+                    modifyText.redList = changeList
 
                     modifyText.setText(content)
                     modifyText.drawBlack()

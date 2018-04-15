@@ -63,7 +63,7 @@ class ReciteListPresenter(private val reciteListView: ReciteListContract.View, v
         for (picResult in picResultList){
             reciteListRealm.beginTransaction()
             val parentItem= reciteListRealm.createObject(ParentListBean::class.java)
-            parentItem.title=picResult.picTitle
+            parentItem.title = picResult.belonging//todo
             parentItem.date=picResult.picDate
             parentItem.isTop=picResult.isTop
             parentItem.text=""

@@ -13,10 +13,11 @@ import io.realm.Realm
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
 import net.bingyan.coverit.data.local.bean.ParentListBean
+import net.bingyan.coverit.data.local.dataadapter.RedData
 import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
-import net.bingyan.coverit.ui.reciteother.CreateTextActivity
+import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
 import org.jetbrains.anko.backgroundResource
-import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.intentFor
 import java.util.*
 
 /**
@@ -73,7 +74,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
     }
 
     override fun startTextActivity() {
-        startActivity(intentFor<CreateTextActivity>())
+        startActivity(context!!.intentFor<ModifyTextActivity>("title" to "", "content" to "", "redData" to mutableListOf<RedData>()))
     }
     override fun loadListData(parentList: MutableList<ParentListBean>) {
         timeList.clear()
@@ -81,10 +82,17 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         picPathList.clear()
         textList.clear()
         parentList.forEach {
-            timeList.add(it.date)
-            titleList.add(it.title)
-            picPathList.add(it.picpath)
-            textList.add(it.text)
+            if (it.isTop) {
+                timeList.add(0, it.date)
+                titleList.add(0, it.title)
+                picPathList.add(0, it.picpath)
+                textList.add(0, it.text)
+            } else {
+                timeList.add(it.date)
+                titleList.add(it.title)
+                picPathList.add(it.picpath)
+                textList.add(it.text)
+            }
         }
         rvList.layoutManager= LinearLayoutManager(context)
         rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList)

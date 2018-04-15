@@ -31,6 +31,7 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.RecitePicBean
 import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.util.LogUtil
+import net.bingyan.coverit.util.PhotoBitmapUtils
 import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
@@ -80,6 +81,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         setContentView(R.layout.activity_modify_pic)
         if (intent.getStringExtra("pic") != null)
             picPath = intent.getStringExtra("pic")
+        picPath = PhotoBitmapUtils.amendRotatePhoto(picPath)
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
         window.decorView.fitsSystemWindows=true
 
@@ -106,7 +108,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbModify.isChecked = true
 
         btnSave.onClick {
-            addPicTitle()
+            //addPicTitle()
+            resultText = ""//todo
+            savePic()
         }
 
         rbSwitch.setOnCheckedChangeListener(this)
@@ -231,7 +235,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         picture.setOnTouchListener(listener)
     }
 
-    public fun removeView(view:ModifyPicView){
+    fun removeView(view: ModifyPicView) {
         viewList.remove(view)
         picFrame.removeView(view)
         picture.invalidate()
@@ -368,7 +372,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         picItem.picTitle=resultText
         picItem.isTop=false
         picItem.picDate= Date(System.currentTimeMillis())
-        picItem.picPath=FileUtils.saveBitmap(bitmap,this)
+        picItem.picPath = FileUtils.saveBitmap(bitmap)
 
         for (modifyPicView:ModifyPicView in viewList){
             val picConfig=PicConfigBean()

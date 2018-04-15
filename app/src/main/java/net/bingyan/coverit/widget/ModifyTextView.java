@@ -110,14 +110,11 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
     @Override
     protected void onCreateContextMenu(ContextMenu menu) {
-
+        if (canEdit) {
+            super.onCreateContextMenu(menu);
+        }
     }
 
-    @Override
-    protected void onSelectionChanged(int selStart, int selEnd) {
-        super.onSelectionChanged(selStart, selEnd);
-
-    }
 
     @Override
     public boolean performClick() {

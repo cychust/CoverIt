@@ -88,6 +88,8 @@
                     android:gravity="center"
                     android:text="placeholder"
                     android:maxEms="10"
+                    android:maxLines="1"
+
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>

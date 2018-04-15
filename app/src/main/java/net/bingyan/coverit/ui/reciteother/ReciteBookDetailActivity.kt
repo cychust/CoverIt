@@ -84,10 +84,17 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         picPathList.clear()
         textList.clear()
         parentList.forEach {
-            timeList.add(it.date)
-            titleList.add(it.title)
-            picPathList.add(it.picpath)
-            textList.add(it.text)
+            if (it.isTop) {
+                timeList.add(0, it.date)
+                titleList.add(0, it.title)
+                picPathList.add(0, it.picpath)
+                textList.add(0, it.text)
+            } else {
+                timeList.add(it.date)
+                titleList.add(it.title)
+                picPathList.add(it.picpath)
+                textList.add(it.text)
+            }
         }
 
         rvList.layoutManager = LinearLayoutManager(this)

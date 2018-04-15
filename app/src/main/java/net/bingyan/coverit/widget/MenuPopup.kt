@@ -1,7 +1,6 @@
 package net.bingyan.coverit.widget
 
 import android.app.Activity
-import android.support.v4.content.ContextCompat.startActivity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -9,7 +8,8 @@ import android.view.animation.AnimationSet
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import net.bingyan.coverit.R
-import net.bingyan.coverit.ui.reciteother.CreateTextActivity
+import net.bingyan.coverit.data.local.dataadapter.RedData
+import net.bingyan.coverit.ui.reciteother.ModifyTextActivity
 import org.jetbrains.anko.intentFor
 import razerdp.basepopup.BasePopupWindow
 
@@ -70,7 +70,7 @@ class MenuPopup(val context: Activity) : BasePopupWindow(context, ViewGroup.Layo
     override fun onClick(v: View) {
         when (v.id) {
             R.id.ll_new_text -> {
-                startActivity(context, context.intentFor<CreateTextActivity>(), null)
+                context.startActivity(context.intentFor<ModifyTextActivity>("title" to "", "content" to "", "redData" to mutableListOf<RedData>()))
                 this.dismiss()
             }
             R.id.ll_new_pic -> {

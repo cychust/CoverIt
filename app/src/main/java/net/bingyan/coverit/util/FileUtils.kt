@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -15,6 +17,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+
 
 /**
  * Author       zdlly
@@ -124,7 +127,7 @@ object FileUtils {
     }
 
     private lateinit var out:FileOutputStream
-    fun saveBitmap(bitmap:Bitmap,activity: Activity):String{
+    fun saveBitmap(bitmap: Bitmap): String {
         val file = File(Environment.getExternalStorageDirectory(), System.currentTimeMillis().toString()+".jpg")
         try {
             out = FileOutputStream(file)
@@ -139,6 +142,30 @@ object FileUtils {
             e.printStackTrace()
         }
         return file.path
+    }
+
+    fun readPictureDegree(path: String): Int {
+        var degree = 0
+        try {
+            val exifInterface = ExifInterface(path)
+            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> degree = 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> degree = 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> degree = 270
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return degree
+    }
+
+    fun rotaingImageView(angle: Int, bitmap: Bitmap): Bitmap {
+        //旋转图片 动作
+        val matrix = Matrix()
+        matrix.postRotate(angle.toFloat())
+        return Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.width, bitmap.height, matrix, true)
     }
 }
 

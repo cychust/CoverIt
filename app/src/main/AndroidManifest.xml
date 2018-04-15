@@ -46,7 +46,6 @@
         </provider>
 
         <activity android:name=".ui.reciteother.ModifyPicActivity" />
-        <activity android:name=".ui.reciteother.CreateTextActivity"/>
         <activity android:name=".ui.reciteother.ModifyTextActivity" />
         <activity android:name=".ui.reciteother.ReciteBookDetailActivity"/>
     </application>
