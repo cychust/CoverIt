@@ -1,5 +1,6 @@
 package net.bingyan.coverit.ui.recitemain
 
+
 import android.Manifest
 import android.app.Activity
 import android.content.ContentUris
@@ -23,7 +24,6 @@ import android.view.WindowManager
 import android.widget.ImageView
 import io.realm.Realm
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.activity_main.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.logicadapter.ViewPagerAdapter
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
@@ -53,6 +53,8 @@ class ReciteMainActivity : AppCompatActivity() {
     private lateinit var reciteListFragment: ReciteListFragment
     private lateinit var reciteBookFragment: ReciteBookFragment
     private lateinit var mineFragment: MineFragment
+    private lateinit var viewPager: ViewPager
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private var currentItem: Int = -1
     val TAKE_PHOTO = 1
@@ -60,11 +62,11 @@ class ReciteMainActivity : AppCompatActivity() {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.recite_list -> {
-                viewpager.currentItem = 0
+                viewPager.currentItem = 0
                 return@OnNavigationItemSelectedListener true
             }
             R.id.recite_book -> {
-                viewpager.currentItem = 1
+                viewPager.currentItem = 1
                 return@OnNavigationItemSelectedListener true
             }
         /*R.id.find -> {
@@ -72,7 +74,7 @@ class ReciteMainActivity : AppCompatActivity() {
             return@OnNavigationItemSelectedListener true
         }*/
             R.id.mine -> {
-                viewpager.currentItem = 2
+                viewPager.currentItem = 2
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -81,12 +83,12 @@ class ReciteMainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (currentItem != -1) viewpager.currentItem = currentItem
+        if (currentItem != -1) viewPager.currentItem = currentItem
     }
 
     override fun onPause() {
         super.onPause()
-        currentItem = viewpager.currentItem
+        currentItem = viewPager.currentItem
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,17 +105,20 @@ class ReciteMainActivity : AppCompatActivity() {
         mainRealm = Realm.getDefaultInstance()
         titleBar = findViewById(R.id.title_bar)
         creatBookView = findViewById(R.id.create_book)
+        viewPager = findViewById(R.id.viewpager)
+        bottomNavigationView = findViewById(R.id.navigation)
+
         titleBar.setImmersive(true)
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
 
-        BottomNavigationViewHelper.disableShiftMode(navigation)
+        BottomNavigationViewHelper.disableShiftMode(bottomNavigationView)
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         creatBookView.setOnClickListener {
             showCustomDialog()
         }
-        setupViewPager(viewpager = viewpager)
-        viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        setupViewPager(viewpager = viewPager)
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -128,7 +133,7 @@ class ReciteMainActivity : AppCompatActivity() {
                 titleBar.setTitleSize(19f)
                 if (position == 1) creatBookView.visibility = View.VISIBLE
                 else creatBookView.visibility = View.GONE
-                menuItem = navigation.menu.getItem(position)
+                menuItem = bottomNavigationView.menu.getItem(position)
                 menuItem?.isChecked = true
             }
 

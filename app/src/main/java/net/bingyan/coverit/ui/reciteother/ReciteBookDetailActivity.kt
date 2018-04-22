@@ -55,6 +55,11 @@ class ReciteBookDetailActivity : AppCompatActivity() {
         loadListData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshListData()
+    }
+
     private fun initView() {
         rvList = findViewById(R.id.rv_list)
         addNewView = findViewById(R.id.iv_add_new)

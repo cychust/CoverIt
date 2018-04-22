@@ -16,6 +16,7 @@ import com.bigkoo.pickerview.view.OptionsPickerView
 import io.realm.Realm
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_modify_pic.*
+
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
@@ -114,6 +115,8 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 modifyTitle.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "标题不能为空!", Toast.LENGTH_SHORT).show()
                 modifyText.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "内容不能为空!", Toast.LENGTH_SHORT).show()
                 else -> {
+                    title = modifyTitle.text.toString()
+                    content = modifyText.text.toString()
                     saveText()
                     reciteBookResults = textRealm.where(ReciteBookBean::class.java)
                             .findAll()
@@ -132,7 +135,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         textRealm.beginTransaction()
         textItem = textRealm.createObject(ReciteTextBean::class.java)
-        textItem.text = content
+        textItem.text = content.trim()
         textItem.textDate = Date(System.currentTimeMillis())
         textItem.textTitle = modifyTitle.text.trim().toString()
         for (redData: RedData in redList) {
