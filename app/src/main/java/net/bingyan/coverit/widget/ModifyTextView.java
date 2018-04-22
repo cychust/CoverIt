@@ -96,7 +96,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     }
 
     private void initLook() {
-        this.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        this.setOverScrollMode(View.OVER_SCROLL_NEVER);
         setGravity(Gravity.TOP);
         setBackgroundColor(Color.WHITE);
         drawRed();
@@ -155,7 +155,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                             if (event.getEventTime() - downTime > 500) {
                                 super.performLongClick();
                                 return true;
-                            } //else return super.performClick();
+                            }
                         } else return super.onTouchEvent(event);
                     }
                 }
