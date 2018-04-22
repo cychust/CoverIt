@@ -112,14 +112,12 @@ object PhotoBitmapUtils {
         options!!.inJustDecodeBounds = false
         options.inSampleSize = 10  // 图片的大小设置为原来的十分之一
         val bmp = BitmapFactory.decodeFile(path, options)
-        options = null
         return bmp
     }
 
     /**
      * 处理旋转后的图片
      * @param originpath 原图路径
-     * @param context 上下文
      * @return 返回修复完毕后的图片路径
      */
     fun amendRotatePhoto(originpath: String): String {

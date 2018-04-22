@@ -8,7 +8,6 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.text.method.ScrollingMovementMethod
 import android.view.WindowManager
 import android.widget.*
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder
@@ -88,7 +87,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         cbWrite.setOnCheckedChangeListener(this)
         cbModify.setOnCheckedChangeListener(this)
 
-        cbWrite.isChecked = false
+        cbWrite.isChecked = true
         cbSee.isChecked = true
         cbModify.isChecked = true
         cbSwitch.isChecked = false
@@ -98,7 +97,6 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         modifyText.backgroundColor = Color.WHITE
         modifyText.isCursorVisible = false
-        modifyText.movementMethod = ScrollingMovementMethod()
         modifyText.isLongClickable = false
 
         modifyText.drawBlack()
@@ -252,9 +250,9 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     }
 
     private fun setDefaultMethod() {
-        modifyText.isCursorVisible = false
-        modifyText.highlightColor = Color.WHITE
-        modifyText.setCanEdit(false)
+        modifyText.isCursorVisible = true
+        modifyText.highlightColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        modifyText.setCanEdit(true)
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
@@ -263,10 +261,12 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 if (p1) {
                     modifyText.isCursorVisible = true
                     modifyText.setCanEdit(true)
-                    modifyText.highlightColor = Color.WHITE
+                    modifyText.highlightColor = ContextCompat.getColor(this, R.color.colorPrimary)
                 }
 
                 if (!p1) {
+                    modifyText.highlightColor = Color.WHITE
+                    content = modifyText.text.toString()
                     modifyText.isCursorVisible = false
                     modifyText.setCanEdit(false)
                 }
@@ -285,12 +285,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
             R.id.see_button -> {
                 if (p1) {
+                    cbWrite.isEnabled = true
                     modifyText.setText(content)
                     modifyText.drawBlack()
                     modifyText.drawRed()
                 }
 
                 if (!p1) {
+                    cbWrite.isEnabled = false
                     val curY = modifyText.scrollY
                     val curX = modifyText.scrollX
                     modifyText.changeText()

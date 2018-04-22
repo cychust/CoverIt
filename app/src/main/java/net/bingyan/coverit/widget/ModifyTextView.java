@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 
 import net.bingyan.coverit.data.local.dataadapter.RedData;
 
@@ -36,6 +37,12 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private int oldY;
     private int newY;
 
+    private float firstX = 0;
+    private float firstY = 0;
+    private float lastX = 0;
+    private float lastY = 0;
+
+    private long downTime;
 
     private boolean canEdit = false;
 
@@ -45,7 +52,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     private ArrayList<RedData> redList = new ArrayList<>();
 
 
-    private ArrayList<RedData> blackList =new ArrayList<>();
+    private ArrayList<RedData> blackList = new ArrayList<>();
 
     public ArrayList<RedData> getRedList() {
         return redList;
@@ -55,10 +62,12 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         this.redList = redList;
     }
 
+    public ArrayList<RedData> getBlackList() {
+        return blackList;
+    }
+
     public void setBlackList(ArrayList<RedData> blackList) {
         this.blackList = blackList;
-    }public ArrayList<RedData> getBlackList() {
-        return blackList;
     }
 
     public void setCanModify(boolean canModify) {
@@ -87,6 +96,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     }
 
     private void initLook() {
+        this.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
         setGravity(Gravity.TOP);
         setBackgroundColor(Color.WHITE);
         drawRed();
@@ -129,6 +139,29 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (canModify) {
+            if (canEdit) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN: {
+                        downTime = event.getDownTime();
+                        firstX = event.getX();
+                        firstY = event.getY();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        lastX = event.getX();
+                        lastY = event.getY();
+                        if (Math.abs(lastX - firstX) <= 1 && Math.abs(lastY - firstY) <= 1) {
+                            if (event.getEventTime() - downTime > 500) {
+                                super.performLongClick();
+                                return true;
+                            } //else return super.performClick();
+                        } else return super.onTouchEvent(event);
+                    }
+                }
+                return super.onTouchEvent(event);
+            }
+
             int begin = Selection.getSelectionStart(getText());
             int end = Selection.getSelectionEnd(getText());
             if (begin > end) {
@@ -142,13 +175,18 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     Log.d(TAG, "onTouchEvent: action down");
+
                     oldX = (int) event.getX();
                     oldY = (int) event.getY();
+
+
+                    if ((getScrollY() + (int) event.getY()) > layout.getHeight()) break;
                     line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                     offset = layout.getOffsetForHorizontal(line, (int) event.getX());
                     Selection.setSelection(getEditableText(), offset);
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    if ((getScrollY() + (int) event.getY()) > layout.getHeight()) break;
                     Log.d(TAG, "onTouchEvent: action move");
                     newX = (int) event.getX();
                     newY = (int) event.getY();
@@ -169,13 +207,16 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                     line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                     int curMoveOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
                     Selection.setSelection(getEditableText(), offset, curMoveOffset);
-                    ForegroundColorSpan[] spans = getText().getSpans(offset, offset+1, ForegroundColorSpan.class);
-                    mSelectionForegroundColorSpan = new ForegroundColorSpan(spans[spans.length-1].getForegroundColor()==Color.RED? Color.BLACK : Color.RED);
-                    oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
-                    getText().setSpan(mSelectionForegroundColorSpan, begin, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    ForegroundColorSpan[] spans = getText().getSpans(offset, offset + 1, ForegroundColorSpan.class);
+                    if (spans.length != 0) {
+                        mSelectionForegroundColorSpan = new ForegroundColorSpan(spans[spans.length - 1].getForegroundColor() == Color.RED ? Color.BLACK : Color.RED);
+                        oldmSelectionForegroundColorSpan = mSelectionForegroundColorSpan;
+                        getText().setSpan(mSelectionForegroundColorSpan, begin, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }
                     break;
 
                 case MotionEvent.ACTION_UP:
+                    if ((getScrollY() + (int) event.getY()) > layout.getHeight()) break;
                     Log.d(TAG, "onTouchEvent: action up");
                     line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                     int curOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
@@ -183,13 +224,8 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                     isNewText = true;
                     break;
             }
-            if (canEdit) {
-                super.onTouchEvent(event);
-                return true;
-            } else return true;
-        } else if(canEdit){
-            return super.onTouchEvent(event);
-        }else return true;
+        }
+        return true;
     }
 
     public void calculateText() {
@@ -205,9 +241,9 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                 if (span.getForegroundColor() == Color.RED) {
                     Log.d(TAG, "changeRedText: " + i + "::" + next);
                     redList.add(new RedData(i, next));
-                }else {
+                } else {
                     Log.d(TAG, "changeBlackText: " + i + "::" + next);
-                    blackList.add(new RedData(i,next));
+                    blackList.add(new RedData(i, next));
                 }
             }
         }
