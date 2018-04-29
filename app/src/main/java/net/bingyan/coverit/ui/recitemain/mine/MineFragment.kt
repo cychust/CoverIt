@@ -34,6 +34,7 @@ class MineFragment:Fragment(),MineContract.View, View.OnClickListener {
             about=findViewById(R.id.about)
         }
         feedBack.setOnClickListener(this)
+        score.setOnClickListener(this)
         about.setOnClickListener(this)
         return root
     }
