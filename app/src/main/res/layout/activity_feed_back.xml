@@ -11,7 +11,7 @@
         <net.bingyan.coverit.widget.TitleBar
             android:id="@+id/titleBar"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             />
         <Button
             android:id="@+id/btn_save"
@@ -35,16 +35,18 @@
 
         <EditText
             android:id="@+id/et_suggestion"
-            android:layout_width="342dp"
+            android:layout_width="0dp"
             android:layout_height="250dp"
-            android:textSize="14sp"
-            android:layout_marginEnd="17dp"
-            android:layout_marginStart="17dp"
             android:layout_marginTop="15dp"
+            android:inputType="textMultiLine"
             android:background="@color/white"
             android:gravity="top"
             android:hint="@string/hint"
+            android:maxLines="10"
+            android:padding="5dp"
+            android:textColorHint="@color/colorPrimary"
             android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -52,19 +54,24 @@
         <EditText
             android:id="@+id/et_address"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:textSize="14sp"
+            android:layout_height="47dp"
             android:layout_marginBottom="100dp"
-            android:layout_marginEnd="17dp"
-            android:layout_marginStart="17dp"
             android:layout_marginTop="15dp"
+            android:inputType="textEmailAddress"
+            android:maxLines="2"
             android:background="@color/white"
             android:hint="@string/hint_call"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:textColorHint="@color/colorPrimary"
             android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_suggestion" />
+            app:layout_constraintTop_toBottomOf="@+id/et_suggestion"
+            app:layout_constraintVertical_bias="0.036" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>

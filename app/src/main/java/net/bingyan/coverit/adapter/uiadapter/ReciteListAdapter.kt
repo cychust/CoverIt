@@ -106,7 +106,7 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                     this.ivContent.visibility = View.VISIBLE
                     Glide.with(context).load(picAddress[position]).into(this.ivContent)
                 }
-                this.tvLine.visibility = View.INVISIBLE
+                //this.tvLine.visibility = View.INVISIBLE
                 this.tvDot.setBackgroundResource(R.drawable.top)
                 this.tvTime.text = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeList[position])
                 this.tvTitle.text = titleList[position]

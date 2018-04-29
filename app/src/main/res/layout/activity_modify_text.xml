@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <net.bingyan.coverit.widget.TitleBar
             android:id="@+id/titleBar"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            />
+            android:layout_height="45dp" />
 
         <Button
             android:id="@+id/btn_save"
@@ -30,26 +30,36 @@
     <EditText
         android:id="@+id/modify_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="3dp"
         android:background="@color/white"
-        android:gravity="top"
+        android:gravity="center|start"
         android:hint="@string/title_hint"
         android:inputType="text"
         android:maxLines="1"
         android:textColor="@color/black"
-        android:textSize="16sp" />
-        <net.bingyan.coverit.widget.ModifyTextView
-            android:id="@+id/modify_text"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:hint="@string/content_hint"
-            android:background="@color/white"
-            android:overScrollMode="never"
-            android:textSize="16sp"
-            android:scrollbarStyle="insideInset"/>
+        android:textSize="15sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey" />
+
+    <net.bingyan.coverit.widget.ModifyTextView
+        android:id="@+id/modify_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:hint="      请输入正文"
+        android:overScrollMode="never"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:scrollbarStyle="insideInset"
+        android:textSize="14sp" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_text"
@@ -97,6 +107,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch_button"
             app:layout_constraintTop_toTopOf="parent" />
+
         <CheckBox
             android:id="@+id/switch_button"
             android:layout_width="wrap_content"

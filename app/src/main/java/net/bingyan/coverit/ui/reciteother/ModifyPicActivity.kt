@@ -110,7 +110,10 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         btnSave.onClick {
             //addPicTitle()
             resultText = ""//todo
-            savePic()
+            reciteBookResults = picRealm.where(ReciteBookBean::class.java)
+                    .findAll()
+            initCustomOptionPicker()
+            pvCustomOptions.show()
         }
 
         rbSwitch.setOnCheckedChangeListener(this)
@@ -243,6 +246,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
     private fun initCustomOptionPicker() {
         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
+            savePic()
             val selectedItem=reciteBookResults[options1]
             picRealm.executeTransaction {
                 picItem.belonging=selectedItem!!.pickerViewText
@@ -302,7 +306,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             }
         })
         val dialog = builder.create()
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        //dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
         if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -384,10 +388,6 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         }
 
         picRealm.commitTransaction()
-        reciteBookResults=picRealm.where(ReciteBookBean::class.java)
-                .findAll()
-        initCustomOptionPicker()
-        pvCustomOptions.show()
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {

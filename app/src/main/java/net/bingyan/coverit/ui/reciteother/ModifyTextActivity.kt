@@ -117,7 +117,6 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 else -> {
                     title = modifyTitle.text.toString()
                     content = modifyText.text.toString()
-                    saveText()
                     reciteBookResults = textRealm.where(ReciteBookBean::class.java)
                             .findAll()
                     initCustomOptionPicker()
@@ -156,6 +155,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
          * 具体可参考demo 里面的两个自定义layout布局。
          */
         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
+            saveText()
             val selectedItem = reciteBookResults[options1]
             textRealm.executeTransaction {
                 textItem.belonging = selectedItem!!.pickerViewText
@@ -221,7 +221,6 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
         })
         val dialog = builder.create()
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
         if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {

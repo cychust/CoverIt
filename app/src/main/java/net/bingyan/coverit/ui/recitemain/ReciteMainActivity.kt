@@ -164,7 +164,7 @@ class ReciteMainActivity : AppCompatActivity() {
             }
         })
         val dialog = builder.create()
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        //dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
         if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
