@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder
@@ -16,12 +17,12 @@ import com.bigkoo.pickerview.view.OptionsPickerView
 import io.realm.Realm
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_modify_pic.*
-
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.ReciteTextBean
 import net.bingyan.coverit.data.local.bean.TextConfigBean
 import net.bingyan.coverit.data.local.dataadapter.RedData
+import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.widget.ModifyTextView
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -53,6 +54,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     private lateinit var textItem: ReciteTextBean
 
     private lateinit var lcText: ConstraintLayout
+    private lateinit var textGuide: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +78,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         cbWrite = findViewById(R.id.write_button)
         cbModify = findViewById(R.id.modify_button)
         lcText = findViewById(R.id.cl_text)
+        textGuide = findViewById(R.id.text_guide)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
@@ -125,6 +128,13 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
         }
 
+
+        if (FileUtils.isTextFirstOpen(this)) {
+            textGuide.visibility = View.VISIBLE
+            textGuide.onClick {
+                textGuide.visibility = View.GONE
+            }
+        }
         setDefaultMethod()
     }
 

@@ -31,6 +31,8 @@ object FileUtils {
     private val FILE_DIR_NAME = "files"
     private var mRootDir: String? = null
     private var mAppRootDir: String? = null
+    private const val SHARE_APP_TAG = "firstOpen"
+
     var fileDir: String? = null
         private set
 
@@ -47,13 +49,13 @@ object FileUtils {
     fun init() {
         mRootDir = rootPath
         if (mRootDir != null && "" != mRootDir) {
-            mAppRootDir = mRootDir + "/" + APP_DIR_NAME
-            fileDir = mAppRootDir + "/" + FILE_DIR_NAME
+            mAppRootDir = "$mRootDir/$APP_DIR_NAME"
+            fileDir = "$mAppRootDir/$FILE_DIR_NAME"
             val appDir = File(mAppRootDir!!)
             if (!appDir.exists()) {
                 appDir.mkdirs()
             }
-            val fileDir = File(mAppRootDir + "/" + FILE_DIR_NAME)
+            val fileDir = File("$mAppRootDir/$FILE_DIR_NAME")
             if (!fileDir.exists()) {
                 fileDir.mkdirs()
             }
@@ -166,6 +168,28 @@ object FileUtils {
         matrix.postRotate(angle.toFloat())
         return Bitmap.createBitmap(bitmap, 0, 0,
                 bitmap.width, bitmap.height, matrix, true)
+    }
+
+    fun isPicFirstOpen(context: Context): Boolean {
+        val setting = context.getSharedPreferences(SHARE_APP_TAG, 0)
+        val userFirst = setting.getBoolean("FIRSTPIC", true)
+        return if (userFirst) {//第一次
+            setting.edit().putBoolean("FIRSTPIC", false).apply()
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isTextFirstOpen(context: Context): Boolean {
+        val setting = context.getSharedPreferences(SHARE_APP_TAG, 0)
+        val userFirst = setting.getBoolean("FIRSTTEXT", true)
+        return if (userFirst) {//第一次
+            setting.edit().putBoolean("FIRSTTEXT", false).apply()
+            true
+        } else {
+            false
+        }
     }
 }
 

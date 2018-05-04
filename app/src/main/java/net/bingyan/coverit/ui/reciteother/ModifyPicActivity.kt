@@ -71,6 +71,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
     private lateinit var resultText: String
 
+    private lateinit var picGuide: ImageView
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
 
     private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
@@ -98,6 +99,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSee = findViewById(R.id.see_button)
         rbModify = findViewById(R.id.modify_button)
         lcPic=findViewById(R.id.cl_pic)
+        picGuide = findViewById(R.id.pic_guide)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
         titleBar.setImmersive(true)
@@ -124,11 +126,16 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         myOptions.inPreferredConfig = Bitmap.Config.RGB_565
 
         bitmap = BitmapFactory.decodeFile(picPath,myOptions)
-        LogUtil.d("the size is ${bitmap.byteCount}")
-        LogUtil.d("the width is ${bitmap.width}")
-        LogUtil.d("the height is ${bitmap.height}")
 
         Glide.with(this).load(bitmap).into(picture)
+
+        if (FileUtils.isPicFirstOpen(this)) {
+            picGuide.visibility = View.VISIBLE
+            picGuide.onClick {
+                picGuide.visibility = View.GONE
+            }
+        }
+
 
     if(intent.getSerializableExtra("picData")!=null){
         val redDataList=intent.getSerializableExtra("picData") as MutableList<PicConfigBean>

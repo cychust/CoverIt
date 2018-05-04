@@ -7,6 +7,14 @@
     tools:context="net.bingyan.coverit.ui.reciteother.ModifyPicActivity"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/pic_guide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/pic_guide"
+        android:scaleType="centerCrop"
+        android:src="@drawable/pic_guide"
+        android:visibility="gone" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
