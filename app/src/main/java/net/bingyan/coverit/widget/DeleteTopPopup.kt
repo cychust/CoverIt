@@ -10,7 +10,7 @@ import net.bingyan.coverit.listener.PopupCallBack
 import razerdp.basepopup.BasePopupWindow
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2018.4.8
  * Time         0:04
  */

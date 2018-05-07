@@ -1,7 +1,7 @@
 package net.bingyan.coverit.widget
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2017.12.21
  * Time         11:42
  */

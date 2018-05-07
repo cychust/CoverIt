@@ -10,6 +10,13 @@ import android.widget.FrameLayout
 import net.bingyan.coverit.util.ViewHelper
 import kotlin.math.sqrt
 
+
+/**
+ * Author       cychust
+ * Date         2018.5.07
+ * Time         23：50
+ */
+
 class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
 

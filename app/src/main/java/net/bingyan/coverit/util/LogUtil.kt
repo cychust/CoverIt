@@ -1,7 +1,7 @@
 package net.bingyan.coverit.util
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2017.12.10
  * Time         15:01
  */

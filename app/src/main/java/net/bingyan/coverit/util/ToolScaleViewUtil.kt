@@ -4,7 +4,7 @@ import android.graphics.PointF
 import android.view.MotionEvent
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2018.4.12
  * Time         23:49
  */

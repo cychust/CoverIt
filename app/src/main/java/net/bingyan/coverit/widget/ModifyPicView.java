@@ -20,7 +20,7 @@ import net.bingyan.coverit.ui.reciteother.ModifyPicActivity;
 import net.bingyan.coverit.util.ToolScaleViewUtil;
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2017.12.24
  * Time         0:08
  */

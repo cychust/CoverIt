@@ -22,7 +22,7 @@ import static android.content.ContentValues.TAG;
 import static java.lang.Math.abs;
 
 /**
- * Author       zdlly
+ * Author       cychust
  * Date         2017.12.24
  * Time         9:24
  */
