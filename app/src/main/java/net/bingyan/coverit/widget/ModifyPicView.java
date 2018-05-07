@@ -45,6 +45,13 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     final public static int COLOR = 1;
     final public static int PICTURE = 2;
 
+
+    final public static int DRAG_DOWN_RIGHT = 3;
+    final public static int DRAG_TOP_RIGHT = 4;
+    final public static int DRAG_TOP_LEFT = 5;
+    final public static int DRAG_DOWN_LEFT = 6;
+
+
     private int curState = DRAG;
 
     public int mode = 0;
@@ -68,7 +75,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float calRectRight;
     private float calRectTop;
     private float calRectDown;
-    private float firstX, firstY;
+    private float firstX, firstY, actionFirstX, actionFirstY;
     private float moveX, moveY;
     private float lastX, lastY;
     private boolean canClick = false;
@@ -250,26 +257,42 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean isInRect = false;
-        if ((event.getX() > Math.min(rectLeft, rectRight) && event.getX() < Math.max(rectLeft, rectRight)) && ((event.getY() > Math.min(rectTop, rectDown) && (event.getY() < Math.max(rectTop, rectDown)))))
+        if ((event.getX() > Math.min(rectLeft - 50, rectRight + 50) && event.getX() < Math.max(rectLeft - 50, rectRight + 50)) && ((event.getY() > Math.min(rectTop - 50, rectDown + 50) && (event.getY() < Math.max(rectTop - 50, rectDown + 50)))))
             isInRect = true;
         if (isInRect) {
             int action = event.getAction();
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
-                    curState = DRAG;
+                    //curState = DRAG;
                     firstX = event.getX();
                     firstY = event.getY();
+
+                    actionFirstX = event.getX();//为了长按删除
+                    actionFirstY = event.getY();
 
                     priRectLeft = this.rectLeft;
                     priRectRight = this.rectRight;
                     priRectTop = this.rectTop;
                     priRectDown = this.rectDown;
 
+
+                    if (Math.abs(event.getX() - this.rectRight) <= 50 && Math.abs(event.getY() - this.rectDown) <= 50) {
+                        curState = DRAG_DOWN_RIGHT;
+                    } else if (Math.abs(event.getX() - this.rectRight) <= 50 && Math.abs(event.getY() - this.rectTop) <= 50) {
+                        curState = DRAG_TOP_RIGHT;
+                    } else if (Math.abs(event.getX() - this.rectLeft) <= 50 & Math.abs(event.getY() - this.rectTop) <= 50) {
+                        curState = DRAG_TOP_LEFT;
+                    } else if (Math.abs(event.getX() - this.rectLeft) <= 50 & Math.abs(event.getY() - this.rectDown) <= 50) {
+                        curState = DRAG_DOWN_LEFT;
+                    } else {
+                        curState = DRAG;
+                    }
+
                     downTime = event.getDownTime();
                     break;
 
                 case MotionEvent.ACTION_POINTER_DOWN:
-                    if (event.getPointerCount() >= 2) {
+                   /* if (event.getPointerCount() >= 2) {
                         curState = ZOOM;
 
                         priRectLeft = this.rectLeft;
@@ -279,16 +302,105 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
                         initDis = ToolScaleViewUtil.spacing(event);
                         mid = ToolScaleViewUtil.midPoint(event);
-                    }
+                    }*/
                     break;
 
                 case MotionEvent.ACTION_MOVE: {
-                    if (curState == DRAG) {
+                    /*if (curState == DRAG) {
                         moveX = event.getX();
 
                         moveY = event.getY();
 
-                        if (moveX - firstX > 3 || moveY - firstY > 3) {
+                        if (Math.abs(moveX - firstX) > 5 || Math.abs(moveY - firstY) > 5) {
+                            // isDragging = true;
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectRight += distanceX;
+                            this.rectDown += distanceY;
+
+                            changeState();
+
+                            isMove = true;
+                            this.invalidate();
+                            isMove = false;
+                            firstY = moveY;
+                            firstX = moveX;
+                        }
+                    } else*/
+                    if (curState == DRAG_TOP_RIGHT) {
+                        moveX = event.getX();
+                        moveY = event.getY();
+                        if (Math.abs(moveY - firstX) > 5 || Math.abs(moveX - firstY) > 5) {
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectRight += distanceX;
+                            this.rectTop += distanceY;
+
+                            changeState();
+
+                            isMove = true;
+                            this.invalidate();
+                            isMove = false;
+                            firstY = moveY;
+                            firstX = moveX;
+                        }
+                    } else if (curState == DRAG_TOP_LEFT) {
+                        moveX = event.getX();
+                        moveY = event.getY();
+                        if (Math.abs(moveY - firstX) > 5 || Math.abs(moveX - firstY) > 5) {
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectLeft += distanceX;
+                            this.rectTop += distanceY;
+
+                            changeState();  //view 翻折
+
+                            isMove = true;
+                            this.invalidate();
+                            isMove = false;
+                            firstY = moveY;
+                            firstX = moveX;
+                        }
+                    } else if (curState == DRAG_DOWN_LEFT) {
+                        moveX = event.getX();
+                        moveY = event.getY();
+                        if (Math.abs(moveY - firstX) > 5 || Math.abs(moveX - firstY) > 5) {
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectLeft += distanceX;
+                            this.rectDown += distanceY;
+
+                            changeState();
+
+                            isMove = true;
+                            this.invalidate();
+                            isMove = false;
+                            firstY = moveY;
+                            firstX = moveX;
+                        }
+                    } else if (curState == DRAG_DOWN_RIGHT) {
+                        moveX = event.getX();
+                        moveY = event.getY();
+                        if (Math.abs(moveY - firstX) > 5 || Math.abs(moveX - firstY) > 5) {
+                            float distanceX = moveX - firstX;
+                            float distanceY = moveY - firstY;
+                            this.rectRight += distanceX;
+                            this.rectDown += distanceY;
+
+                            changeState();
+
+                            isMove = true;
+                            this.invalidate();
+                            isMove = false;
+                            firstY = moveY;
+                            firstX = moveX;
+                        }
+                    } else if (curState == DRAG) {
+                        moveX = event.getX();
+
+                        moveY = event.getY();
+
+                        if (Math.abs(moveX - firstX) > 5 || Math.abs(moveY - firstY) > 5) {
                             isDragging = true;
                             float distanceX = moveX - firstX;
                             float distanceY = moveY - firstY;
@@ -298,22 +410,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                             this.rectDown = priRectDown + distanceY;
 
                             this.invalidate();
-                        }
-                    } else {
-                        if (event.getPointerCount() >= 2) {
-                            isScaling = true;
-                            float newDis = ToolScaleViewUtil.spacing(event);
 
-                            float scale = newDis / initDis;
-                            float preWidth = priRectRight - priRectLeft;
-                            float preHeight = priRectDown - priRectTop;
-
-                            this.rectLeft = mid.x - preWidth * scale / 2;
-                            this.rectRight = mid.x + preWidth * scale / 2;
-                            this.rectTop = mid.y - preHeight * scale / 2;
-                            this.rectDown = mid.y + preHeight * scale / 2;
-
-                            this.invalidate();
                         }
                     }
                 }
@@ -323,9 +420,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                 case MotionEvent.ACTION_UP:
                     lastX = event.getX();
                     lastY = event.getY();
-
-
-                    if (Math.abs(lastX - firstX) <= 1 && Math.abs(lastY - firstY) <= 1) {
+                    if (Math.abs(lastX - actionFirstX) <= 5 && Math.abs(lastY - actionFirstY) <= 5) {        //<5 认为没有动
                         if (event.getEventTime() - downTime > 1000) {
                             isLongClick = true;
                             onLongClick();
@@ -341,6 +436,72 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
             return true;
         } else {
             return false;
+        }
+
+    }
+
+
+    private void changeState() {
+        if (rectLeft > rectRight && rectTop < rectDown) {
+            float tmp;
+            tmp = rectRight;
+            rectRight = rectLeft;
+            rectLeft = tmp;
+            switch (curState) {
+                case DRAG_TOP_LEFT:
+                    curState = DRAG_TOP_RIGHT;
+                    break;
+                case DRAG_TOP_RIGHT:
+                    curState = DRAG_TOP_LEFT;
+                    break;
+                case DRAG_DOWN_RIGHT:
+                    curState = DRAG_DOWN_LEFT;
+                    break;
+                case DRAG_DOWN_LEFT:
+                    curState = DRAG_DOWN_RIGHT;
+                    break;
+            }
+        } else if (rectLeft < rectRight && rectTop > rectDown) {
+            float tmp;
+            tmp = rectTop;
+            rectTop = rectDown;
+            rectDown = tmp;
+            switch (curState) {
+                case DRAG_TOP_LEFT:
+                    curState = DRAG_DOWN_LEFT;
+                    break;
+                case DRAG_TOP_RIGHT:
+                    curState = DRAG_DOWN_RIGHT;
+                    break;
+                case DRAG_DOWN_RIGHT:
+                    curState = DRAG_TOP_RIGHT;
+                    break;
+                case DRAG_DOWN_LEFT:
+                    curState = DRAG_TOP_LEFT;
+                    break;
+            }
+        } else if (rectLeft > rectRight && rectTop > rectDown) {
+            float tmp;
+            tmp = rectRight;
+            rectRight = rectLeft;
+            rectLeft = tmp;
+            tmp = rectTop;
+            rectTop = rectDown;
+            rectDown = tmp;
+            switch (curState) {
+                case DRAG_TOP_LEFT:
+                    curState = DRAG_DOWN_RIGHT;
+                    break;
+                case DRAG_TOP_RIGHT:
+                    curState = DRAG_DOWN_LEFT;
+                    break;
+                case DRAG_DOWN_RIGHT:
+                    curState = DRAG_TOP_LEFT;
+                    break;
+                case DRAG_DOWN_LEFT:
+                    curState = DRAG_TOP_RIGHT;
+                    break;
+            }
         }
 
     }

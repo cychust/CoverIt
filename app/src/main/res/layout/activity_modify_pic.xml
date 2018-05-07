@@ -15,6 +15,11 @@
         android:scaleType="centerCrop"
         android:src="@drawable/pic_guide"
         android:visibility="gone" />
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbarRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -35,8 +40,9 @@
             android:text="@string/btn_save"
             android:textSize="16sp" />
     </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <net.bingyan.coverit.ui.reciteother.ScaleFrameLayout
         android:id="@+id/picture_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -48,7 +54,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:src="@mipmap/logo" />
-    </FrameLayout>
+    </net.bingyan.coverit.ui.reciteother.ScaleFrameLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_pic"
