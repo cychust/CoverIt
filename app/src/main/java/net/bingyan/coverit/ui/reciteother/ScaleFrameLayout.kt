@@ -2,10 +2,12 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.content.Context
 import android.graphics.PointF
+import android.support.v4.widget.ViewDragHelper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import android.view.View
 import android.widget.FrameLayout
 import net.bingyan.coverit.util.ViewHelper
 import kotlin.math.sqrt
@@ -19,6 +21,9 @@ import kotlin.math.sqrt
 
 class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
+
+    private  var screenWidth:Int=0
+    private  var screenHeight:Int=0
 
     private var scaleGestureDetector: ScaleGestureDetector
 
@@ -37,10 +42,47 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
 
     private var preScale:Float=1f
     private var flag:Int=0
+  //  private var viewDragHelper:ViewDragHelper
+
+
+
+ /*   private val viewDragCallback=object:ViewDragHelper.Callback(){
+        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
+            if (preScale>1){
+                return true
+            }
+            return false
+        }
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+            if (left < (screenWidth - screenWidth * preScale) / 2)
+                left = (screenWidth - screenWidth * preScale) / 2 // 限制mainView可向左移动到的位置
+            if (left > (screenWidth * preScale - screenWidth) / 2)
+                left = (Int) (screenWidth * preScale - screenWidth) / 2;// 限制mainView可向右移动到的位置
+            return left
+        }
+
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
+            if (top < (screenHeight - screenHeight * preScale) / 2) {
+                top = (Int) (screenHeight - screenHeight * preScale) / 2;// 限制mainView可向上移动到的位置
+            }
+            if (top > (screenHeight * preScale - screenHeight) / 2) {
+                top = (Int) (screenHeight * preScale - screenHeight) / 2;// 限制mainView可向上移动到的位置
+            }
+            return top;
+        }
+
+    }
+*/
     init {
         scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
+      //  viewDragHelper= ViewDragHelper.create(this,viewDragCallback)
     }
 
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+    }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         if (ev?.pointerCount == 2) {
@@ -57,7 +99,12 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.pointerCount == 2) {
+        if(event?.pointerCount==1){
+
+
+            return false
+        }
+        else if (event?.pointerCount == 2) {
             return scaleGestureDetector.onTouchEvent(event)
             /* when (event.action) {
                  MotionEvent.ACTION_DOWN -> {
@@ -107,6 +154,8 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         rightFromScreen=getRight()
 
     }
+
+
     inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {
 
         private var previousSpan:Float=0f

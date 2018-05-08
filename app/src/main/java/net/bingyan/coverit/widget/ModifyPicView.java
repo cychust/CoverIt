@@ -29,9 +29,15 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     private static final String TAG = "ModifyView";
 
+    private float tmp;
+
     private int isReload = 0;
     private int mSides = 3;
     private Paint mPaint;
+
+    private Paint linePint;
+    private float[] pts;
+
     private Xfermode mXfermode;
     private Bitmap mMask;
     private Bitmap currBitmap;
@@ -109,6 +115,9 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float initDis = 1f;
 
     private Canvas canvas;
+
+    private final float lineLength=25.0f;
+    private final float lineWidth=15.0f;
 
     private ModifyPicActivity thisActivity;
 
@@ -204,6 +213,10 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         super(context, attrs, defStyleAttr);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+        linePint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        linePint.setColor(Color.BLACK);
+        linePint.setStrokeWidth(lineWidth);
+
         path = new Path();
         matrix = new Matrix();
         bitmap = BitmapFactory.decodeFile(picPath);
@@ -238,6 +251,16 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        float[] pts = {rectLeft, rectTop-lineWidth, rectLeft, rectTop + lineLength
+                , rectLeft, rectTop, rectLeft + lineLength, rectTop
+                , rectRight - lineLength, rectTop, rectRight+lineWidth, rectTop
+                , rectRight, rectTop, rectRight, rectTop + lineLength
+                , rectRight, rectDown - lineLength, rectRight, rectDown+lineWidth
+                , rectRight, rectDown, rectRight - lineLength, rectDown
+                , rectLeft-lineWidth, rectDown, rectLeft + lineLength, rectDown
+                , rectLeft, rectDown, rectLeft, rectDown - lineLength};     //画四角的黑线
+        canvas.drawLines(pts,linePint);
+
 
         if (!isSwitch) {
             if (isMove)
@@ -420,7 +443,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                 case MotionEvent.ACTION_UP:
                     lastX = event.getX();
                     lastY = event.getY();
-                    if (Math.abs(lastX - actionFirstX) <= 5 && Math.abs(lastY - actionFirstY) <= 5) {        //<5 认为没有动
+                    if (Math.abs(lastX - actionFirstX) <= 10 && Math.abs(lastY - actionFirstY) <= 10) {        //<5 认为没有动
                         if (event.getEventTime() - downTime > 1000) {
                             isLongClick = true;
                             onLongClick();
@@ -443,7 +466,6 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     private void changeState() {
         if (rectLeft > rectRight && rectTop < rectDown) {
-            float tmp;
             tmp = rectRight;
             rectRight = rectLeft;
             rectLeft = tmp;
@@ -462,7 +484,6 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                     break;
             }
         } else if (rectLeft < rectRight && rectTop > rectDown) {
-            float tmp;
             tmp = rectTop;
             rectTop = rectDown;
             rectDown = tmp;
@@ -481,7 +502,6 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
                     break;
             }
         } else if (rectLeft > rectRight && rectTop > rectDown) {
-            float tmp;
             tmp = rectRight;
             rectRight = rectLeft;
             rectLeft = tmp;
@@ -514,4 +534,5 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     public void setCanClick(boolean canClick) {
         this.canClick = canClick;
     }
+
 }
