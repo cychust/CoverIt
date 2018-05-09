@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.bingyan.coverit.ui.reciteother.ModifyPicActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="net.bingyan.coverit.ui.reciteother.ModifyPicActivity">
 
     <ImageView
         android:id="@+id/pic_guide"
@@ -20,26 +20,27 @@
         android:id="@+id/toolbarRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <net.bingyan.coverit.widget.TitleBar
-            android:id="@+id/titleBar"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            />
 
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/titleBar"
-            android:layout_marginTop="20dp"
-            android:background="@color/transparent"
-            android:textColor="@color/white"
-            android:text="@string/btn_save"
-            android:textSize="16sp" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <net.bingyan.coverit.widget.TitleBar
+                android:id="@+id/titleBar"
+                android:layout_width="match_parent"
+                android:layout_height="45dp" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/titleBar"
+                android:layout_marginTop="20dp"
+                android:background="@color/transparent"
+                android:text="@string/btn_save"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
     <net.bingyan.coverit.ui.reciteother.ScaleFrameLayout
@@ -60,6 +61,7 @@
         android:id="@+id/cl_pic"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <CheckBox

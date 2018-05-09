@@ -8,8 +8,12 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import net.bingyan.coverit.util.ViewHelper
+import org.jetbrains.anko.margin
 import kotlin.math.sqrt
 
 
@@ -22,8 +26,8 @@ import kotlin.math.sqrt
 class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attributeSet, defStyle) {
 
 
-    private  var screenWidth:Int=0
-    private  var screenHeight:Int=0
+    private var screenWidth: Int = 0
+    private var screenHeight: Int = 0
 
     private var scaleGestureDetector: ScaleGestureDetector
 
@@ -37,51 +41,45 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
 
     private var midPoint: PointF = PointF()             //中点
 
-    private var leftFromScreen:Int=0
-    private var rightFromScreen:Int=0
+    private var leftFromScreen: Int = 0
+    private var rightFromScreen: Int = 0
 
-    private var preScale:Float=1f
-    private var flag:Int=0
-  //  private var viewDragHelper:ViewDragHelper
+    private var preScale: Float = 1f
+    private var flag: Int = 0
+    // private var viewDragHelper:ViewDragHelper
+    private var oriFrameLayoutLeft: Int = 0
+    private var oriFrameLayoutRight: Int = 0
+    private var oriFrameLayoutTop: Int = 0
+    private var oriFrameLayoutDown: Int = 0
 
 
+    private var dxTotal: Int = 0
+    private var dyTotal: Int = 0
 
- /*   private val viewDragCallback=object:ViewDragHelper.Callback(){
-        override fun tryCaptureView(child: View, pointerId: Int): Boolean {
-            if (preScale>1){
-                return true
-            }
-            return false
-        }
-        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
-            if (left < (screenWidth - screenWidth * preScale) / 2)
-                left = (screenWidth - screenWidth * preScale) / 2 // 限制mainView可向左移动到的位置
-            if (left > (screenWidth * preScale - screenWidth) / 2)
-                left = (Int) (screenWidth * preScale - screenWidth) / 2;// 限制mainView可向右移动到的位置
-            return left
-        }
 
-        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
-            if (top < (screenHeight - screenHeight * preScale) / 2) {
-                top = (Int) (screenHeight - screenHeight * preScale) / 2;// 限制mainView可向上移动到的位置
-            }
-            if (top > (screenHeight * preScale - screenHeight) / 2) {
-                top = (Int) (screenHeight * preScale - screenHeight) / 2;// 限制mainView可向上移动到的位置
-            }
-            return top;
-        }
+    private var lastLeft: Int = 0
+    private var lastTop: Int = 0
 
-    }
-*/
+    private var canModify = true
+
+
     init {
         scaleGestureDetector = ScaleGestureDetector(context, ScaleGestureListener())
-      //  viewDragHelper= ViewDragHelper.create(this,viewDragCallback)
+        //    viewDragHelper= ViewDragHelper.create(this,viewDragCallback)
     }
-
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        screenWidth = measuredWidth
+        screenHeight = measuredHeight
 
+        oriFrameLayoutDown = bottom
+        oriFrameLayoutTop = top
+        oriFrameLayoutLeft = left
+        oriFrameLayoutRight = right
+        Log.d("oriLeft", oriFrameLayoutLeft.toString())
+        Log.d("screenWidth", screenWidth.toString())
+        Log.d("oriRight", oriFrameLayoutRight.toString())
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
@@ -99,12 +97,37 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if(event?.pointerCount==1){
+        if (event?.pointerCount == 1 && !canModify) {
+            Log.d("dragFrame", "success")
+            var currentTimeMillis: Long = System.currentTimeMillis()
+            if (currentTimeMillis - lastMultiTouchTime > 200) {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        lastLeft = event.rawX.toInt()
+                        lastTop = event.rawY.toInt()
 
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        var tmpRawTop = event.rawY.toInt()
+                        var tmpRawLeft = event.rawX.toInt()
 
-            return false
-        }
-        else if (event?.pointerCount == 2) {
+                        var dx = tmpRawLeft - lastLeft
+                        var dy = tmpRawTop - lastTop
+
+                        center(dx, dy)
+
+                        /*var lp:LinearLayout.LayoutParams =LinearLayout.LayoutParams(frameLayoutRight-frameLayoutLeft
+                                ,frameLayoutDown-frameLayoutTop)
+                        lp.setMargins(frameLayoutLeft,frameLayoutTop,0,0)
+                        this.layoutParams=lp*/
+                        //this.layout(frameLayoutLeft, frameLayoutTop, frameLayoutRight, frameLayoutDown)
+
+                        Log.d("layout", "end")
+                    }
+                }
+            }
+            return true
+        } else if (event?.pointerCount == 2) {
             return scaleGestureDetector.onTouchEvent(event)
             /* when (event.action) {
                  MotionEvent.ACTION_DOWN -> {
@@ -136,6 +159,33 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         }
     }
 
+    private fun center(dx: Int, dy: Int) {
+
+
+        val oriXSpace: Float = screenWidth * (preScale - 1) / 2
+        val oriYSpace: Float = screenHeight * (preScale - 1) / 2
+
+        if (oriXSpace >= Math.abs(dxTotal) ||
+                (oriXSpace < Math.abs(dxTotal)
+                        &&
+                        ((dxTotal > 0 && dx < 0) || (dxTotal < 0 && dx > 0)))
+        ) {
+            //if ((dxTotal>0&&dx<0)||(dxTotal<0&&dx>0)){
+            dxTotal += dx / 50                         //降低灵敏度
+
+        }
+        if (oriYSpace >= Math.abs(dyTotal) ||
+                (oriYSpace < Math.abs(dyTotal)
+                        &&
+                        ((dyTotal > 0 && dy < 0) || (dyTotal < 0 && dy > 0)))) {
+            dyTotal += dy / 50                        //降低灵敏度
+        }
+
+        ViewHelper.setTranslationX(this, dxTotal.toFloat())
+        ViewHelper.setTranslationY(this, dyTotal.toFloat())
+
+    }
+
     fun distance(event: MotionEvent): Float {
         val x: Float = event.getX(event.findPointerIndex(0)) - event.getX(event.findPointerIndex(1))
         val y: Float = event.getY(event.findPointerIndex(0)) - event.getY(event.findPointerIndex(1))
@@ -150,43 +200,43 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        leftFromScreen=getLeft()
-        rightFromScreen=getRight()
+        leftFromScreen = getLeft()
+        rightFromScreen = getRight()
 
     }
 
 
     inner class ScaleGestureListener : ScaleGestureDetector.OnScaleGestureListener {
 
-        private var previousSpan:Float=0f
-        private var currentSpan:Float=0f
+        private var previousSpan: Float = 0f
+        private var currentSpan: Float = 0f
         override fun onScale(detector: ScaleGestureDetector?): Boolean {
-            if (flag==0) {
+            if (flag == 0) {
                 previousSpan = detector!!.previousSpan
                 currentSpan = detector.currentSpan
-            }else{
+            } else {
                 previousSpan = detector!!.currentSpan
                 currentSpan = detector.currentSpan
-                flag=0
+                flag = 0
             }
             if (System.currentTimeMillis() - oldTime > 100) {
                 Log.d("scaleGesture", "onScale" + scale)
                 // 缩小
                 // scale = preScale-detector.getScaleFactor()/3;
-                if (currentSpan>=previousSpan){
-                    scale = (currentSpan - previousSpan)/1000+preScale
-                }else {
-                    if (scale>=1)
-                    scale = -(previousSpan-currentSpan)/1000 +preScale
+                if (currentSpan >= previousSpan) {
+                    scale = (currentSpan - previousSpan) / 1000 + preScale
+                } else {
+                    if (scale >= 1)
+                        scale = -(previousSpan - currentSpan) / 1000 + preScale
                 }
-                Log.d("scale",scale.toString())
+                Log.d("scale", scale.toString())
                 if (scale >= 1) {
                     ViewHelper.setScaleX(this@ScaleFrameLayout, scale);// x方向上缩放
                     ViewHelper.setScaleY(this@ScaleFrameLayout, scale);// y方向上缩放
                 }
 
                 oldTime = System.currentTimeMillis()
-               // preScale=scale
+                // preScale=scale
 
             }
             return false
@@ -197,8 +247,13 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         }
 
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
-            preScale=scale
-            flag=1
+            lastMultiTouchTime = System.currentTimeMillis()
+            preScale = scale
+            flag = 1
         }
+    }
+
+    public fun setCannotModify() {
+        canModify = false
     }
 }

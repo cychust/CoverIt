@@ -251,13 +251,13 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float[] pts = {rectLeft, rectTop-lineWidth, rectLeft, rectTop + lineLength
+        float[] pts = {rectLeft, rectTop-lineWidth/2, rectLeft, rectTop + lineLength
                 , rectLeft, rectTop, rectLeft + lineLength, rectTop
-                , rectRight - lineLength, rectTop, rectRight+lineWidth, rectTop
+                , rectRight - lineLength, rectTop, rectRight+lineWidth/2, rectTop
                 , rectRight, rectTop, rectRight, rectTop + lineLength
-                , rectRight, rectDown - lineLength, rectRight, rectDown+lineWidth
+                , rectRight, rectDown - lineLength, rectRight, rectDown+lineWidth/2
                 , rectRight, rectDown, rectRight - lineLength, rectDown
-                , rectLeft-lineWidth, rectDown, rectLeft + lineLength, rectDown
+                , rectLeft-lineWidth/2, rectDown, rectLeft + lineLength, rectDown
                 , rectLeft, rectDown, rectLeft, rectDown - lineLength};     //画四角的黑线
         canvas.drawLines(pts,linePint);
 

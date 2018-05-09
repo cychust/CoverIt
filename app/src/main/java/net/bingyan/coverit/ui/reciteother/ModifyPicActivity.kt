@@ -39,7 +39,7 @@ import java.util.*
 class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
     private lateinit var btnSave: Button
 
-    private lateinit var picFrame: FrameLayout
+    private lateinit var picFrame: ScaleFrameLayout
     private lateinit var picture: AppCompatImageView
     private lateinit var rbSwitch: CheckBox
     private lateinit var rbSee: CheckBox
@@ -190,11 +190,22 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             moveY = p1.y
 
                             coverView.setMove(false)
-
-                            coverView.rectTop = beginY
-                            coverView.rectLeft = beginX
-                            coverView.rectRight = moveX
-                            coverView.rectDown = moveY
+                            if(moveX>beginX) {
+                                //coverView.rectTop = beginY
+                                coverView.rectLeft = beginX
+                                coverView.rectRight = moveX
+                                //coverView.rectDown = moveY
+                            }else{
+                                coverView.rectLeft=moveX
+                                coverView.rectRight=beginX
+                            }
+                            if (moveY>beginY){
+                                coverView.rectTop=beginY
+                                coverView.rectDown=moveY
+                            }else{
+                                coverView.rectTop=moveY
+                                coverView.rectDown=beginY
+                            }
 
                             coverView.invalidate()
                         }
@@ -204,6 +215,17 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView.setMove(true)
                             coverView.invalidate()
                             coverView.setMove(false)
+                            var tmp=0f
+                            if (moveX<beginX){
+                                tmp=moveX
+                                moveX=beginX
+                                beginX=tmp
+                            }
+                            if (moveY<beginY){
+                                tmp=moveY
+                                moveY=beginY
+                                beginY=tmp
+                            }
 
                             if(preWidTimes>=preHeiTimes){
                                 coverView.rectTop = when{
@@ -478,6 +500,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         view.setCanModify(false)
                     }
                     canModify = false
+                    picFrame.setCannotModify()
                 }
             }
         }
