@@ -186,6 +186,8 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
 
     }
 
+    
+
     fun distance(event: MotionEvent): Float {
         val x: Float = event.getX(event.findPointerIndex(0)) - event.getX(event.findPointerIndex(1))
         val y: Float = event.getY(event.findPointerIndex(0)) - event.getY(event.findPointerIndex(1))

@@ -31,8 +31,10 @@
             android:name="android.max_aspect"
             android:value="2.1" />
 
-        <activity android:name=".ui.reciteother.FeedBackActivity" />
-        <activity android:name=".ui.reciteother.AboutActivity" />
+        <activity android:name=".ui.reciteother.FeedBackActivity"
+            android:theme="@style/BaseTheme"/>
+        <activity android:name=".ui.reciteother.AboutActivity"
+            android:theme="@style/BaseTheme"/>
         <activity android:name=".ui.recitemain.ReciteMainActivity" />
 
         <provider
