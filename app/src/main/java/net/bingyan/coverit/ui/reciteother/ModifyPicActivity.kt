@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -14,6 +15,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -29,6 +31,8 @@ import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.PicConfigBean
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.data.local.bean.RecitePicBean
+import net.bingyan.coverit.util.DialogUtil.DialogUtil
+import net.bingyan.coverit.util.DialogUtil.listener.OnViewClickListener
 import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.util.LogUtil
 import net.bingyan.coverit.util.PhotoBitmapUtils
@@ -366,6 +370,23 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         }
     }
 
+    private fun addNewReciteBook_tmp(){
+        DialogUtil.Builder(supportFragmentManager).setLayoutRes(R.layout.dialog_pop_view_tmp)
+                .setWidth(600)
+                .setHeight(800)
+                .setScreenWidthAspect(this,0.8f)
+                .setScreenHeightAspect(this,0.3f)
+                .setGravity(Gravity.CENTER)
+                .setDimAmount(0.6f)
+                .setCancelable(false)
+                .addOnClickListener(R.id.create_cancel,R.id.create_save)
+                .setOnViewClickListener({viewHolder, view, tDialog ->
+                    when(view.id){
+                        R.id.create_cancel->Toast.LENGTH_LONG
+                        R.id.create_save->Toast.LENGTH_LONG
+                    } })
+                .create().show()
+    }
 
     private fun addPicTitle() {
         val builder= AlertDialog.Builder(this)
