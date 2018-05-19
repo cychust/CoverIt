@@ -60,8 +60,8 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_pic"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
+        android:layout_height="43dp"
+        android:background="#fafafa"
         android:orientation="horizontal">
 
         <CheckBox

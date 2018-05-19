@@ -8,6 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="GraAppTheme" parent="BaseTheme">
+        <!--item name="android:actionBarStyle">@style/ActionBarStyle</item-->
+    </style>
     <style name="AppTheme" parent="BaseTheme">
         <item name="actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:windowTranslucentStatus">true</item>

@@ -108,7 +108,8 @@
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:visibility="gone"
-            android:background="@color/grey"
+            android:background="#fafafa"
+            android:textColor="#323232"
             android:maxEms="100"/>
     </LinearLayout>
 </LinearLayout>

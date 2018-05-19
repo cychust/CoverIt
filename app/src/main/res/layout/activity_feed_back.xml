@@ -1,79 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
-    <RelativeLayout
+    android:fitsSystemWindows="true"
+    android:background="#f4f6f7"
+    tools:context=".ui.reciteother.FeedBackActivity">
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <net.bingyan.coverit.widget.TitleBar
-            android:id="@+id/titleBar"
+        android:layout_height="45dp"
+        android:id="@+id/appBarLayout"
+        android:layout_marginBottom="0dp"
+        android:layout_marginStart="0dp">
+
+        <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            />
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/titleBar"
-            android:layout_marginTop="20dp"
-            android:background="@color/transparent"
-            android:textColor="@color/white"
-            android:text="@string/btn_submit"
-            android:textSize="16sp"/>
-    </RelativeLayout>
+            android:layout_height="match_parent"
+            android:layout_marginStart="9dp">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grey_white"
-        tools:context="net.bingyan.coverit.ui.reciteother.FeedBackActivity">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:orientation="horizontal"
+                android:padding="0dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true">
+                    <ImageView
+                        android:id="@+id/back_pic"
+                        android:layout_width="13dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_gravity="center_vertical"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/back_white" />
+                    <TextView
+                        android:id="@+id/back_text_feedback"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:text="返回"
+                        android:textColor="@color/white"
+                        app:layout_constraintStart_toEndOf="@+id/back_pic"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="反馈"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/et_suggestion"
-            android:layout_width="0dp"
-            android:layout_height="250dp"
-            android:layout_marginTop="15dp"
-            android:inputType="textMultiLine"
-            android:background="@color/white"
-            android:gravity="top"
-            android:hint="@string/hint"
-            android:maxLines="10"
-            android:padding="5dp"
-            android:textColorHint="@color/colorPrimary"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="31dp"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@color/transparent"
+                    android:text="@string/btn_submit"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        <EditText
-            android:id="@+id/et_address"
-            android:layout_width="match_parent"
-            android:layout_height="47dp"
-            android:layout_marginBottom="100dp"
-            android:layout_marginTop="15dp"
-            android:inputType="textEmailAddress"
-            android:maxLines="2"
-            android:background="@color/white"
-            android:hint="@string/hint_call"
-            android:paddingEnd="5dp"
-            android:paddingStart="5dp"
-            android:textColorHint="@color/colorPrimary"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_suggestion"
-            app:layout_constraintVertical_bias="0.036" />
+    </android.support.design.widget.AppBarLayout>
 
-    </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+   <include layout="@layout/feedback_content"/>
+</android.support.design.widget.CoordinatorLayout>
 
 

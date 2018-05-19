@@ -67,6 +67,10 @@
             android:src="@drawable/logo_beita" />
 
         <TextView
+            android:paddingTop="14dp"
+            android:paddingLeft="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="14dp"
             android:id="@+id/tv_content_text"
             android:layout_width="match_parent"
             android:layout_height="78dp"
