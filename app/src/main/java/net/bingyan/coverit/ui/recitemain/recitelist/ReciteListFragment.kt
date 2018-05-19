@@ -97,8 +97,10 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         rvList.layoutManager= LinearLayoutManager(context)
         rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList)
         if (rvList.adapter.itemCount==0){
-            llList.backgroundResource=R.drawable.nothing_bg
-        }else llList.backgroundResource=R.color.white
+            //llList.backgroundResource=R.drawable.nothing_bg
+           // rvList.backgroundResource=R.drawable.nothing_bg
+            rvList.backgroundResource=R.drawable.nothing
+        }else rvList.backgroundResource=R.color.white
     }
 
     fun invalidateData() {
