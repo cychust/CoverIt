@@ -37,6 +37,8 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
 
     private lateinit var llList:LinearLayout
 
+    private var belonglist= mutableListOf<String>()
+
     private var titleList= mutableListOf<String>()
 
     private var timeList= mutableListOf<Date>()
@@ -87,19 +89,21 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
                 titleList.add(0, it.title)
                 picPathList.add(0, it.picpath)
                 textList.add(0, it.text)
+                belonglist.add(0,it.belonging)
             } else {
                 timeList.add(it.date)
                 titleList.add(it.title)
                 picPathList.add(it.picpath)
                 textList.add(it.text)
+                belonglist.add(it.belonging)
             }
         }
         rvList.layoutManager= LinearLayoutManager(context)
-        rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList)
+        rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList,belonglist)
         if (rvList.adapter.itemCount==0){
             //llList.backgroundResource=R.drawable.nothing_bg
            // rvList.backgroundResource=R.drawable.nothing_bg
-            rvList.backgroundResource=R.drawable.nothing
+            rvList.backgroundResource=R.drawable.nothing_bg
         }else rvList.backgroundResource=R.color.white
     }
 

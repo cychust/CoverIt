@@ -31,7 +31,7 @@ import java.util.*
  * Date         2017.12.9
  * Time         16:56
  */
-class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActivity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>(), PopupCallBack {
+class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActivity, var timeList: List<Date>, var titleList: List<String>, var picAddress: List<String>, var textList: List<String>,var being:List<String>) : RecyclerView.Adapter<ReciteListAdapter.ViewHolder>(), PopupCallBack {
     val TYPE_TOP: Int = 0
 
     val TYPE_NORMAL: Int = 1
@@ -110,7 +110,7 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                 //this.tvLine.visibility = View.INVISIBLE
                 this.tvDot.setBackgroundResource(R.drawable.top)
                 this.tvTime.text = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeList[position])
-                this.tvTitle.text = titleList[position]
+                this.tvTitle.text = being[position]
             }
         } else if (getItemViewType(position) == TYPE_NORMAL) {
             holder.apply {
@@ -128,7 +128,7 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                 this.tvLine.visibility = View.VISIBLE
                 this.tvDot.setBackgroundResource(R.drawable.cicle)
                 this.tvTime.text = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeList[position])
-                this.tvTitle.text = titleList[position]
+                this.tvTitle.text = being[position]
             }
         }
     }

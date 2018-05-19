@@ -171,14 +171,14 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
                         ((dxTotal > 0 && dx < 0) || (dxTotal < 0 && dx > 0)))
         ) {
             //if ((dxTotal>0&&dx<0)||(dxTotal<0&&dx>0)){
-            dxTotal += dx / 50                         //降低灵敏度
+            dxTotal += dx / 30                         //降低灵敏度
 
         }
         if (oriYSpace >= Math.abs(dyTotal) ||
                 (oriYSpace < Math.abs(dyTotal)
                         &&
                         ((dyTotal > 0 && dy < 0) || (dyTotal < 0 && dy > 0)))) {
-            dyTotal += dy / 50                        //降低灵敏度
+            dyTotal += dy / 30                        //降低灵敏度
         }
 
         ViewHelper.setTranslationX(this, dxTotal.toFloat())

@@ -316,24 +316,27 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
 
             R.id.switch_button -> {
-                if (p1) {
-                    val changeList = modifyText.blackList
-                    modifyText.blackList = modifyText.redList
-                    modifyText.redList = changeList
+                if (modifyText.text.isEmpty()) {
 
-                    modifyText.setText(content)
-                    modifyText.drawBlack()
-                    modifyText.drawRed()
-                }
+                } else {
+                    if (p1) {
+                        val changeList = modifyText.blackList
+                        modifyText.blackList = modifyText.redList
+                        modifyText.redList = changeList
 
-                if (!p1) {
-                    val changeList = modifyText.blackList
-                    modifyText.blackList = modifyText.redList
-                    modifyText.redList = changeList
+                        modifyText.setText(content)
+                        modifyText.drawBlack()
+                        modifyText.drawRed()
+                    }
+                    if (!p1) {
+                        val changeList = modifyText.blackList
+                        modifyText.blackList = modifyText.redList
+                        modifyText.redList = changeList
 
-                    modifyText.setText(content)
-                    modifyText.drawBlack()
-                    modifyText.drawRed()
+                        modifyText.setText(content)
+                        modifyText.drawBlack()
+                        modifyText.drawRed()
+                    }
                 }
             }
 
