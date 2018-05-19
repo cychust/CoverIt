@@ -44,7 +44,7 @@
         android:layout_height="1dp"
         android:background="@color/grey" />
     <android.support.v7.widget.RecyclerView
-        android:background="@drawable/nothing"
+        android:background="@drawable/bg_placeholder"
         android:id="@+id/rv_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

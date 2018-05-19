@@ -103,7 +103,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
         if (rvList.adapter.itemCount==0){
             //llList.backgroundResource=R.drawable.nothing_bg
            // rvList.backgroundResource=R.drawable.nothing_bg
-            rvList.backgroundResource=R.drawable.nothing_bg
+            rvList.backgroundResource=R.drawable.bg_placeholder
         }else rvList.backgroundResource=R.color.white
     }
 
