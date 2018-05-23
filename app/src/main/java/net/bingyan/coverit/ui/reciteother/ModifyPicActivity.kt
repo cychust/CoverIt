@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageView
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -37,6 +38,7 @@ import net.bingyan.coverit.util.FileUtils
 import net.bingyan.coverit.util.LogUtil
 import net.bingyan.coverit.util.PhotoBitmapUtils
 import net.bingyan.coverit.widget.ModifyPicView
+import org.jetbrains.anko.db.NULL
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
 
@@ -62,16 +64,20 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
     private val TAG = "PicView"
 
-    private var removeView: ModifyPicView? =null
+    private var removeView: ModifyPicView? = null
     private lateinit var coverView: ModifyPicView
 
     private var canModify = true
+
+    private var picDate: Date? = null
+
+    private var previousTitle: String? = null
 
     private lateinit var bitmap: Bitmap
 
     private lateinit var picRealm: Realm
 
-    private lateinit var picItem:RecitePicBean
+    private lateinit var picItem: RecitePicBean
 
     private lateinit var resultText: String
 
@@ -79,7 +85,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
 
     private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
-    private lateinit var lcPic:ConstraintLayout
+    private lateinit var lcPic: ConstraintLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,9 +95,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             picPath = intent.getStringExtra("pic")
         picPath = PhotoBitmapUtils.amendRotatePhoto(picPath)
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
-        window.decorView.fitsSystemWindows=true
+        window.decorView.fitsSystemWindows = true
 
-        picRealm= Realm.getDefaultInstance()
+        picRealm = Realm.getDefaultInstance()
         initView()
     }
 
@@ -102,7 +109,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         rbSwitch = findViewById(R.id.switch_button)
         rbSee = findViewById(R.id.see_button)
         rbModify = findViewById(R.id.modify_button)
-        lcPic=findViewById(R.id.cl_pic)
+        lcPic = findViewById(R.id.cl_pic)
         picGuide = findViewById(R.id.pic_guide)
 
         titleBar.setBackgroundResource(R.drawable.bg_actionbar)
@@ -129,7 +136,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         val myOptions = BitmapFactory.Options()
         myOptions.inPreferredConfig = Bitmap.Config.RGB_565
 
-        bitmap = BitmapFactory.decodeFile(picPath,myOptions)
+        bitmap = BitmapFactory.decodeFile(picPath, myOptions)
 
         Glide.with(this).load(bitmap).into(picture)
 
@@ -141,30 +148,36 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         }
 
 
-    if(intent.getSerializableExtra("picData")!=null){
-        val redDataList=intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
+        if (intent.getSerializableExtra("picData") != null) {
+            val redDataList = intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
 
-        redDataList.forEach {
-            coverView = ModifyPicView(context, picPath)
-            viewList.add(coverView)
-            picFrame.addView(coverView)
-            coverView.rectLeft = it.left
-            coverView.rectTop = it.top
-            coverView.rectDown = it.bottom
-            coverView.rectRight = it.right
-            coverView.setCanClick(true)
-            coverView.setThisActivity(this)
-            coverView.invalidate()
+            redDataList.forEach {
+                coverView = ModifyPicView(context, picPath)
+                viewList.add(coverView)
+                picFrame.addView(coverView)
+                coverView.rectLeft = it.left
+                coverView.rectTop = it.top
+                coverView.rectDown = it.bottom
+                coverView.rectRight = it.right
+                coverView.setCanClick(true)
+                coverView.setThisActivity(this)
+                coverView.invalidate()
+            }
         }
-    }
+        if (intent.getSerializableExtra("picDate") != null) {
+            picDate = intent.getSerializableExtra("picDate") as Date
+            // picItem = picRealm.where(ReciteBookBean::class.java).equalTo("picDate",picDate).findFirst()
+            previousTitle=intent.getStringExtra("picTitle")
+            Log.d("bookTitle previous",previousTitle)
+        }
 
         class PictureListener : View.OnTouchListener {
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
                 if (canModify) {
                     val preWidTimes = bitmap.width.toDouble() / picture.width.toDouble()
                     val preHeiTimes = bitmap.height.toDouble() / picture.height.toDouble()
-                    val freeHeiSpace=(picture.height-bitmap.height/preWidTimes)/2
-                    val freeWidSpace=(picture.width-bitmap.width/preHeiTimes)/2
+                    val freeHeiSpace = (picture.height - bitmap.height / preWidTimes) / 2
+                    val freeWidSpace = (picture.width - bitmap.width / preHeiTimes) / 2
                     val action = p1?.action
                     if (isNewRect) {
                         coverView = ModifyPicView(context, picPath)
@@ -194,21 +207,21 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             moveY = p1.y
 
                             coverView.setMove(false)
-                            if(moveX>beginX) {
+                            if (moveX > beginX) {
                                 //coverView.rectTop = beginY
                                 coverView.rectLeft = beginX
                                 coverView.rectRight = moveX
                                 //coverView.rectDown = moveY
-                            }else{
-                                coverView.rectLeft=moveX
-                                coverView.rectRight=beginX
+                            } else {
+                                coverView.rectLeft = moveX
+                                coverView.rectRight = beginX
                             }
-                            if (moveY>beginY){
-                                coverView.rectTop=beginY
-                                coverView.rectDown=moveY
-                            }else{
-                                coverView.rectTop=moveY
-                                coverView.rectDown=beginY
+                            if (moveY > beginY) {
+                                coverView.rectTop = beginY
+                                coverView.rectDown = moveY
+                            } else {
+                                coverView.rectTop = moveY
+                                coverView.rectDown = beginY
                             }
 
                             coverView.invalidate()
@@ -219,46 +232,46 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                             coverView.setMove(true)
                             coverView.invalidate()
                             coverView.setMove(false)
-                            var tmp=0f
-                            if (moveX<beginX){
-                                tmp=moveX
-                                moveX=beginX
-                                beginX=tmp
+                            var tmp = 0f
+                            if (moveX < beginX) {
+                                tmp = moveX
+                                moveX = beginX
+                                beginX = tmp
                             }
-                            if (moveY<beginY){
-                                tmp=moveY
-                                moveY=beginY
-                                beginY=tmp
+                            if (moveY < beginY) {
+                                tmp = moveY
+                                moveY = beginY
+                                beginY = tmp
                             }
 
-                            if(preWidTimes>=preHeiTimes){
-                                coverView.rectTop = when{
-                                    beginY-freeHeiSpace<0->freeHeiSpace
-                                    beginY+freeHeiSpace>picture.height->picture.height-freeHeiSpace
-                                    else->beginY.toDouble()
+                            if (preWidTimes >= preHeiTimes) {
+                                coverView.rectTop = when {
+                                    beginY - freeHeiSpace < 0 -> freeHeiSpace
+                                    beginY + freeHeiSpace > picture.height -> picture.height - freeHeiSpace
+                                    else -> beginY.toDouble()
                                 }.toFloat()
                                 coverView.rectLeft = beginX
                                 coverView.rectRight = moveX
-                                coverView.rectDown = when{
-                                    moveY-freeHeiSpace<0->freeHeiSpace
-                                    moveY+freeHeiSpace>picture.height->picture.height-freeHeiSpace
-                                    else->moveY.toDouble()
+                                coverView.rectDown = when {
+                                    moveY - freeHeiSpace < 0 -> freeHeiSpace
+                                    moveY + freeHeiSpace > picture.height -> picture.height - freeHeiSpace
+                                    else -> moveY.toDouble()
                                 }.toFloat()
-                            }else{
+                            } else {
                                 coverView.rectTop = beginY
-                                coverView.rectLeft = when{
-                                    beginX-freeWidSpace<0->freeWidSpace
-                                    beginX+freeWidSpace>picture.width->picture.width-freeWidSpace
-                                    else->beginX.toDouble()
+                                coverView.rectLeft = when {
+                                    beginX - freeWidSpace < 0 -> freeWidSpace
+                                    beginX + freeWidSpace > picture.width -> picture.width - freeWidSpace
+                                    else -> beginX.toDouble()
                                 }.toFloat()
-                                coverView.rectRight = when{
-                                    moveX-freeWidSpace<0->freeWidSpace
-                                    moveX+freeWidSpace>picture.width->picture.width-freeWidSpace
-                                    else->moveX.toDouble()
+                                coverView.rectRight = when {
+                                    moveX - freeWidSpace < 0 -> freeWidSpace
+                                    moveX + freeWidSpace > picture.width -> picture.width - freeWidSpace
+                                    else -> moveX.toDouble()
                                 }.toFloat()
                                 coverView.rectDown = moveY
                             }
-                            LogUtil.d(coverView.rectTop.toString()+"\n"+coverView.rectLeft.toString()+"\n"+coverView.rectRight.toString()+"\n"+coverView.rectDown.toString())
+                            LogUtil.d(coverView.rectTop.toString() + "\n" + coverView.rectLeft.toString() + "\n" + coverView.rectRight.toString() + "\n" + coverView.rectDown.toString())
                             coverView.invalidate()
                         }
                     }
@@ -280,17 +293,33 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private fun initCustomOptionPicker() {
         pvCustomOptions = OptionsPickerBuilder(this, OnOptionsSelectListener { options1, _, _, _ ->
             savePic()
-            val selectedItem=reciteBookResults[options1]
+            val selectedItem = reciteBookResults[options1]
             picRealm.executeTransaction {
-                picItem.belonging=selectedItem!!.pickerViewText
+                picItem.belonging = selectedItem!!.pickerViewText
             }
             picRealm.executeTransaction({
                 //先查找后得到对象
-                val user = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",selectedItem!!.pickerViewText).findFirst()
-                user!!.picNum +=1
-                user!!.picList.add(picItem)
-                user.bookDate= Date(System.currentTimeMillis())
-                Toast.makeText(this,"已成功添加",Toast.LENGTH_SHORT).show()
+                //   val previousUser=picRealm.where(ReciteBookBean::class.java).equalTo(bookTile)
+                val user = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", selectedItem!!.pickerViewText).findFirst()
+                if (previousTitle==null){
+                    user!!.picNum += 1
+                    user!!.picList.add(picItem)
+                    user.bookDate = Date(System.currentTimeMillis())
+                }else {
+                    if (user!!.bookTitle == previousTitle) {
+                        user.bookDate = Date(System.currentTimeMillis())
+                    } else {
+                        user!!.picNum += 1
+                        user!!.picList.add(picItem)
+                        user.bookDate = Date(System.currentTimeMillis())
+
+                        val previousUser = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", previousTitle).findFirst()
+
+                        previousUser!!.picNum -= 1
+                        previousUser!!.picList.remove(picItem)
+                    }
+                }
+                    Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
                 finish()
             })
         })
@@ -341,11 +370,11 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         val dialog = builder.create()
         //dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.show()
-        if(dialog.getButton(AlertDialog.BUTTON_POSITIVE)!=null) {
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 resultText = textInput.text.toString()
                 if (!resultText.trim().isEmpty()) {
-                    if(picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",resultText).findAll().isEmpty()){
+                    if (picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", resultText).findAll().isEmpty()) {
                         picRealm.beginTransaction()
                         val bookItem = picRealm.createObject(ReciteBookBean::class.java)
                         bookItem.bookTitle = resultText
@@ -354,48 +383,49 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         bookItem.isTop = false
                         bookItem.bookDate = Date(System.currentTimeMillis())
                         picRealm.commitTransaction()
-                    }else {
-                        textInput.error="记背本已存在,不能重复创建!"
+                    } else {
+                        textInput.error = "记背本已存在,不能重复创建!"
                         return@setOnClickListener
                     }
-                }else {
+                } else {
                     textInput.error = "记背本名称不能为空!"
                     return@setOnClickListener
                 }
                 pvCustomOptions.setPicker(picRealm.copyFromRealm(reciteBookResults))
                 dialog.dismiss()
-                pvCustomOptions.setSelectOptions(reciteBookResults.size-1)
+                pvCustomOptions.setSelectOptions(reciteBookResults.size - 1)
                 pvCustomOptions.show()
             }
         }
     }
 
-    private fun addNewReciteBook_tmp(){
+    private fun addNewReciteBook_tmp() {
         DialogUtil.Builder(supportFragmentManager).setLayoutRes(R.layout.dialog_pop_view_tmp)
                 .setWidth(600)
                 .setHeight(800)
-                .setScreenWidthAspect(this,0.8f)
-                .setScreenHeightAspect(this,0.3f)
+                .setScreenWidthAspect(this, 0.8f)
+                .setScreenHeightAspect(this, 0.3f)
                 .setGravity(Gravity.CENTER)
                 .setDimAmount(0.6f)
                 .setCancelable(false)
-                .addOnClickListener(R.id.create_cancel,R.id.create_save)
-                .setOnViewClickListener({viewHolder, view, tDialog ->
-                    when(view.id){
-                        R.id.create_cancel->Toast.LENGTH_LONG
-                        R.id.create_save->Toast.LENGTH_LONG
-                    } })
+                .addOnClickListener(R.id.create_cancel, R.id.create_save)
+                .setOnViewClickListener({ viewHolder, view, tDialog ->
+                    when (view.id) {
+                        R.id.create_cancel -> Toast.LENGTH_LONG
+                        R.id.create_save -> Toast.LENGTH_LONG
+                    }
+                })
                 .create().show()
     }
 
     private fun addPicTitle() {
-        val builder= AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle("给这张图片起个名字吧")
 
-        val dialogContent=layoutInflater.inflate(R.layout.custom_dialog,null)
+        val dialogContent = layoutInflater.inflate(R.layout.custom_dialog, null)
         builder.setView(dialogContent)
 
-        val textInput=dialogContent.findViewById<TextInputEditText>(R.id.input_text)
+        val textInput = dialogContent.findViewById<TextInputEditText>(R.id.input_text)
 
         textInput.hint = "添加图片名称"
 
@@ -405,39 +435,61 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         builder.setPositiveButton("确定", { dialog, which ->
             run {
                 resultText = textInput.text.toString()
-                if (!resultText.trim().isEmpty()){
+                if (!resultText.trim().isEmpty()) {
                     dialog.dismiss()
                     savePic()
-                }else Toast.makeText(this,"图片名称不能为空!",Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(this, "图片名称不能为空!", Toast.LENGTH_SHORT).show()
             }
         })
-        builder.setNegativeButton("取消", { dialog, which -> run {
-            dialog.dismiss()
-        } })
-        val dialog=builder.create()
+        builder.setNegativeButton("取消", { dialog, which ->
+            run {
+                dialog.dismiss()
+            }
+        })
+        val dialog = builder.create()
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         dialog.show()
     }
 
     private fun savePic() {
-        picRealm.beginTransaction()
-        picItem=picRealm.createObject(RecitePicBean::class.java)
-        picItem.picTitle=resultText
-        picItem.isTop=false
-        picItem.picDate= Date(System.currentTimeMillis())
-        picItem.picPath = FileUtils.saveBitmap(bitmap)
+        if (picDate == null) {
+            picRealm.beginTransaction()
+            picItem = picRealm.createObject(RecitePicBean::class.java)
+            picItem.picTitle = resultText
+            picItem.isTop = false
+            picItem.picDate = Date(System.currentTimeMillis())
+            picItem.picPath = FileUtils.saveBitmap(bitmap)
 
-        for (modifyPicView:ModifyPicView in viewList){
-            val picConfig=PicConfigBean()
-            picConfig.left=modifyPicView.rectLeft
-            picConfig.top=modifyPicView.rectTop
-            picConfig.right=modifyPicView.rectRight
-            picConfig.bottom =modifyPicView.rectDown
-            picItem.picConfigList.add(picConfig)
+            for (modifyPicView: ModifyPicView in viewList) {
+                val picConfig = PicConfigBean()
+                picConfig.left = modifyPicView.rectLeft
+                picConfig.top = modifyPicView.rectTop
+                picConfig.right = modifyPicView.rectRight
+                picConfig.bottom = modifyPicView.rectDown
+                picItem.picConfigList.add(picConfig)
+            }
+
+            picRealm.commitTransaction()
+        } else {
+            picRealm.beginTransaction()
+            picItem = picRealm.where(RecitePicBean::class.java).equalTo("picDate", picDate).findFirst()!!
+
+            picItem.picTitle = resultText
+            picItem.isTop = false
+            picItem.picDate = Date(System.currentTimeMillis())
+            picItem.picPath = FileUtils.saveBitmap(bitmap)
+
+            for (modifyPicView: ModifyPicView in viewList) {
+                val picConfig = PicConfigBean()
+                picConfig.left = modifyPicView.rectLeft
+                picConfig.top = modifyPicView.rectTop
+                picConfig.right = modifyPicView.rectRight
+                picConfig.bottom = modifyPicView.rectDown
+                picItem.picConfigList.add(picConfig)
+            }
+            picRealm.commitTransaction()
         }
-
-        picRealm.commitTransaction()
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
@@ -457,34 +509,34 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         view.setSwitch(true)
                         val preWidTimes = bitmap.width.toDouble() / picture.width.toDouble()
                         val preHeiTimes = bitmap.height.toDouble() / picture.height.toDouble()
-                        if(preWidTimes>=preHeiTimes){
-                            val freeHeiSpace=(picture.height-bitmap.height/preWidTimes)/2
+                        if (preWidTimes >= preHeiTimes) {
+                            val freeHeiSpace = (picture.height - bitmap.height / preWidTimes) / 2
                             view.setCalRectLeft(view.rectLeft)
-                            view.setCalRectTop(when{
-                                view.rectTop-freeHeiSpace<0->freeHeiSpace
-                                view.rectTop+freeHeiSpace>picture.height->picture.height-freeHeiSpace
-                                else->view.rectTop-freeHeiSpace
+                            view.setCalRectTop(when {
+                                view.rectTop - freeHeiSpace < 0 -> freeHeiSpace
+                                view.rectTop + freeHeiSpace > picture.height -> picture.height - freeHeiSpace
+                                else -> view.rectTop - freeHeiSpace
                             }.toFloat())
                             view.setCalRectRight(view.rectRight)
-                            view.setCalRectDown(when{
-                                view.rectDown-freeHeiSpace<0->freeHeiSpace
-                                view.rectDown+freeHeiSpace>picture.height->picture.height-freeHeiSpace
-                                else->view.rectDown-freeHeiSpace
+                            view.setCalRectDown(when {
+                                view.rectDown - freeHeiSpace < 0 -> freeHeiSpace
+                                view.rectDown + freeHeiSpace > picture.height -> picture.height - freeHeiSpace
+                                else -> view.rectDown - freeHeiSpace
                             }.toFloat())
                             view.setWidTimes(preWidTimes)
                             view.setHeiTimes(preWidTimes)
-                        }else{
-                            val freeWidSpace=(picture.width-bitmap.width/preHeiTimes)/2
-                            view.setCalRectLeft(when{
-                                view.rectLeft-freeWidSpace<0->freeWidSpace
-                                view.rectLeft+freeWidSpace>picture.width->picture.width-freeWidSpace
-                                else->view.rectLeft-freeWidSpace
+                        } else {
+                            val freeWidSpace = (picture.width - bitmap.width / preHeiTimes) / 2
+                            view.setCalRectLeft(when {
+                                view.rectLeft - freeWidSpace < 0 -> freeWidSpace
+                                view.rectLeft + freeWidSpace > picture.width -> picture.width - freeWidSpace
+                                else -> view.rectLeft - freeWidSpace
                             }.toFloat())
                             view.setCalRectTop(view.rectTop)
-                            view.setCalRectRight(when{
-                                view.rectRight-freeWidSpace<0->freeWidSpace
-                                view.rectRight+freeWidSpace>picture.width->picture.width-freeWidSpace
-                                else->view.rectRight-freeWidSpace
+                            view.setCalRectRight(when {
+                                view.rectRight - freeWidSpace < 0 -> freeWidSpace
+                                view.rectRight + freeWidSpace > picture.width -> picture.width - freeWidSpace
+                                else -> view.rectRight - freeWidSpace
                             }.toFloat())
                             view.setCalRectDown(view.rectDown)
                             view.setWidTimes(preHeiTimes)
@@ -512,7 +564,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             R.id.modify_button -> {
                 if (p1) {
                     for (view: ModifyPicView in this.viewList) {
-                       view.setCanModify(true)
+                        view.setCanModify(true)
                     }
                     canModify = true
                 }

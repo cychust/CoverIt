@@ -25,31 +25,31 @@ import java.util.*
  * Date         2017.12.9
  * Time         0:30
  */
-class ReciteListFragment: Fragment(),ReciteListContract.View {
+class ReciteListFragment : Fragment(), ReciteListContract.View {
     override lateinit var reciteListRealm: Realm
 
-    private val TAKE_PHOTO=1
-    private val SELECT_ALBUM=2
+    private val TAKE_PHOTO = 1
+    private val SELECT_ALBUM = 2
 
-    private lateinit var ivNewText:ImageView
-    private lateinit var ivNewPic:ImageView
-    private lateinit var rvList:RecyclerView
+    private lateinit var ivNewText: ImageView
+    private lateinit var ivNewPic: ImageView
+    private lateinit var rvList: RecyclerView
 
-    private lateinit var llList:LinearLayout
+    private lateinit var llList: LinearLayout
 
-    private var belonglist= mutableListOf<String>()
+    private var belonglist = mutableListOf<String>()
 
-    private var titleList= mutableListOf<String>()
+    private var titleList = mutableListOf<String>()
 
-    private var timeList= mutableListOf<Date>()
-    private var picPathList= mutableListOf<String>()
-    private var textList= mutableListOf<String>()
+    private var timeList = mutableListOf<Date>()
+    private var picPathList = mutableListOf<String>()
+    private var textList = mutableListOf<String>()
     override lateinit var presenter: ReciteListContract.Presenter
-
 
 
     override fun onResume() {
         super.onResume()
+        //synchronized(this) {
         presenter.start()
     }
 
@@ -59,12 +59,12 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-       val root=inflater.inflate(R.layout.fragment_recitelist,container,false)
-        with(root){
-            ivNewText=findViewById(R.id.iv_new_text)
-            ivNewPic=findViewById(R.id.iv_new_pic)
-            rvList=findViewById(R.id.rv_list)
-            llList=findViewById(R.id.ll_list)
+        val root = inflater.inflate(R.layout.fragment_recitelist, container, false)
+        with(root) {
+            ivNewText = findViewById(R.id.iv_new_text)
+            ivNewPic = findViewById(R.id.iv_new_pic)
+            rvList = findViewById(R.id.rv_list)
+            llList = findViewById(R.id.ll_list)
         }
         ivNewText.setOnClickListener {
             presenter.createNewText()
@@ -78,10 +78,12 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
     override fun startTextActivity() {
         startActivity(context!!.intentFor<ModifyTextActivity>("title" to "", "content" to "", "redData" to mutableListOf<RedData>()))
     }
+
     override fun loadListData(parentList: MutableList<ParentListBean>) {
         timeList.clear()
         titleList.clear()
         picPathList.clear()
+        belonglist.clear()
         textList.clear()
         parentList.forEach {
             if (it.isTop) {
@@ -89,7 +91,7 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
                 titleList.add(0, it.title)
                 picPathList.add(0, it.picpath)
                 textList.add(0, it.text)
-                belonglist.add(0,it.belonging)
+                belonglist.add(0, it.belonging)
             } else {
                 timeList.add(it.date)
                 titleList.add(it.title)
@@ -98,13 +100,13 @@ class ReciteListFragment: Fragment(),ReciteListContract.View {
                 belonglist.add(it.belonging)
             }
         }
-        rvList.layoutManager= LinearLayoutManager(context)
-        rvList.adapter= ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!,timeList,titleList,picPathList,textList,belonglist)
-        if (rvList.adapter.itemCount==0){
+        rvList.layoutManager = LinearLayoutManager(context)
+        rvList.adapter = ReciteListAdapter(context!!, (activity as ReciteMainActivity?)!!, timeList, titleList, picPathList, textList, belonglist)
+        if (rvList.adapter.itemCount == 0) {
             //llList.backgroundResource=R.drawable.nothing_bg
-           // rvList.backgroundResource=R.drawable.nothing_bg
-            rvList.backgroundResource=R.drawable.bg_placeholder
-        }else rvList.backgroundResource=R.color.white
+            // rvList.backgroundResource=R.drawable.nothing_bg
+            rvList.backgroundResource = R.drawable.bg_placeholder
+        } else rvList.backgroundResource = R.color.white
     }
 
     fun invalidateData() {

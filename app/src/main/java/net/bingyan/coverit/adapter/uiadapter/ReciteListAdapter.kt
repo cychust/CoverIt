@@ -59,6 +59,10 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                     val configList= mutableListOf<PicConfigBean>()
                     configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
                     picIntent.putExtra("picData",configList as Serializable)
+                    val data=itemResult.picDate
+                    picIntent.putExtra("picDate",data)
+                    val picTitle=itemResult.belonging
+                    picIntent.putExtra("picTitle",picTitle)
                     context.startActivity(picIntent)
                 }else{
                     val itemResult=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
