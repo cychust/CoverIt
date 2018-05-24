@@ -25,7 +25,6 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /**
  * Author       zdlly
  * Date         2017.12.9
@@ -63,6 +62,9 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                     picIntent.putExtra("picDate",data)
                     val picTitle=itemResult.belonging
                     picIntent.putExtra("picTitle",picTitle)
+
+                    //picIntent.putExtra("picItem",itemResult as Serializable)
+
                     context.startActivity(picIntent)
                 }else{
                     val itemResult=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
@@ -72,6 +74,12 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
                     val configList= mutableListOf<TextConfigBean>()
                     configList.addAll(listRealm.copyFromRealm(itemResult).textConfigList)
                     textIntent.putExtra("redData",configList as Serializable)
+
+                    val textDate=itemResult.textDate
+                    textIntent.putExtra("textDate",textDate)
+                    val textBelong=itemResult.belonging
+                    textIntent.putExtra("belong",textBelong)
+                  //  textIntent.putExtra("textItem",itemResult as Serializable)
                     context.startActivity(textIntent)
                 }
 

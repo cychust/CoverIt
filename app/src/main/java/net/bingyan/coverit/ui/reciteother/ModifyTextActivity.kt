@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -43,6 +44,12 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     private lateinit var content: String
 
     private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
+
+    private var previousTextItem:ReciteTextBean?=null
+
+    private var textDate: Date? = null
+
+    private var previousBelong: String? = null
 
     private var redList = mutableListOf<RedData>()
 
@@ -128,6 +135,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
         }
 
+        if (intent.getSerializableExtra("textDate") != null) {
+            textDate = intent.getSerializableExtra("textDate") as Date
+            // picItem = picRealm.where(ReciteBookBean::class.java).equalTo("picDate",picDate).findFirst()
+            previousBelong=intent.getStringExtra("belong")
+            //previousTextItem=intent.getSerializableExtra("textItem") as ReciteTextBean
+            previousTextItem=textRealm.where(ReciteTextBean::class.java).equalTo("textDate",textDate).findFirst()
+            //Log.d("bookTitle previous",previousTitle)
+        }
 
         if (FileUtils.isTextFirstOpen(this)) {
             textGuide.visibility = View.VISIBLE
@@ -142,18 +157,39 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         modifyText.calculateText()
         redList = modifyText.redList
 
-        textRealm.beginTransaction()
-        textItem = textRealm.createObject(ReciteTextBean::class.java)
-        textItem.text = content.trim()
-        textItem.textDate = Date(System.currentTimeMillis())
-        textItem.textTitle = modifyTitle.text.trim().toString()
-        for (redData: RedData in redList) {
-            val textConfig = TextConfigBean()
-            textConfig.previous = redData.previous
-            textConfig.next = redData.next
-            textItem.textConfigList.add(textConfig)
+        if (textDate==null){
+            textRealm.beginTransaction()
+            textItem = textRealm.createObject(ReciteTextBean::class.java)
+            textItem.text = content.trim()
+            textItem.textDate = Date(System.currentTimeMillis())
+            textItem.textTitle = modifyTitle.text.trim().toString()
+            for (redData: RedData in redList) {
+                val textConfig = TextConfigBean()
+                textConfig.previous = redData.previous
+                textConfig.next = redData.next
+                textItem.textConfigList.add(textConfig)
+            }
+            textRealm.commitTransaction()
+        }else{
+            textRealm.beginTransaction()
+            textItem=textRealm.where(ReciteTextBean::class.java).equalTo("textDate",textDate).findFirst()!!
+            //textItem = textRealm.createObject(ReciteTextBean::class.java)
+            textItem.text = content.trim()
+            textItem.textDate = Date(System.currentTimeMillis())
+            textItem.textTitle = modifyTitle.text.trim().toString()
+
+            textItem.textConfigList.clear()
+
+            for (redData: RedData in redList) {
+                val textConfig = TextConfigBean()
+                textConfig.previous = redData.previous
+                textConfig.next = redData.next
+                textItem.textConfigList.add(textConfig)
+            }
+            textRealm.commitTransaction()
         }
-        textRealm.commitTransaction()
+
+
     }
 
     private fun initCustomOptionPicker() {//条件选择器初始化，自定义布局
@@ -172,10 +208,27 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
             textRealm.executeTransaction({
                 //先查找后得到对象
+
+
+
                 val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", selectedItem!!.pickerViewText).findFirst()
-                user!!.textNum += 1
-                user!!.textList.add(textItem)
-                user.bookDate = Date(System.currentTimeMillis())
+                if (previousBelong==null){
+                    user!!.textNum+=1
+                    user!!.textList.add(textItem)
+                    user.bookDate= Date(System.currentTimeMillis())
+                }else {
+                    if (previousBelong==selectedItem.pickerViewText){
+                        user!!.bookDate=Date(System.currentTimeMillis())
+                    }else {
+                        user!!.textNum += 1
+                        user!!.textList.add(textItem)
+                        user.bookDate = Date(System.currentTimeMillis())
+
+                        val previousUser=textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",previousBelong).findFirst()
+                        previousUser!!.textNum-=1
+                        user.textList.remove(previousTextItem)
+                    }
+                }
                 Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
                 finish()
             })

@@ -40,6 +40,7 @@ import net.bingyan.coverit.util.PhotoBitmapUtils
 import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.db.NULL
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.themedImageSwitcher
 import java.util.*
 
 class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListener {
@@ -68,6 +69,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     private lateinit var coverView: ModifyPicView
 
     private var canModify = true
+
+    private var previousPicItem:RecitePicBean?=null
 
     private var picDate: Date? = null
 
@@ -168,7 +171,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             picDate = intent.getSerializableExtra("picDate") as Date
             // picItem = picRealm.where(ReciteBookBean::class.java).equalTo("picDate",picDate).findFirst()
             previousTitle=intent.getStringExtra("picTitle")
-            Log.d("bookTitle previous",previousTitle)
+           // previousPicItem=intent.getSerializableExtra("picItem") as RecitePicBean
+            previousPicItem=picRealm.where(RecitePicBean::class.java).equalTo("picDate",picDate).findFirst()
+           // Log.d("bookTitle previous",previousTitle)
         }
 
         class PictureListener : View.OnTouchListener {
@@ -316,7 +321,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         val previousUser = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", previousTitle).findFirst()
 
                         previousUser!!.picNum -= 1
-                        previousUser!!.picList.remove(picItem)
+                        previousUser!!.picList.remove(previousPicItem)
                     }
                 }
                     Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
@@ -478,8 +483,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             picItem.picTitle = resultText
             picItem.isTop = false
             picItem.picDate = Date(System.currentTimeMillis())
-            picItem.picPath = FileUtils.saveBitmap(bitmap)
+          //  picItem.picPath = FileUtils.saveBitmap(bitmap)
 
+            picItem.picConfigList.clear()
             for (modifyPicView: ModifyPicView in viewList) {
                 val picConfig = PicConfigBean()
                 picConfig.left = modifyPicView.rectLeft
@@ -582,5 +588,9 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onDestroy() {
         super.onDestroy()
         picRealm.close()
+        viewList.clear()
+        picFrame.removeAllViews()
+
+        //removeView()
     }
 }

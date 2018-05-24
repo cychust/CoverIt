@@ -54,10 +54,13 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
                     val configList= mutableListOf<PicConfigBean>()
                     configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
                     picIntent.putExtra("picData",configList as Serializable)
-                    val data=itemResult.picDate
-                    picIntent.putExtra("picDate",data)
+                    val date=itemResult.picDate
+                    picIntent.putExtra("picDate",date)
                     val picTitle=itemResult.belonging
                     picIntent.putExtra("picTitle",picTitle)
+
+                    //picIntent.putExtra("picItem",itemResult)
+
                     context.startActivity(picIntent)
                 }else{
                     val itemResult=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
@@ -67,6 +70,12 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
                     val configList= mutableListOf<TextConfigBean>()
                     configList.addAll(listRealm.copyFromRealm(itemResult).textConfigList)
                     textIntent.putExtra("redData",configList as Serializable)
+
+                    val textDate=itemResult.textDate
+                    textIntent.putExtra("textDate",textDate)
+                    val textBelong=itemResult.belonging
+                    textIntent.putExtra("belong",textBelong)
+                   // textIntent.putExtra("textItem",itemResult)
                     context.startActivity(textIntent)
                 }
 
