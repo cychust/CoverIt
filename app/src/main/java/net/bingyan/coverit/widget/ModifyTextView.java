@@ -1,12 +1,23 @@
 package net.bingyan.coverit.widget;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.Selection;
+
+import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
+import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -15,7 +26,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import net.bingyan.coverit.data.local.dataadapter.RedData;
+import net.bingyan.coverit.util.DelHtmlTag;
+import net.bingyan.coverit.util.ResUtil;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
@@ -123,6 +137,47 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         if (canEdit) {
             super.onCreateContextMenu(menu);
         }
+    }
+
+    @Override
+    public boolean onTextContextMenuItem(int id) {
+
+        if (id == android.R.id.paste) {
+            //只设置粘贴文本
+            int lastCursorPosion = getSelectionStart();
+            //拿到粘贴板的文本，setSpan的时候第二个参数last+文本的长度
+            ClipboardManager clip = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            String text = clip.getPrimaryClip().getItemAt(0).getText().toString();
+            StringBuilder stringBuilder=new StringBuilder(getText());
+            stringBuilder.append(DelHtmlTag.delHTMLTag(text));
+            //之后，设置光标的时候，填这第二个参数即可
+            super.onTextContextMenuItem(android.R.id.paste);
+           /* SpannableString ss = new SpannableString(getText());
+            //这里之所以分两种情况是因为android系统的粘贴，为了用户体验，会在粘贴的文本前后加上空格，表示是粘贴的内容
+            //如果在文本中间粘贴，会在粘贴文本前后都加上空格；如果在文末粘贴，会在粘贴文本前加上空格；如果空的内容中粘贴，则不加空格
+            if (lastCursorPosion != 0) {
+
+                ss.setSpan(new StyleSpan(Typeface.NORMAL), lastCursorPosion + 1, lastCursorPosion + 1 + text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new AbsoluteSizeSpan((int) ResUtil.Companion.sp2px(getContext(), 14.0f)), lastCursorPosion + 1, lastCursorPosion + 1 + text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                setText(DelHtmlTag.delHTMLTag(text));
+                setSelection(lastCursorPosion + 1 + text.length());
+            } else {
+                //ss.setSpan(new StyleSpan(Typeface.NORMAL), lastCursorPosion, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new AbsoluteSizeSpan((int) ResUtil.Companion.sp2px(getContext(), 14.0f)),
+                       lastCursorPosion, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new StyleSpan(android.graphics.Typeface.NORMAL),lastCursorPosion, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+              //  ss.setSpan(n,lastCursorPosion, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE););
+                setText(DelHtmlTag.delHTMLTag(text));
+                setSelection(text.length());
+            }*/
+
+           // Log.d(TAG, "onTextContextMenuItem: " + ss.toString());
+            setText(stringBuilder.toString());
+            Log.d(TAG, "onTextContextMenuItem: "+getText().toString());
+            setSelection(getText().length());
+            return true;
+        }
+        return super.onTextContextMenuItem(id);
     }
 
 
