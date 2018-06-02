@@ -5,10 +5,7 @@ import android.content.Intent
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -103,15 +100,22 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
             }
         }
         holder.apply {
-            if (textList[position].trim().isEmpty()) this.linearLayout.visibility = View.GONE
+            if (textList[position].trim().isEmpty()) {
+                //this.linearLayout.visibility = View.GONE
+            }
             else {
                 val topItem=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
                 ivTop.visibility=if(listRealm.copyFromRealm(topItem!!).isTop) View.VISIBLE
                 else View.INVISIBLE
 
-                this.linearLayout.visibility = View.VISIBLE
+              /*  this.linearLayout.visibility = View.VISIBLE
                 tvContent.text = textList[position]
-                rvTilte.text=titleList[position]
+                rvTilte.text=titleList[position]*/
+                val view:View=stub.inflate()
+                val tvContent:TextView=view.findViewById(R.id.tv_content_text)
+                val rvTitle:TextView=view.findViewById(R.id.rv_title_text)
+                tvContent.text=textList[position]
+                rvTitle.text=titleList[position]
             }
             if (picAddress[position].trim().isEmpty()) this.ivContent.visibility = View.GONE
             else {
@@ -222,10 +226,11 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
         val listItem=list.findViewById<LinearLayout>(R.id.ll_item)
         val tvTime = list.findViewById<TextView>(R.id.tv_time)
         val tvTitle = list.findViewById<TextView>(R.id.tv_title)
-        val linearLayout:LinearLayout=list.findViewById(R.id.linear)
+       // val linearLayout:LinearLayout=list.findViewById(R.id.linear)
         val ivContent = list.findViewById<ImageView>(R.id.iv_content_pic)
-        val tvContent = list.findViewById<TextView>(R.id.tv_content_text)
-        val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
+        val stub=list.findViewById<ViewStub>(R.id.stub_linear)
+       // val tvContent = list.findViewById<TextView>(R.id.tv_content_text)
+       // val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
         val ivTop=list.findViewById<ImageView>(R.id.iv_pin_top)
     }
 }

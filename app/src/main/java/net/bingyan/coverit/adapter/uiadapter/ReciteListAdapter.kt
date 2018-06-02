@@ -5,10 +5,7 @@ import android.content.Intent
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -108,11 +105,18 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
         }
         if (getItemViewType(position) == TYPE_TOP) {
             holder.apply {
-                if (textList[position].trim().isEmpty()) this.linearLayout.visibility = View.GONE
+                if (textList[position].trim().isEmpty()) {
+                    //this.linearLayout.visibility = View.GONE
+                }
                 else {
-                    this.linearLayout.visibility = View.VISIBLE
+                    /*this.linearLayout.visibility = View.VISIBLE
                     tvContent.text = textList[position]
-                    rvTilte.text=titleList[position]
+                    rvTilte.text=titleList[position]*/
+                    val view:View=stub.inflate()
+                    val tvContent:TextView=view.findViewById(R.id.tv_content_text)
+                    val rvTitle:TextView=view.findViewById(R.id.rv_title_text)
+                    tvContent.text=textList[position]
+                    rvTitle.text=titleList[position]
                 }
                 if (picAddress[position].trim().isEmpty()) this.ivContent.visibility = View.GONE
                 else {
@@ -126,11 +130,18 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
             }
         } else if (getItemViewType(position) == TYPE_NORMAL) {
             holder.apply {
-                if (textList[position].trim().isEmpty()) this.linearLayout.visibility = View.GONE
+                if (textList[position].trim().isEmpty()) {
+                    //this.linearLayout.visibility = View.GONE
+                }
                 else {
-                    this.linearLayout.visibility = View.VISIBLE
+                    /*this.linearLayout.visibility = View.VISIBLE
                     tvContent.text = textList[position]
-                    rvTilte.text=titleList[position]
+                    rvTilte.text=titleList[position]*/
+                    val view:View=stub.inflate()
+                    val tvContent:TextView=view.findViewById(R.id.tv_content_text)
+                    val rvTitle:TextView=view.findViewById(R.id.rv_title_text)
+                    tvContent.text=textList[position]
+                    rvTitle.text=titleList[position]
                 }
                 if (picAddress[position].trim().isEmpty()) this.ivContent.visibility = View.GONE
                 else {
@@ -256,9 +267,10 @@ class ReciteListAdapter(var context: Context,val parentActivity: ReciteMainActiv
         val tvTime: TextView = list.findViewById(R.id.tv_time)
         val tvTitle: TextView = list.findViewById(R.id.tv_title)
         val ivContent: ImageView = list.findViewById(R.id.iv_content_pic)
-        val linearLayout:LinearLayout=list.findViewById(R.id.linear)
-        val tvContent: TextView = list.findViewById(R.id.tv_content_text)
-        val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
+        //val linearLayout:LinearLayout=list.findViewById(R.id.linear)
+       // val tvContent: TextView = list.findViewById(R.id.tv_content_text)
+       // val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
+        val stub=list.findViewById<ViewStub>(R.id.stub_linear_listItem)
         val tvDot: TextView = list.findViewById(R.id.tvDot)
         val tvLine: TextView = list.findViewById(R.id.tvTopLine)
     }
