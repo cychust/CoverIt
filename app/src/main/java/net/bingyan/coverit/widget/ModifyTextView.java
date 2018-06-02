@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.Math.abs;
+import static java.lang.Math.log;
 
 /**
  * Author       cychust
@@ -148,7 +149,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             //拿到粘贴板的文本，setSpan的时候第二个参数last+文本的长度
             ClipboardManager clip = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             String text = clip.getPrimaryClip().getItemAt(0).getText().toString();
-            StringBuilder stringBuilder=new StringBuilder(getText());
+            StringBuilder stringBuilder = new StringBuilder(getText());
             stringBuilder.append(DelHtmlTag.delHTMLTag(text));
             //之后，设置光标的时候，填这第二个参数即可
             super.onTextContextMenuItem(android.R.id.paste);
@@ -171,9 +172,9 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                 setSelection(text.length());
             }*/
 
-           // Log.d(TAG, "onTextContextMenuItem: " + ss.toString());
+            // Log.d(TAG, "onTextContextMenuItem: " + ss.toString());
             setText(stringBuilder.toString());
-            Log.d(TAG, "onTextContextMenuItem: "+getText().toString());
+            Log.d(TAG, "onTextContextMenuItem: " + getText().toString());
             setSelection(getText().length());
             return true;
         }
@@ -247,10 +248,17 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                     newY = (int) event.getY();
                     Log.d(TAG, "onTouchEvent: oldX" + oldX);
                     Log.d(TAG, "onTouchEvent: newX" + newX);
-
                     if (abs(newX - oldX) < 10) {
                         oldX = newX;
-                        this.scrollBy(0, -(newY - oldY));
+                        if (getScrollY()==0&&newY>oldY){
+                           // Log.d("getMeasu",getMeasuredHeight()+"  "+getHeight());
+                        }else {
+                            this.scrollBy(0, -(newY - oldY));
+                        }
+                        if (getScrollY()<0){
+                          //  Log.d("get","<0");
+                            this.scrollTo(0,0);
+                        }
                         oldY = newY;
                         return true;
                     }
@@ -281,6 +289,8 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             }
         }
         return true;
+
+
     }
 
     public void calculateText() {
