@@ -100,7 +100,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     private Rect clipDstRect;
 
-    private static Bitmap bitmap;
+    private Bitmap bitmap;
 
     private double widTimes;
 
@@ -115,9 +115,10 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     private float initDis = 1f;
 
     private Canvas canvas;
+    //  private String picPath;
 
-    private final float lineLength=25.0f;
-    private final float lineWidth=15.0f;
+    private final float lineLength = 25.0f;
+    private final float lineWidth = 15.0f;
 
     private ModifyPicActivity thisActivity;
 
@@ -159,6 +160,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     public void setSwitch(boolean aSwitch) {
         this.isSwitch = aSwitch;
+
     }
 
     public void setColor(int color) {
@@ -201,15 +203,15 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         this.rectDown = rectDown;
     }
 
-    public ModifyPicView(Context context, String picPath) {
-        this(context, null, picPath);
+    public ModifyPicView(Context context, Bitmap bitmap) {
+        this(context, null, bitmap);
     }
 
-    public ModifyPicView(Context context, AttributeSet attrs, String picPath) {
-        this(context, attrs, 0, picPath);
+    public ModifyPicView(Context context, AttributeSet attrs, Bitmap bitmap) {
+        this(context, attrs, 0, bitmap);
     }
 
-    public ModifyPicView(Context context, AttributeSet attrs, int defStyleAttr, String picPath) {
+    public ModifyPicView(Context context, AttributeSet attrs, int defStyleAttr, Bitmap bitmap) {
         super(context, attrs, defStyleAttr);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -219,7 +221,12 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
         path = new Path();
         matrix = new Matrix();
-        bitmap = BitmapFactory.decodeFile(picPath);
+        //this.picPath=picPath;
+        //bitmap = BitmapFactory.decodeFile(picPath);
+        if (bitmap == null) {
+            throw new IllegalStateException("bitmap cannot be null");
+        } else
+            this.bitmap = bitmap;
     }
 
     @Override
@@ -251,15 +258,15 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float[] pts = {rectLeft, rectTop-lineWidth/2, rectLeft, rectTop + lineLength
+        float[] pts = {rectLeft, rectTop - lineWidth / 2, rectLeft, rectTop + lineLength
                 , rectLeft, rectTop, rectLeft + lineLength, rectTop
-                , rectRight - lineLength, rectTop, rectRight+lineWidth/2, rectTop
+                , rectRight - lineLength, rectTop, rectRight + lineWidth / 2, rectTop
                 , rectRight, rectTop, rectRight, rectTop + lineLength
-                , rectRight, rectDown - lineLength, rectRight, rectDown+lineWidth/2
+                , rectRight, rectDown - lineLength, rectRight, rectDown + lineWidth / 2
                 , rectRight, rectDown, rectRight - lineLength, rectDown
-                , rectLeft-lineWidth/2, rectDown, rectLeft + lineLength, rectDown
+                , rectLeft - lineWidth / 2, rectDown, rectLeft + lineLength, rectDown
                 , rectLeft, rectDown, rectLeft, rectDown - lineLength};     //画四角的黑线
-        canvas.drawLines(pts,linePint);
+        canvas.drawLines(pts, linePint);
 
 
         if (!isSwitch) {
@@ -273,7 +280,13 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
             clipSrcRect = new Rect((int) (calRectLeft * widTimes), (int) (calRectTop * heiTimes), (int) (calRectRight * widTimes), (int) (calRectDown * heiTimes));
             clipDstRect = new Rect((int) rectLeft, (int) rectTop, (int) rectRight, (int) rectDown);
 
-            canvas.drawBitmap(bitmap, clipSrcRect, clipDstRect, null);
+
+            //bitmap = BitmapFactory.decodeFile(picPath);
+            if (bitmap == null) {
+                throw new IllegalStateException("bitmap cannot be init");
+            } else {
+                canvas.drawBitmap(bitmap, clipSrcRect, clipDstRect, null);
+            }
         }
     }
 
@@ -535,4 +548,11 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         this.canClick = canClick;
     }
 
+    public void ViewDestroy() {
+        if (bitmap != null) {
+            bitmap.recycle();
+            Log.d("bitmap view", "destroy");
+        }
+
+    }
 }

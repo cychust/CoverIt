@@ -3,21 +3,11 @@ package net.bingyan.coverit.widget;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.Selection;
-
-import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
-import android.text.style.TextAppearanceSpan;
-import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -27,14 +17,11 @@ import android.view.View;
 
 import net.bingyan.coverit.data.local.dataadapter.RedData;
 import net.bingyan.coverit.util.DelHtmlTag;
-import net.bingyan.coverit.util.ResUtil;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.Math.abs;
-import static java.lang.Math.log;
 
 /**
  * Author       cychust

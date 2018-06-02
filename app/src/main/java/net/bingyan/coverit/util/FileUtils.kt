@@ -27,8 +27,8 @@ import java.io.IOException
 
 object FileUtils {
 
-    private val APP_DIR_NAME = "coverIt"
-    private val FILE_DIR_NAME = "files"
+    private const val APP_DIR_NAME = "coverIt"
+    private const val FILE_DIR_NAME = "files"
     private var mRootDir: String? = null
     private var mAppRootDir: String? = null
     private const val SHARE_APP_TAG = "firstOpen"

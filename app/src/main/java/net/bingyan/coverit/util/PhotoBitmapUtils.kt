@@ -23,15 +23,15 @@ object PhotoBitmapUtils {
     /**
      * 存放拍摄图片的文件夹
      */
-    private val FILES_NAME = "/MyPhoto"
+    private const val FILES_NAME = "/MyPhoto"
     /**
      * 获取的时间格式
      */
-    val TIME_STYLE = "yyyyMMddHHmmss"
+    const val TIME_STYLE = "yyyyMMddHHmmss"
     /**
      * 图片种类
      */
-    val IMAGE_TYPE = ".png"
+    const val IMAGE_TYPE = ".png"
 
     /**
      * 获取手机可存储路径
@@ -108,7 +108,7 @@ object PhotoBitmapUtils {
      * @return 压缩后的图片
      */
     fun getCompressPhoto(path: String): Bitmap {
-        var options: BitmapFactory.Options? = BitmapFactory.Options()
+        val options: BitmapFactory.Options? = BitmapFactory.Options()
         options!!.inJustDecodeBounds = false
         options.inSampleSize = 10  // 图片的大小设置为原来的十分之一
         val bmp = BitmapFactory.decodeFile(path, options)

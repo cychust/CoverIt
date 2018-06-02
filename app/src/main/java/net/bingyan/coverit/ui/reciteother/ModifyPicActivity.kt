@@ -70,7 +70,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
     private var canModify = true
 
-    private var previousPicItem:RecitePicBean?=null
+    private var previousPicItem: RecitePicBean? = null
 
     private var picDate: Date? = null
 
@@ -141,7 +141,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
         bitmap = BitmapFactory.decodeFile(picPath, myOptions)
 
-        Glide.with(this).load(bitmap).into(picture)
+        Glide.with(this)
+                .load(bitmap).into(picture)
 
         if (FileUtils.isPicFirstOpen(this)) {
             picGuide.visibility = View.VISIBLE
@@ -155,7 +156,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             val redDataList = intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
 
             redDataList.forEach {
-                coverView = ModifyPicView(context, picPath)
+                coverView = ModifyPicView(context,bitmap)
                 viewList.add(coverView)
                 picFrame.addView(coverView)
                 coverView.rectLeft = it.left
@@ -170,10 +171,10 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         if (intent.getSerializableExtra("picDate") != null) {
             picDate = intent.getSerializableExtra("picDate") as Date
             // picItem = picRealm.where(ReciteBookBean::class.java).equalTo("picDate",picDate).findFirst()
-            previousTitle=intent.getStringExtra("picTitle")
-           // previousPicItem=intent.getSerializableExtra("picItem") as RecitePicBean
-            previousPicItem=picRealm.where(RecitePicBean::class.java).equalTo("picDate",picDate).findFirst()
-           // Log.d("bookTitle previous",previousTitle)
+            previousTitle = intent.getStringExtra("picTitle")
+            // previousPicItem=intent.getSerializableExtra("picItem") as RecitePicBean
+            previousPicItem = picRealm.where(RecitePicBean::class.java).equalTo("picDate", picDate).findFirst()
+            // Log.d("bookTitle previous",previousTitle)
         }
 
         class PictureListener : View.OnTouchListener {
@@ -185,7 +186,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                     val freeWidSpace = (picture.width - bitmap.width / preHeiTimes) / 2
                     val action = p1?.action
                     if (isNewRect) {
-                        coverView = ModifyPicView(context, picPath)
+                        coverView = ModifyPicView(context, bitmap)
                         coverView.setThisActivity(this@ModifyPicActivity)
                         viewList.add(coverView)
 
@@ -306,11 +307,11 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 //先查找后得到对象
                 //   val previousUser=picRealm.where(ReciteBookBean::class.java).equalTo(bookTile)
                 val user = picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", selectedItem!!.pickerViewText).findFirst()
-                if (previousTitle==null){
+                if (previousTitle == null) {
                     user!!.picNum += 1
                     user!!.picList.add(picItem)
                     user.bookDate = Date(System.currentTimeMillis())
-                }else {
+                } else {
                     if (user!!.bookTitle == previousTitle) {
                         user.bookDate = Date(System.currentTimeMillis())
                     } else {
@@ -324,7 +325,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         previousUser!!.picList.remove(previousPicItem)
                     }
                 }
-                    Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
                 finish()
             })
         })
@@ -483,7 +484,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             picItem.picTitle = resultText
             picItem.isTop = false
             picItem.picDate = Date(System.currentTimeMillis())
-          //  picItem.picPath = FileUtils.saveBitmap(bitmap)
+            //  picItem.picPath = FileUtils.saveBitmap(bitmap)
 
             picItem.picConfigList.clear()
             for (modifyPicView: ModifyPicView in viewList) {
@@ -588,9 +589,15 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onDestroy() {
         super.onDestroy()
         picRealm.close()
-        viewList.clear()
+       // viewList.forEach { it.ViewDestroy() }
+        //viewList.clear()
+        viewList.forEach { it.ViewDestroy() }
         picFrame.removeAllViews()
-
+        //coverView.ViewDestroy()
+        if (bitmap != null) {
+            bitmap.recycle()           //回收bitmap内存
+        }
+        System.gc ()                 //提醒系统回收内存
         //removeView()
     }
 }

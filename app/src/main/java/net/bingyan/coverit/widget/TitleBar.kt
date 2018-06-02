@@ -409,12 +409,12 @@ class TitleBar : ViewGroup, View.OnClickListener {
     }
 
     companion object {
-        private val DEFAULT_MAIN_TEXT_SIZE = 18
-        private val DEFAULT_SUB_TEXT_SIZE = 12
-        private val DEFAULT_ACTION_TEXT_SIZE = 15
-        private val DEFAULT_TITLE_BAR_HEIGHT = 48
+        private const val DEFAULT_MAIN_TEXT_SIZE = 18
+        private const val DEFAULT_SUB_TEXT_SIZE = 12
+        private const val DEFAULT_ACTION_TEXT_SIZE = 15
+        private const val DEFAULT_TITLE_BAR_HEIGHT = 48
 
-        private val STATUS_BAR_HEIGHT_RES_NAME = "status_bar_height"
+        private const val STATUS_BAR_HEIGHT_RES_NAME = "status_bar_height"
 
         fun dip2px(dpValue: Int): Int {
             val scale = Resources.getSystem().displayMetrics.density

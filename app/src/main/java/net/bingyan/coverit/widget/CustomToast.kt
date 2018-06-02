@@ -17,7 +17,7 @@ class CustomToast(context: Context, view: View, duration: Int) {
     /**
      * 获取Toast
      */
-    var toast: Toast? = null
+    private var toast: Toast? = null
         private set
     private var toastView: LinearLayout? = null
 

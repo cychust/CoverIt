@@ -5,7 +5,7 @@ package net.bingyan.coverit.ui.recitemain.mine
  * Date         2017.12.9
  * Time         0:41
  */
-class MinePresenter(val mineFragment: MineContract.View):MineContract.Presenter {
+class MinePresenter(private val mineFragment: MineContract.View):MineContract.Presenter {
     init {
         mineFragment.presenter=this
     }

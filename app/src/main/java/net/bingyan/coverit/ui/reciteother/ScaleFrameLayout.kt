@@ -96,10 +96,13 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         return super.onInterceptTouchEvent(ev)
     }
 
+    override fun performClick(): Boolean {
+        return super.performClick()
+    }
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.pointerCount == 1 && !canModify) {
             Log.d("dragFrame", "success")
-            var currentTimeMillis: Long = System.currentTimeMillis()
+            val currentTimeMillis: Long = System.currentTimeMillis()
             if (currentTimeMillis - lastMultiTouchTime > 200) {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -108,11 +111,11 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
 
                     }
                     MotionEvent.ACTION_MOVE -> {
-                        var tmpRawTop = event.rawY.toInt()
-                        var tmpRawLeft = event.rawX.toInt()
+                        val tmpRawTop = event.rawY.toInt()
+                        val tmpRawLeft = event.rawX.toInt()
 
-                        var dx = tmpRawLeft - lastLeft
-                        var dy = tmpRawTop - lastTop
+                        val dx = tmpRawLeft - lastLeft
+                        val dy = tmpRawTop - lastTop
 
                         center(dx, dy)
 
@@ -222,7 +225,7 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
                 flag = 0
             }
             if (System.currentTimeMillis() - oldTime > 100) {
-                Log.d("scaleGesture", "onScale" + scale)
+               // Log.d("scaleGesture", "onScale" + scale)
                 // 缩小
                 // scale = preScale-detector.getScaleFactor()/3;
                 if (currentSpan >= previousSpan) {
@@ -258,4 +261,5 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
     public fun setCannotModify() {
         canModify = false
     }
+
 }

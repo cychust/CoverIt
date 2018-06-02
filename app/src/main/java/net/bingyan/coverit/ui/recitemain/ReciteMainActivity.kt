@@ -57,8 +57,8 @@ class ReciteMainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private var currentItem: Int = -1
-    val TAKE_PHOTO = 1
-    val CHOOSE_PHOTO = 2
+    private val TAKE_PHOTO = 1
+    private val CHOOSE_PHOTO = 2
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.recite_list -> {
@@ -241,7 +241,7 @@ class ReciteMainActivity : AppCompatActivity() {
         }
     }
 
-    fun geturi(intent: android.content.Intent): Uri {
+    private fun geturi(intent: android.content.Intent): Uri {
         var uri = intent.data
         val type = intent.type
         if (uri!!.scheme == "file" && type!!.contains("image/*")) {
