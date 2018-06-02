@@ -39,6 +39,7 @@ import net.bingyan.coverit.util.LogUtil
 import net.bingyan.coverit.util.PhotoBitmapUtils
 import net.bingyan.coverit.widget.ModifyPicView
 import org.jetbrains.anko.db.NULL
+import org.jetbrains.anko.imageBitmap
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.themedImageSwitcher
 import java.util.*
@@ -589,12 +590,16 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onDestroy() {
         super.onDestroy()
         picRealm.close()
+        if (bitmap!=null&&!bitmap.isRecycled){
+            bitmap.recycle()
+        }
        // viewList.forEach { it.ViewDestroy() }
         //viewList.clear()
         viewList.forEach { it.ViewDestroy() }
+
         picFrame.removeAllViews()
         //coverView.ViewDestroy()
-        if (bitmap != null) {
+        if (bitmap!=null&&!bitmap.isRecycled) {
             bitmap.recycle()           //回收bitmap内存
         }
         System.gc ()                 //提醒系统回收内存

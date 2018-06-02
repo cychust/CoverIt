@@ -3,6 +3,8 @@ package net.bingyan.coverit.ui.reciteother
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
@@ -203,5 +205,11 @@ class ReciteBookDetailActivity : AppCompatActivity() {
             parentList.add(reciteBookDetailRealm.copyFromRealm(parentItem))
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reciteBookDetailRealm.close()
+
+     }
 
 }

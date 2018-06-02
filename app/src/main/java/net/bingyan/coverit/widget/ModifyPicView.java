@@ -62,9 +62,8 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
 
     public int mode = 0;
 
-    private Matrix matrix = new Matrix();
-    private Matrix matrix1 = new Matrix();
-    private Matrix saveMatrix = new Matrix();
+   // private Matrix matrix;
+
 
     private float rectLeft;
     private float rectRight;
@@ -220,7 +219,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         linePint.setStrokeWidth(lineWidth);
 
         path = new Path();
-        matrix = new Matrix();
+       // matrix = new Matrix();
         //this.picPath=picPath;
         //bitmap = BitmapFactory.decodeFile(picPath);
         if (bitmap == null) {
@@ -552,7 +551,9 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
         if (bitmap != null) {
             bitmap.recycle();
             Log.d("bitmap view", "destroy");
+            bitmap=null;
         }
+
 
     }
 }
