@@ -45,7 +45,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var pvCustomOptions: OptionsPickerView<ReciteBookBean>
 
-    private var previousTextItem:ReciteTextBean?=null
+    private var previousTextItem: ReciteTextBean? = null
 
     private var textDate: Date? = null
 
@@ -120,6 +120,8 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
         modifyText.redList = redList as ArrayList<RedData>
         modifyText.drawRed()
+
+        modifyText.calculateText()
         btnSave.onClick {
             when {
                 modifyTitle.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "标题不能为空!", Toast.LENGTH_SHORT).show()
@@ -138,9 +140,9 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         if (intent.getSerializableExtra("textDate") != null) {
             textDate = intent.getSerializableExtra("textDate") as Date
             // picItem = picRealm.where(ReciteBookBean::class.java).equalTo("picDate",picDate).findFirst()
-            previousBelong=intent.getStringExtra("belong")
+            previousBelong = intent.getStringExtra("belong")
             //previousTextItem=intent.getSerializableExtra("textItem") as ReciteTextBean
-            previousTextItem=textRealm.where(ReciteTextBean::class.java).equalTo("textDate",textDate).findFirst()
+            previousTextItem = textRealm.where(ReciteTextBean::class.java).equalTo("textDate", textDate).findFirst()
             //Log.d("bookTitle previous",previousTitle)
         }
 
@@ -157,7 +159,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         modifyText.calculateText()
         redList = modifyText.redList
 
-        if (textDate==null){
+        if (textDate == null) {
             textRealm.beginTransaction()
             textItem = textRealm.createObject(ReciteTextBean::class.java)
             textItem.text = content.trim()
@@ -170,9 +172,9 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 textItem.textConfigList.add(textConfig)
             }
             textRealm.commitTransaction()
-        }else{
+        } else {
             textRealm.beginTransaction()
-            textItem=textRealm.where(ReciteTextBean::class.java).equalTo("textDate",textDate).findFirst()!!
+            textItem = textRealm.where(ReciteTextBean::class.java).equalTo("textDate", textDate).findFirst()!!
             //textItem = textRealm.createObject(ReciteTextBean::class.java)
             textItem.text = content.trim()
             textItem.textDate = Date(System.currentTimeMillis())
@@ -210,22 +212,21 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 //先查找后得到对象
 
 
-
                 val user = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", selectedItem!!.pickerViewText).findFirst()
-                if (previousBelong==null){
-                    user!!.textNum+=1
+                if (previousBelong == null) {
+                    user!!.textNum += 1
                     user!!.textList.add(textItem)
-                    user.bookDate= Date(System.currentTimeMillis())
-                }else {
-                    if (previousBelong==selectedItem.pickerViewText){
-                        user!!.bookDate=Date(System.currentTimeMillis())
-                    }else {
+                    user.bookDate = Date(System.currentTimeMillis())
+                } else {
+                    if (previousBelong == selectedItem.pickerViewText) {
+                        user!!.bookDate = Date(System.currentTimeMillis())
+                    } else {
                         user!!.textNum += 1
                         user!!.textList.add(textItem)
                         user.bookDate = Date(System.currentTimeMillis())
 
-                        val previousUser=textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle",previousBelong).findFirst()
-                        previousUser!!.textNum-=1
+                        val previousUser = textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", previousBelong).findFirst()
+                        previousUser!!.textNum -= 1
                         user.textList.remove(previousTextItem)
                     }
                 }
@@ -327,9 +328,19 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     modifyText.isCursorVisible = true
                     modifyText.setCanEdit(true)
                     modifyText.highlightColor = ContextCompat.getColor(this, R.color.colorPrimary)
+
+                    Log.d("write","start")
+
+                    cbSee.isChecked = true
+
+
+                    modifyText.drawBlack()
+                    modifyText.drawRed()
+
                 }
 
                 if (!p1) {
+                    content = modifyText.text.toString()
                     modifyText.highlightColor = Color.WHITE
                     content = modifyText.text.toString()
                     modifyText.isCursorVisible = false
@@ -339,7 +350,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
             R.id.modify_button -> {
                 if (p1) {
-                    modifyText.setCanModify(true)
+                    if (cbSee.isChecked)
+                        modifyText.setCanModify(true)
+                    else
+                        cbModify.isChecked = false
                 }
 
                 if (!p1) {
@@ -349,7 +363,11 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
             }
 
             R.id.see_button -> {
+                if (content.isEmpty()) {
+                    content = modifyText.text.toString()
+                }
                 if (p1) {
+
                     cbWrite.isEnabled = true
                     modifyText.setText(content)
                     modifyText.drawBlack()
@@ -358,6 +376,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
                 if (!p1) {
                     cbWrite.isEnabled = false
+
+                    cbWrite.isChecked = false
+
+                    cbModify.isChecked = false
+
+                    content = modifyText.text.toString()
+                    //  modifyText.calculateText()
+
                     val curY = modifyText.scrollY
                     val curX = modifyText.scrollX
                     modifyText.changeText()
@@ -369,6 +395,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
 
             R.id.switch_button -> {
+                if (cbSee.isChecked) {
+                    content = modifyText.text.toString()
+                    modifyText.calculateText()
+                }
                 if (modifyText.text.isEmpty()) {
 
                 } else {
@@ -380,15 +410,23 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                         modifyText.setText(content)
                         modifyText.drawBlack()
                         modifyText.drawRed()
+                        if (!cbSee.isChecked) {
+                            modifyText.changeText()
+                            modifyText.drawRed()
+                        }
                     }
                     if (!p1) {
-                        val changeList = modifyText.blackList
-                        modifyText.blackList = modifyText.redList
-                        modifyText.redList = changeList
-
+                        val changeList = modifyText.redList
+                        modifyText.redList = modifyText.blackList
+                        modifyText.blackList = changeList
                         modifyText.setText(content)
                         modifyText.drawBlack()
                         modifyText.drawRed()
+                        if (!cbSee.isChecked) {
+                            modifyText.changeText()
+                            modifyText.drawRed()
+                        }
+
                     }
                 }
             }

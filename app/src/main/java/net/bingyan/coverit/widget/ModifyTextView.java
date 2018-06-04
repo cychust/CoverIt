@@ -115,7 +115,12 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
         if (!redList.isEmpty()) {
             for (RedData redData : redList) {
                 ForegroundColorSpan redColorSpan = new ForegroundColorSpan(Color.RED);
-                getText().setSpan(redColorSpan, redData.getPrevious(), redData.getNext(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                try{
+                    getText().setSpan(redColorSpan, redData.getPrevious(), redData.getNext(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                }catch (IndexOutOfBoundsException e){
+                    e.printStackTrace();
+                }
+
             }
         }
     }
@@ -283,6 +288,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
     public void calculateText() {
         if (!redList.isEmpty()) {
             redList.clear();
+            blackList.clear();
         }
         int next;
         for (int i = 0; i < getText().length(); i = next) {
