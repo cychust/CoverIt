@@ -128,7 +128,9 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 modifyText.text.isEmpty() -> Toast.makeText(this@ModifyTextActivity, "内容不能为空!", Toast.LENGTH_SHORT).show()
                 else -> {
                     title = modifyTitle.text.toString()
-                    content = modifyText.text.toString()
+                    if (cbSee.isChecked) {
+                        content = modifyText.text.toString()
+                    }
                     reciteBookResults = textRealm.where(ReciteBookBean::class.java)
                             .findAll()
                     initCustomOptionPicker()
@@ -329,10 +331,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     modifyText.setCanEdit(true)
                     modifyText.highlightColor = ContextCompat.getColor(this, R.color.colorPrimary)
 
-                    Log.d("write","start")
+                    Log.d("write", "start")
 
                     cbSee.isChecked = true
-
+                    cbModify.isChecked = true
 
                     modifyText.drawBlack()
                     modifyText.drawRed()
@@ -358,6 +360,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
                 if (!p1) {
                     modifyText.setCanModify(false)
+                    cbWrite.isChecked=false
                 }
 
             }
