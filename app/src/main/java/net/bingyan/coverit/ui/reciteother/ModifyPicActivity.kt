@@ -406,7 +406,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         }
     }
 
-    private fun addNewReciteBook_tmp() {
+  /*  private fun addNewReciteBook_tmp() {
         DialogUtil.Builder(supportFragmentManager).setLayoutRes(R.layout.dialog_pop_view_tmp)
                 .setWidth(600)
                 .setHeight(800)
@@ -424,7 +424,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 })
                 .create().show()
     }
-
+*/
     private fun addPicTitle() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("给这张图片起个名字吧")

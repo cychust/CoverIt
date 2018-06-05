@@ -12,14 +12,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
             android:text="创建记背本"
             android:textColor="@color/black"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/textInputEditText2"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_edit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.041"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,13 +27,14 @@
             app:layout_constraintVertical_bias="0.65" />
 
         <EditText
-            android:id="@+id/textInputEditText2"
+            android:id="@+id/dialog_edit"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/black"
             android:drawableBottom="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,30 +43,31 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/create_cancel"
+            android:id="@+id/push_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"
-            android:text="确定"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="3dp"
+            android:text="取消"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputEditText2" />
+            app:layout_constraintTop_toBottomOf="@+id/dialog_edit" />
 
         <Button
-            android:id="@+id/create_save"
+            android:id="@+id/push_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="168dp"
-            android:layout_marginTop="8dp"
-            android:text="取消"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="3dp"
+            android:text="确定"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputEditText2"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_edit"
             app:layout_constraintVertical_bias="0.502" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
