@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.recitemain.mine
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,14 +10,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.design.widget.TextInputEditText
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +23,9 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import io.realm.Realm
+import io.realm.RealmResults
+import io.realm.kotlin.delete
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.push.JsonConvertUtil
@@ -43,7 +42,6 @@ import okhttp3.Response
 import org.jetbrains.anko.support.v4.intentFor
 import org.json.JSONException
 import java.io.IOException
-import java.util.*
 
 
 /**
@@ -66,7 +64,8 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
 
 
     //  private var textResult: String = ""
-    private lateinit var tDialog1: DialogUtil
+    private var tDialog1: DialogUtil? = null
+    private lateinit var reciteBookResults: RealmResults<ReciteBookBean>
     //private lateinit var tDialog2: DialogUtil
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_mine, container, false)
@@ -105,22 +104,17 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                 startActivity(intentFor<AboutActivity>())
             }
             R.id.get_data -> {
-                if (ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermission()
-                } else {
-                    if (NetUtils.isNetworkAvailable(activity)) {
-                        showDialog()
-                    } else {
-                        Toast.makeText(activity, "请检查网络状态", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                showDialog()
             }
         }
+
+
     }
+
 
     private fun showDialog() {
         val gson = Gson()
-        DialogUtil.Builder(fragmentManager).setLayoutRes(R.layout.dialog_costome_tmp)
+        DialogUtil.Builder(fragmentManager).setLayoutRes(R.layout.dialog_push)
                 .setScreenWidthAspect(activity, 0.8f)
                 .addOnClickListener(R.id.push_cancel, R.id.push_ok)
                 .setOnBindViewListener(object : OnBindViewListener {
@@ -144,50 +138,68 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                     Toast.makeText(activity, "验证码不能为空", Toast.LENGTH_SHORT).show()
                                 } else {
                                     if (!content.trim().isEmpty()) {
-                                        tDialog1.show()
+                                        dialogShow()
                                         NetUtils.getInstance().getDataAsynFromNet(url, object : NetUtils.MyNetCall {
                                             @Throws(IOException::class)
                                             override fun success(call: Call, response: Response) {
                                                 val re: String? = response.body()?.string()
                                                 val handler: Handler = Handler(Looper.getMainLooper());
-                                                handler.post({
-                                                    if (re!=null)
-                                                    Toast.makeText(activity, re, Toast.LENGTH_SHORT).show()
-                                                })
+                                                //                    handler.post({
+                                                //                       if (re!=null)
+                                                //                        Toast.makeText(activity, re, Toast.LENGTH_SHORT).show()
+                                                //                    })
                                                 try {
                                                     val book = gson.fromJson(re, JsonFromWeb::class.java)
                                                     book.codeList.forEach {
                                                         if (!it.equals(content)) {
-                                                            tDialog1.dismiss()
+
+                                                            // dialogDismiss()
+
                                                             handler.post({
-                                                                Toast.makeText(activity, "验证码错误", Toast.LENGTH_SHORT).show()
+                                                                //    Toast.makeText(activity, "验证码错误", Toast.LENGTH_SHORT).show()
                                                             })
 
                                                         } else {
-                                                            JsonConvertUtil.jsonCovert(re)
-                                                            tDialog1.dismiss()
+                                                            var flag = 0
+                                                            dialogDismiss()
+                                                            val realm: Realm = Realm.getDefaultInstance()
+                                                            reciteBookResults = realm.where(ReciteBookBean::class.java)
+                                                                    .findAll()
+                                                            reciteBookResults.forEach {
+                                                                if (it.bookTitle.equals(book.notebookName)) {
+                                                                    showConfirmDialog(re)
+                                                                    flag = 1
+                                                                }
+                                                            }
+                                                            if (flag == 0) {
+                                                                JsonConvertUtil.jsonCovert(re, 0)
+                                                            }
                                                             handler.post({
                                                                 Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
                                                             })
 
                                                         }
                                                     }
+                                                    dialogDismiss()
                                                 } catch (s: JsonSyntaxException) {
                                                     s.printStackTrace()
                                                 } catch (s: JsonIOException) {
                                                     s.printStackTrace()
                                                 } catch (s: JSONException) {
                                                     s.printStackTrace()
+                                                } catch (s: IllegalStateException) {
+                                                    s.printStackTrace()
                                                 } finally {
-                                                    tDialog1.dismiss()
+                                                    dialogDismiss()
                                                 }
                                             }
 
                                             override fun failed(call: Call, e: IOException) {
                                                 val handler: Handler = Handler(Looper.getMainLooper());
                                                 handler.post({
-                                                    Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(activity, "获取失败", Toast.LENGTH_SHORT).show()
                                                 })
+                                                dialogDismiss()
                                             }
                                         })
                                     }
@@ -204,25 +216,55 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
 
     }
 
-    private fun requestPermission() {
-        if (ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity as Activity, arrayOf(Manifest.permission.INTERNET), 2)
+
+    private fun dialogDismiss() {
+        if (tDialog1 == null) {
+            tDialog1 = DialogUtil.Builder(fragmentManager)
+                    .setLayoutRes(R.layout.dialog_loading)
+                    .setHeight(300)
+                    .setWidth(300)
+                    .setCancelable(false)
+                    .setCancelableOutside(true).create()
         }
+        tDialog1!!.dismiss()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            2 -> {
-                if (grantResults.size > 0) {
-                    if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                        val s: String = permissions[0]
-                        Toast.makeText(activity, s + "权限被拒绝了", Toast.LENGTH_SHORT).show()
-                    } else {
-                        showDialog()
-                    }
-                }
-            }
+    private fun dialogShow() {
+        if (tDialog1 == null) {
+            tDialog1 = DialogUtil.Builder(fragmentManager)
+                    .setLayoutRes(R.layout.dialog_loading)
+                    .setHeight(300)
+                    .setWidth(300)
+                    .setCancelable(false)
+                    .setCancelableOutside(true).create()
         }
+        tDialog1!!.show()
+    }
+
+    private fun showConfirmDialog(re: String?) {
+        DialogUtil.Builder(fragmentManager)
+                .setLayoutRes(R.layout.dialog_confirm)
+                .setScreenWidthAspect(activity, 0.7f)
+                .setCancelableOutside(false)
+                .addOnClickListener(R.id.tv_cancel, R.id.tv_confirm)
+                .setOnViewClickListener(object : OnViewClickListener {
+                    override fun onViewClick(viewHolder: BindViewHolder?, view: View?, tDialog: DialogUtil?) {
+                        when (view?.id) {
+                            R.id.tv_confirm -> {
+                                JsonConvertUtil.jsonCovert(re, 1)
+                                tDialog?.dismiss()
+
+                            }
+                            R.id.tv_cancel -> {
+                                tDialog?.dismiss()
+                            }
+
+                        }
+                    }
+
+                }
+                )
+                .create().show()
+
     }
 }

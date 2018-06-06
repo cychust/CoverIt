@@ -45,35 +45,42 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
         with(holder){
             this.listItem.setOnClickListener{
                 if (textList[position].trim().isEmpty()){
-                    val itemResult=listRealm.where(RecitePicBean::class.java).equalTo("picDate",timeList[position]).findFirst()
-                    val picIntent= Intent(context, ModifyPicActivity::class.java)
-                    picIntent.putExtra("pic",listRealm.copyFromRealm(itemResult!!).picPath)
-                    val configList= mutableListOf<PicConfigBean>()
-                    configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
-                    picIntent.putExtra("picData",configList as Serializable)
-                    val date=itemResult.picDate
-                    picIntent.putExtra("picDate",date)
-                    val picTitle=itemResult.belonging
-                    picIntent.putExtra("picTitle",picTitle)
-
+                    try {
+                        val itemResult = listRealm.where(RecitePicBean::class.java).equalTo("picDate", timeList[position]).findFirst()
+                        val picIntent = Intent(context, ModifyPicActivity::class.java)
+                        picIntent.putExtra("pic", listRealm.copyFromRealm(itemResult!!).picPath)
+                        val configList = mutableListOf<PicConfigBean>()
+                        configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
+                        picIntent.putExtra("picData", configList as Serializable)
+                        val date = itemResult.picDate
+                        picIntent.putExtra("picDate", date)
+                        val picTitle = itemResult.belonging
+                        picIntent.putExtra("picTitle", picTitle)
+                        context.startActivity(picIntent)
+                    }catch (e:KotlinNullPointerException){
+                        e.printStackTrace()
+                    }
                     //picIntent.putExtra("picItem",itemResult)
 
-                    context.startActivity(picIntent)
                 }else{
-                    val itemResult=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
-                    val textIntent= Intent(context, ModifyTextActivity::class.java)
-                    textIntent.putExtra("title",listRealm.copyFromRealm(itemResult!!).textTitle)
-                    textIntent.putExtra("content", listRealm.copyFromRealm(itemResult).text)
-                    val configList= mutableListOf<TextConfigBean>()
-                    configList.addAll(listRealm.copyFromRealm(itemResult).textConfigList)
-                    textIntent.putExtra("redData",configList as Serializable)
+                    try {
+                        val itemResult = listRealm.where(ReciteTextBean::class.java).equalTo("textDate", timeList[position]).findFirst()
+                        val textIntent = Intent(context, ModifyTextActivity::class.java)
+                        textIntent.putExtra("title", listRealm.copyFromRealm(itemResult!!).textTitle)
+                        textIntent.putExtra("content", listRealm.copyFromRealm(itemResult).text)
+                        val configList = mutableListOf<TextConfigBean>()
+                        configList.addAll(listRealm.copyFromRealm(itemResult).textConfigList)
+                        textIntent.putExtra("redData", configList as Serializable)
 
-                    val textDate=itemResult.textDate
-                    textIntent.putExtra("textDate",textDate)
-                    val textBelong=itemResult.belonging
-                    textIntent.putExtra("belong",textBelong)
-                   // textIntent.putExtra("textItem",itemResult)
-                    context.startActivity(textIntent)
+                        val textDate = itemResult.textDate
+                        textIntent.putExtra("textDate", textDate)
+                        val textBelong = itemResult.belonging
+                        textIntent.putExtra("belong", textBelong)
+                        // textIntent.putExtra("textItem",itemResult)
+                        context.startActivity(textIntent)
+                    }catch (e:KotlinNullPointerException){
+                        e.printStackTrace()
+                    }
                 }
 
             }
@@ -101,21 +108,23 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
         }
         holder.apply {
             if (textList[position].trim().isEmpty()) {
-                //this.linearLayout.visibility = View.GONE
+                this.linearLayout.visibility = View.GONE
             }
             else {
                 val topItem=listRealm.where(ReciteTextBean::class.java).equalTo("textDate",timeList[position]).findFirst()
                 ivTop.visibility=if(listRealm.copyFromRealm(topItem!!).isTop) View.VISIBLE
                 else View.INVISIBLE
 
-              /*  this.linearLayout.visibility = View.VISIBLE
+                this.linearLayout.visibility = View.VISIBLE
                 tvContent.text = textList[position]
-                rvTilte.text=titleList[position]*/
-                val view:View=stub.inflate()
-                val tvContent:TextView=view.findViewById(R.id.tv_content_text)
-                val rvTitle:TextView=view.findViewById(R.id.rv_title_text)
-                tvContent.text=textList[position]
-                rvTitle.text=titleList[position]
+                rvTilte.text=titleList[position]
+              /*  if (stub!=null) {
+                    val view: View = stub.inflate()
+                    val tvContent: TextView = view.findViewById(R.id.tv_content_text)
+                    val rvTitle: TextView = view.findViewById(R.id.rv_title_text)
+                    tvContent.text = textList[position]
+                    rvTitle.text = titleList[position]
+                }*/
             }
             if (picAddress[position].trim().isEmpty()) this.ivContent.visibility = View.GONE
             else {
@@ -226,11 +235,11 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
         val listItem=list.findViewById<LinearLayout>(R.id.ll_item)
         val tvTime = list.findViewById<TextView>(R.id.tv_time)
         val tvTitle = list.findViewById<TextView>(R.id.tv_title)
-       // val linearLayout:LinearLayout=list.findViewById(R.id.linear)
+        val linearLayout:LinearLayout=list.findViewById(R.id.linear)
         val ivContent = list.findViewById<ImageView>(R.id.iv_content_pic)
-        val stub=list.findViewById<ViewStub>(R.id.stub_linear)
-       // val tvContent = list.findViewById<TextView>(R.id.tv_content_text)
-       // val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
+        //val stub=list.findViewById<ViewStub>(R.id.stub_linear)
+        val tvContent = list.findViewById<TextView>(R.id.tv_content_text)
+        val rvTilte:TextView=list.findViewById(R.id.rv_title_text)
         val ivTop=list.findViewById<ImageView>(R.id.iv_pin_top)
     }
 }

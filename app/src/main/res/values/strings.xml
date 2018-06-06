@@ -24,4 +24,5 @@
     <string name="delete_tip">提示:删除记背本不会删除记背本中的内容</string>
     <string name="pic_guide">picGuide</string>
     <string name="text_guide">textGuide</string>
+    <string name="date">获取资料</string>
 </resources>

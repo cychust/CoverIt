@@ -64,6 +64,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         val textNumList:MutableList<String> = mutableListOf()
         val picNumList:MutableList<String> = mutableListOf()
         val dateList:MutableList<String> = mutableListOf()
+        reciteBookRealm= Realm.getDefaultInstance()
         for (realmResult:ReciteBookBean in realmResults){
             if(reciteBookRealm.copyFromRealm(realmResult).isTop){
                 titleList.add(0,(reciteBookRealm.copyFromRealm(realmResult)).bookTitle.toString())
@@ -80,6 +81,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         rvBookList.layoutManager= GridLayoutManager(context,2) as RecyclerView.LayoutManager?
         rvBookList.adapter= ReciteBookAdapter(context, (activity  as ReciteMainActivity?)!!,titleList ,textNumList,picNumList,dateList)
         rvBookList.itemAnimator=DefaultItemAnimator()
+      // (rvBookList.adapter as ReciteBookAdapter).refreshSlef()
         if (rvBookList.adapter.itemCount==0){
             rvBookList.background= ContextCompat.getDrawable(context!!,R.drawable.nothing)
         }else rvBookList.backgroundResource=R.color.white

@@ -62,7 +62,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var lcText: ConstraintLayout
     private lateinit var textGuide: ImageView
-
+    private lateinit var toast: Toast
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
@@ -73,6 +73,8 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         content = intent.getStringExtra("content")
 
         textRealm = Realm.getDefaultInstance()
+        toast=Toast.makeText(this,"文本已锁定",Toast.LENGTH_SHORT)
+
         initView()
     }
 
@@ -352,6 +354,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
             R.id.modify_button -> {
                 if (p1) {
+                    toast.cancel()
                     if (cbSee.isChecked)
                         modifyText.setCanModify(true)
                     else
@@ -361,6 +364,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 if (!p1) {
                     modifyText.setCanModify(false)
                     cbWrite.isChecked=false
+                    toast.show()
                 }
 
             }
