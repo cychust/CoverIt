@@ -150,16 +150,9 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                                 //                    })
                                                 try {
                                                     val book = gson.fromJson(re, JsonFromWeb::class.java)
+                                                    val fla=0
                                                     book.codeList.forEach {
-                                                        if (!it.equals(content)) {
-
-                                                            // dialogDismiss()
-
-                                                            handler.post({
-                                                                //    Toast.makeText(activity, "验证码错误", Toast.LENGTH_SHORT).show()
-                                                            })
-
-                                                        } else {
+                                                        if (it.equals(content)){
                                                             var flag = 0
                                                             dialogDismiss()
                                                             val realm: Realm = Realm.getDefaultInstance()
@@ -180,6 +173,11 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
 
                                                         }
                                                     }
+                                                    if (fla==0){
+                                                        handler.post({
+                                                            Toast.makeText(activity, "领取码有误，请重试", Toast.LENGTH_SHORT).show()
+                                                        })
+                                                    }
                                                     dialogDismiss()
                                                 } catch (s: JsonSyntaxException) {
                                                     s.printStackTrace()
@@ -197,7 +195,7 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                             override fun failed(call: Call, e: IOException) {
                                                 val handler: Handler = Handler(Looper.getMainLooper());
                                                 handler.post({
-                                                    Toast.makeText(activity, "获取失败", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(activity, "网络错误请重试", Toast.LENGTH_SHORT).show()
                                                 })
                                                 dialogDismiss()
                                             }

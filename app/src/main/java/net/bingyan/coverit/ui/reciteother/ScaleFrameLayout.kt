@@ -83,6 +83,9 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (!canModify){
+            return true
+        }
         if (ev?.pointerCount == 2) {
             Log.d("double tab", "intercept")
 
@@ -258,8 +261,8 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         }
     }
 
-    public fun setCannotModify() {
-        canModify = false
+    public fun setCanModify(boolean: Boolean) {
+        canModify = boolean
     }
 
 }

@@ -575,13 +575,14 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         view.setCanModify(true)
                     }
                     canModify = true
+                    picFrame.setCanModify(true)
                 }
                 if (!p1) {
                     for (view: ModifyPicView in this.viewList) {
                         view.setCanModify(false)
                     }
                     canModify = false
-                    picFrame.setCannotModify()
+                    picFrame.setCanModify(false)
                 }
             }
         }
