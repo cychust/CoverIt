@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.blankj.utilcode.util.FileUtils
 import com.bumptech.glide.Glide
 import io.realm.Realm
 import net.bingyan.coverit.R
@@ -47,16 +48,25 @@ class ReciteBookDetailAdapter(private var context: Context,val parentActivity: R
                 if (textList[position].trim().isEmpty()){
                     try {
                         val itemResult = listRealm.where(RecitePicBean::class.java).equalTo("picDate", timeList[position]).findFirst()
-                        val picIntent = Intent(context, ModifyPicActivity::class.java)
-                        picIntent.putExtra("pic", listRealm.copyFromRealm(itemResult!!).picPath)
-                        val configList = mutableListOf<PicConfigBean>()
-                        configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
-                        picIntent.putExtra("picData", configList as Serializable)
-                        val date = itemResult.picDate
-                        picIntent.putExtra("picDate", date)
-                        val picTitle = itemResult.belonging
-                        picIntent.putExtra("picTitle", picTitle)
-                        context.startActivity(picIntent)
+                        if (FileUtils.isFileExists(itemResult?.picPath)) {
+                            val picIntent = Intent(context, ModifyPicActivity::class.java)
+                            picIntent.putExtra("pic", listRealm.copyFromRealm(itemResult!!).picPath)
+                            val configList = mutableListOf<PicConfigBean>()
+                            configList.addAll(listRealm.copyFromRealm(itemResult).picConfigList)
+                            picIntent.putExtra("picData", configList as Serializable)
+                            val date = itemResult.picDate
+                            picIntent.putExtra("picDate", date)
+                            val picTitle = itemResult.belonging
+                            picIntent.putExtra("picTitle", picTitle)
+                            context.startActivity(picIntent)
+                        }else{
+                            listRealm.beginTransaction()
+                            val book = listRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", itemResult?.belonging).findFirst()
+                            if (book != null)
+                                book.picNum--
+                            itemResult?.deleteFromRealm()
+                            listRealm.commitTransaction()
+                        }
                     }catch (e:KotlinNullPointerException){
                         e.printStackTrace()
                     }

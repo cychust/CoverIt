@@ -130,7 +130,7 @@ object FileUtils {
 
     private lateinit var out:FileOutputStream
     fun saveBitmap(bitmap: Bitmap): String {
-        val file = File(Environment.getExternalStorageDirectory(), System.currentTimeMillis().toString()+".jpg")
+        val file = File(Environment.getExternalStorageDirectory(), System.currentTimeMillis().toString())
         try {
             out = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
@@ -190,6 +190,13 @@ object FileUtils {
         } else {
             false
         }
+    }
+    fun isExist(context: Context,picPath:String):Boolean{
+        val file:File=File(picPath)
+        if (file.exists()){
+            return true
+        }
+        return false
     }
 }
 
