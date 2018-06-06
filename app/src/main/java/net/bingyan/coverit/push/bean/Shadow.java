@@ -5,27 +5,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class Shadow {
 
-    @SerializedName("fromNumber")
+    @SerializedName("from")
     @Expose
-    private Integer fromNumber;
-    @SerializedName("toNumber")
+    private Integer from;
+    @SerializedName("to")
     @Expose
-    private Integer toNumber;
+    private Integer to;
 
-    public Integer getFromNumber() {
-        return fromNumber;
+    public Integer getFrom() {
+        return from;
     }
 
-    public void setFrom(Integer fromNumber) {
-        this.fromNumber = fromNumber;
+    public void setFrom(Integer from) {
+        this.from = from;
     }
 
-    public Integer getToNumber() {
-        return toNumber;
+    public Integer getTo() {
+        return to;
     }
 
-    public void setToNumber(Integer toNumber) {
-        this.toNumber = toNumber;
+    public void setToNumber(Integer to) {
+        this.to = to;
     }
 
 }

@@ -54,7 +54,7 @@ import java.util.*
 class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
     override lateinit var presenter: MineContract.Presenter
 
-    private companion object {
+    companion object {
         val url: String = "https://git.bingyan.net/BeBeBerr/ShadowsTempAPI/raw/master/app.json"
     }
 
@@ -65,9 +65,9 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
     private lateinit var getData: LinearLayout
 
 
-    private var textResult: String = ""
+    //  private var textResult: String = ""
     private lateinit var tDialog1: DialogUtil
-    private lateinit var tDialog2: DialogUtil
+    //private lateinit var tDialog2: DialogUtil
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_mine, container, false)
         with(root) {
@@ -80,6 +80,13 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
         score.setOnClickListener(this)
         about.setOnClickListener(this)
         getData.setOnClickListener(this)
+        tDialog1 = DialogUtil.Builder(fragmentManager)
+                .setLayoutRes(R.layout.dialog_loading)
+                .setHeight(300)
+                .setWidth(300)
+                .setCancelable(false)
+                .setCancelableOutside(true).create()
+
         return root
     }
 
@@ -103,13 +110,6 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                 } else {
                     if (NetUtils.isNetworkAvailable(activity)) {
                         showDialog()
-                       /* tDialog1 = DialogUtil.Builder(fragmentManager)
-                                .setLayoutRes(R.layout.dialog_loading)
-                                .setHeight(300)
-                                .setWidth(300)
-                                .setCancelable(false)
-                                .setCancelableOutside(true)
-                                .create().show()*/
                     } else {
                         Toast.makeText(activity, "请检查网络状态", Toast.LENGTH_SHORT).show()
                     }
@@ -120,7 +120,6 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
 
     private fun showDialog() {
         val gson = Gson()
-
         DialogUtil.Builder(fragmentManager).setLayoutRes(R.layout.dialog_costome_tmp)
                 .setScreenWidthAspect(activity, 0.8f)
                 .addOnClickListener(R.id.push_cancel, R.id.push_ok)
@@ -130,74 +129,72 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                         text?.post(object : Runnable {
                             override fun run() {
                                 var imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                imm!!.showSoftInput(text, 0)
+                                imm?.showSoftInput(text, 0)
                             }
                         })
                     }
                 })
                 .setOnViewClickListener(object : OnViewClickListener {
                     override fun onViewClick(viewHolder: BindViewHolder?, view: View?, tDialog: DialogUtil?) {
-                        when(view?.id){
-                            R.id.push_ok->{
+                        when (view?.id) {
+                            R.id.push_ok -> {
                                 val editText: EditText = viewHolder?.getView(R.id.dialog_edit)!!
                                 val content = editText.getText().toString().trim()
-                                if (!content.trim().isEmpty()) {
-                                    NetUtils.getInstance().getDataAsynFromNet(url, object : NetUtils.MyNetCall {
-                                        @Throws(IOException::class)
-                                        override fun success(call: Call, response: Response) {
-                                            val re: String = response.body().toString()
-                                            val handler:Handler= Handler(Looper.getMainLooper());
-                                            handler.post({
-                                                Toast.makeText(activity,re,Toast.LENGTH_SHORT).show()
-                                            })
-                                            try {
-                                                val book = gson.fromJson(re, JsonFromWeb::class.java)
-                                                book.codeList.forEach {
-                                                    if (!it.equals(textResult)) {
-                                                        tDialog1.dismiss()
-                                                        handler.post( {
-                                                            Toast.makeText(activity, "验证码错误", Toast.LENGTH_SHORT).show()
-                                                        })
+                                if (content.isEmpty()) {
+                                    Toast.makeText(activity, "验证码不能为空", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    if (!content.trim().isEmpty()) {
+                                        tDialog1.show()
+                                        NetUtils.getInstance().getDataAsynFromNet(url, object : NetUtils.MyNetCall {
+                                            @Throws(IOException::class)
+                                            override fun success(call: Call, response: Response) {
+                                                val re: String? = response.body()?.string()
+                                                val handler: Handler = Handler(Looper.getMainLooper());
+                                                handler.post({
+                                                    if (re!=null)
+                                                    Toast.makeText(activity, re, Toast.LENGTH_SHORT).show()
+                                                })
+                                                try {
+                                                    val book = gson.fromJson(re, JsonFromWeb::class.java)
+                                                    book.codeList.forEach {
+                                                        if (!it.equals(content)) {
+                                                            tDialog1.dismiss()
+                                                            handler.post({
+                                                                Toast.makeText(activity, "验证码错误", Toast.LENGTH_SHORT).show()
+                                                            })
 
-                                                    } else {
-                                                        JsonConvertUtil.jsonCovert(re)
-                                                        tDialog1.dismiss()
-                                                        handler.post( {
-                                                            Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
-                                                        })
+                                                        } else {
+                                                            JsonConvertUtil.jsonCovert(re)
+                                                            tDialog1.dismiss()
+                                                            handler.post({
+                                                                Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
+                                                            })
 
+                                                        }
                                                     }
-                                                }
-                                            }catch (s:JsonSyntaxException){
-                                                s.printStackTrace()
-                                            }catch (s:JsonIOException){
-                                                s.printStackTrace()
-                                            }catch (s:JSONException){
-                                                s.printStackTrace()
-                                            }
-                                            finally {
+                                                } catch (s: JsonSyntaxException) {
+                                                    s.printStackTrace()
+                                                } catch (s: JsonIOException) {
+                                                    s.printStackTrace()
+                                                } catch (s: JSONException) {
+                                                    s.printStackTrace()
+                                                } finally {
                                                     tDialog1.dismiss()
+                                                }
                                             }
-                                        }
 
-                                        override fun failed(call: Call, e: IOException) {
-                                            val handler:Handler= Handler(Looper.getMainLooper());
-                                            handler.post( {
-                                                Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
-                                            })
-                                        }
-                                    })
+                                            override fun failed(call: Call, e: IOException) {
+                                                val handler: Handler = Handler(Looper.getMainLooper());
+                                                handler.post({
+                                                    Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
+                                                })
+                                            }
+                                        })
+                                    }
+                                    tDialog?.dismiss()
                                 }
-                                 tDialog1 = DialogUtil.Builder(fragmentManager)
-                                .setLayoutRes(R.layout.dialog_loading)
-                                .setHeight(300)
-                                .setWidth(300)
-                                .setCancelable(false)
-                                .setCancelableOutside(true)
-                                .create().show()
-                                tDialog?.dismiss()
                             }
-                            R.id.push_cancel->{
+                            R.id.push_cancel -> {
                                 tDialog?.dismiss()
                             }
                         }
