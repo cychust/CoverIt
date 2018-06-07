@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -83,11 +84,14 @@
             android:id="@+id/write_button"
             android:layout_width="wrap_content"
             android:layout_height="23dp"
+            android:layout_marginEnd="66dp"
             android:layout_marginStart="20dp"
             android:background="@drawable/write_selector"
             android:button="@null"
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/modify_button"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,16 +100,14 @@
             android:layout_width="wrap_content"
             android:layout_height="23dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginEnd="77dp"
-            android:layout_marginStart="77dp"
+            android:layout_marginEnd="66dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/modify_selector"
             android:button="@null"
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/see_button"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/write_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
@@ -115,13 +117,15 @@
             android:layout_width="wrap_content"
             android:layout_height="23dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginEnd="77dp"
+            android:layout_marginEnd="66dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/see_selector"
             android:button="@null"
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/modify_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <CheckBox
@@ -134,6 +138,8 @@
             android:checked="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/see_button"
             app:layout_constraintTop_toTopOf="parent" />
 
 
