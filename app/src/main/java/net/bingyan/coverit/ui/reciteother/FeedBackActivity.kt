@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import net.bingyan.coverit.R
 import net.bingyan.coverit.push.NetUtils
+import net.bingyan.coverit.util.DialogUtil.DialogUtil
 import net.bingyan.coverit.widget.CustomToast
 import okhttp3.Call
 import okhttp3.Response
@@ -28,6 +29,7 @@ class FeedBackActivity : AppCompatActivity() {
     private lateinit var tvbtn: TextView
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var statusBarView: View
+    private var tDialog1:DialogUtil?=null
     private var time = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,10 +60,13 @@ class FeedBackActivity : AppCompatActivity() {
         //titleBar.setTitle("反馈")
         //  titleBar.setTitleColor(ContextCompat.getColor(this@FeedBackActivity,R.color.title_white))
         btnSubmit.onClick {
-            if (time != 0L && System.currentTimeMillis() - time >= 3 * 1000)
+            dialogShow()
+            if (time==0L||(time != 0L && (System.currentTimeMillis() - time >= 60 * 1000)))
+                time=System.currentTimeMillis()
+
                 if (!etSuggestion.text.isEmpty()) {
                     var paras = hashMapOf<String, String>()
-                    paras["info"] ="[背它Android反馈]" +etSuggestion.text.toString() +"联系方式:"+ etAddress.text.toString()
+                    paras["info"] ="[背它Android反馈]" +etSuggestion.text.toString() +"  联系方式:"+ etAddress.text.toString()
                     NetUtils.getInstance().postDataAsynToNet("http://cqmu.wangluyuan.cc/feedback/", paras, object : NetUtils.MyNetCall {
                         @Throws(IOException::class)
                         override fun success(call: Call?, response: Response?) {
@@ -70,11 +75,13 @@ class FeedBackActivity : AppCompatActivity() {
                                 //Log.d("message",response?.code().toString())
                                 if (!response?.body()?.string()?.trim().equals("{\"state\": \"ok\"}")) {
                                     Toast.makeText(this@FeedBackActivity, "发送错误，请联系相关人员", Toast.LENGTH_SHORT).show()
+                                    dialogDismiss()
                                     finish()
                                 } else {
                                     //   Log.d("feedback_response", response?.body()?.string())
                                     val toast = CustomToast(this@FeedBackActivity, LayoutInflater.from(this@FeedBackActivity).inflate(R.layout.popup_view, null, false), Toast.LENGTH_SHORT)
                                     toast.show()
+                                    dialogDismiss()
                                     finish()
                                 }
                             }
@@ -89,6 +96,8 @@ class FeedBackActivity : AppCompatActivity() {
                             handler.post({
                                 Toast.makeText(this@FeedBackActivity, "网络错误,请稍后重试", Toast.LENGTH_SHORT).show()
                             })
+                            dialogDismiss()
+                            finish()
                         }
                     })
 
@@ -98,7 +107,29 @@ class FeedBackActivity : AppCompatActivity() {
         }
         tvbtn.isClickable = true
         tvbtn.onClick { finish() }
+    }
+    private fun dialogDismiss() {
+        if (tDialog1 == null) {
+            tDialog1 = DialogUtil.Builder(supportFragmentManager)
+                    .setLayoutRes(R.layout.dialog_loading)
+                    .setHeight(300)
+                    .setWidth(300)
+                    .setCancelable(false)
+                    .setCancelableOutside(true).create()
+        }
+        tDialog1!!.dismiss()
+    }
 
+    private fun dialogShow() {
+        if (tDialog1 == null) {
+            tDialog1 = DialogUtil.Builder(supportFragmentManager)
+                    .setLayoutRes(R.layout.dialog_loading)
+                    .setHeight(300)
+                    .setWidth(300)
+                    .setCancelable(false)
+                    .setCancelableOutside(true).create()
+        }
+        tDialog1!!.show()
     }
 
 }
