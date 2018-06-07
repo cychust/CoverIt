@@ -197,7 +197,7 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                                     dialogDismiss()
                                                 }
                                             }
-
+                                            @Throws(IOException::class)
                                             override fun failed(call: Call, e: IOException) {
                                                 val handler: Handler = Handler(Looper.getMainLooper());
                                                 handler.post({

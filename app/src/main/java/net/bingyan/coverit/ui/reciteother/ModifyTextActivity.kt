@@ -18,6 +18,7 @@ import com.bigkoo.pickerview.listener.OnOptionsSelectListener
 import com.bigkoo.pickerview.view.OptionsPickerView
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.ReciteBookBean
@@ -40,7 +41,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     private lateinit var cbSee: CheckBox
     private lateinit var cbWrite: CheckBox
     private lateinit var cbModify: CheckBox
-    private lateinit var title: String
+    private var title: String? = null
 
     private lateinit var content: String
 
@@ -64,6 +65,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     private lateinit var lcText: ConstraintLayout
     private lateinit var textGuide: ImageView
     private var toast: Toast? = null
+    private var firstOpen = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
@@ -101,10 +103,12 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         cbWrite.setOnCheckedChangeListener(this)
         cbModify.setOnCheckedChangeListener(this)
 
+        cbModify.isChecked = true
         cbWrite.isChecked = true
         cbSee.isChecked = true
-        cbModify.isChecked = true
+
         cbSwitch.isChecked = false
+        firstOpen = 0
 
         modifyTitle.setText(title)
         modifyText.setText(content)
@@ -135,7 +139,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                         content = modifyText.text.toString()
                     }
                     reciteBookResults = textRealm.where(ReciteBookBean::class.java)
-                            .findAll()
+                            .findAll().sort("bookDate", Sort.DESCENDING)
                     initCustomOptionPicker()
                     pvCustomOptions.show()
                 }
@@ -261,6 +265,14 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 .build()
 
         pvCustomOptions.setPicker(textRealm.copyFromRealm(reciteBookResults))//添加数据
+
+        if (previousBelong != null)
+            try {
+                pvCustomOptions.setSelectOptions(reciteBookResults
+                        .indexOf(textRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", previousBelong).findFirst()))
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
     }
 
     private fun addNewReciteBook() {
@@ -339,9 +351,11 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     cbSee.isChecked = true
                     cbModify.isChecked = true
 
-                    if (cbModify.isChecked){
-                        showToast("文本可编辑")
+                    if (cbModify.isChecked) {
+                        if (firstOpen == 1)
+                            showToast("文本可编辑")
                     }
+                    firstOpen = 1
                     modifyText.drawBlack()
                     modifyText.drawRed()
 
@@ -354,7 +368,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     content = modifyText.text.toString()
                     modifyText.isCursorVisible = false
                     modifyText.setCanEdit(false)
-                    if (cbModify.isChecked){
+                    if (cbModify.isChecked) {
                         showToast("选中区域可编辑")
                     }
                 }
@@ -364,9 +378,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                 if (p1) {
                     if (cbSee.isChecked) {
                         modifyText.setCanModify(true)
-                        if (cbWrite.isChecked){
-                            showToast("文本可编辑")
-                        }else{
+                        if (cbWrite.isChecked) {
+                            if (firstOpen == 1)
+                                showToast("文本可编辑")
+                        } else {
                             showToast("选中区域可编辑")
                         }
                     } else
@@ -464,10 +479,10 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
     override fun onDestroy() {
         super.onDestroy()
         textRealm.close()
-        if (toast!=null){
+        if (toast != null) {
             try {
                 toast!!.cancel()
-            }catch (e:KotlinNullPointerException){
+            } catch (e: KotlinNullPointerException) {
                 e.printStackTrace()
             }
         }

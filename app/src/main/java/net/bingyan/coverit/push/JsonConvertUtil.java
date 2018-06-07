@@ -91,7 +91,7 @@ public class JsonConvertUtil {
         for (Shadow shadow : textItem.getShadows()) {
             TextConfigBean textConfigBean = new TextConfigBean();
             textConfigBean.setPrevious(shadow.getFrom());
-            textConfigBean.setNext(shadow.getTo());
+            textConfigBean.setNext(shadow.getTo()+1);
             textBean.getTextConfigList().add(textConfigBean);
         }
         return textBean;

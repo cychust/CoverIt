@@ -27,6 +27,7 @@ import com.bigkoo.pickerview.view.OptionsPickerView
 import com.bumptech.glide.Glide
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_modify_pic.*
 import net.bingyan.coverit.R
 import net.bingyan.coverit.data.local.bean.PicConfigBean
@@ -128,7 +129,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             //addPicTitle()
             resultText = ""//todo
             reciteBookResults = picRealm.where(ReciteBookBean::class.java)
-                    .findAll()
+                    .findAll().sort("bookDate", Sort.DESCENDING)
             initCustomOptionPicker()
             pvCustomOptions.show()
         }
@@ -351,6 +352,14 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                 .build()
 
         pvCustomOptions.setPicker(picRealm.copyFromRealm(reciteBookResults))//添加数据
+        if (previousTitle != null) {
+            try {
+                pvCustomOptions.setSelectOptions(reciteBookResults
+                        .indexOf(picRealm.where(ReciteBookBean::class.java).equalTo("bookTitle", previousTitle).findFirst()))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun addNewReciteBook() {
