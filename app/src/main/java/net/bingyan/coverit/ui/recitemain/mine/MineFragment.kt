@@ -31,6 +31,7 @@ import net.bingyan.coverit.data.local.bean.ReciteBookBean
 import net.bingyan.coverit.push.JsonConvertUtil
 import net.bingyan.coverit.push.NetUtils
 import net.bingyan.coverit.push.bean.JsonFromWeb
+import net.bingyan.coverit.ui.recitemain.ReciteMainActivity
 import net.bingyan.coverit.ui.reciteother.AboutActivity
 import net.bingyan.coverit.ui.reciteother.FeedBackActivity
 import net.bingyan.coverit.util.DialogUtil.DialogUtil
@@ -150,7 +151,7 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                                 //                    })
                                                 try {
                                                     val book = gson.fromJson(re, JsonFromWeb::class.java)
-                                                    val fla=0
+                                                    var fla=0
                                                     book.codeList.forEach {
                                                         if (it.equals(content)){
                                                             var flag = 0
@@ -161,16 +162,21 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                                                             reciteBookResults.forEach {
                                                                 if (it.bookTitle.equals(book.notebookName)) {
                                                                     showConfirmDialog(re)
-                                                                    flag = 1
+                                                                    flag = 1             //记背本已经存在flag==1
+                                                                    return@forEach
                                                                 }
                                                             }
                                                             if (flag == 0) {
                                                                 JsonConvertUtil.jsonCovert(re, 0)
+
+                                                                flag=0
                                                             }
                                                             handler.post({
+                                                                (activity as ReciteMainActivity).refreshBookData()
                                                                 Toast.makeText(activity, "获取成功", Toast.LENGTH_SHORT).show()
                                                             })
-
+                                                            fla=1
+                                                            return@forEach
                                                         }
                                                     }
                                                     if (fla==0){
@@ -250,6 +256,7 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
                         when (view?.id) {
                             R.id.tv_confirm -> {
                                 JsonConvertUtil.jsonCovert(re, 1)
+                                (activity as ReciteMainActivity).refreshBookData()
                                 tDialog?.dismiss()
 
                             }

@@ -157,7 +157,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
             val redDataList = intent.getSerializableExtra("picData") as MutableList<PicConfigBean>
 
             redDataList.forEach {
-                coverView = ModifyPicView(context,bitmap)
+                coverView = ModifyPicView(context, bitmap)
                 viewList.add(coverView)
                 picFrame.addView(coverView)
                 coverView.rectLeft = it.left
@@ -326,7 +326,8 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         previousUser!!.picList.remove(previousPicItem)
                     }
                 }
-                Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
+                if (picDate == null)
+                    Toast.makeText(this, "已成功添加", Toast.LENGTH_SHORT).show()
                 finish()
             })
         })
@@ -406,25 +407,25 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
         }
     }
 
-  /*  private fun addNewReciteBook_tmp() {
-        DialogUtil.Builder(supportFragmentManager).setLayoutRes(R.layout.dialog_pop_view_tmp)
-                .setWidth(600)
-                .setHeight(800)
-                .setScreenWidthAspect(this, 0.8f)
-                .setScreenHeightAspect(this, 0.3f)
-                .setGravity(Gravity.CENTER)
-                .setDimAmount(0.6f)
-                .setCancelable(false)
-                .addOnClickListener(R.id.create_cancel, R.id.create_save)
-                .setOnViewClickListener({ viewHolder, view, tDialog ->
-                    when (view.id) {
-                        R.id.create_cancel -> Toast.LENGTH_LONG
-                        R.id.create_save -> Toast.LENGTH_LONG
-                    }
-                })
-                .create().show()
-    }
-*/
+    /*  private fun addNewReciteBook_tmp() {
+          DialogUtil.Builder(supportFragmentManager).setLayoutRes(R.layout.dialog_pop_view_tmp)
+                  .setWidth(600)
+                  .setHeight(800)
+                  .setScreenWidthAspect(this, 0.8f)
+                  .setScreenHeightAspect(this, 0.3f)
+                  .setGravity(Gravity.CENTER)
+                  .setDimAmount(0.6f)
+                  .setCancelable(false)
+                  .addOnClickListener(R.id.create_cancel, R.id.create_save)
+                  .setOnViewClickListener({ viewHolder, view, tDialog ->
+                      when (view.id) {
+                          R.id.create_cancel -> Toast.LENGTH_LONG
+                          R.id.create_save -> Toast.LENGTH_LONG
+                      }
+                  })
+                  .create().show()
+      }
+  */
     private fun addPicTitle() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("给这张图片起个名字吧")
@@ -510,6 +511,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         view.invalidate()
                     }
                     picture.setImageBitmap(bitmap)
+                    picFrame.setCanModify(true)
 
                 }
                 if (p1) {
@@ -553,6 +555,7 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
                         view.invalidate()
                     }
                     picture.setImageDrawable(ColorDrawable(Color.WHITE))
+                    picFrame.setCanModify(false)
                 }
             }
             R.id.see_button -> {
@@ -591,19 +594,19 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
     override fun onDestroy() {
         super.onDestroy()
         picRealm.close()
-        if (bitmap!=null&&!bitmap.isRecycled){
+        if (bitmap != null && !bitmap.isRecycled) {
             bitmap.recycle()
         }
-       // viewList.forEach { it.ViewDestroy() }
+        // viewList.forEach { it.ViewDestroy() }
         //viewList.clear()
         viewList.forEach { it.ViewDestroy() }
 
         picFrame.removeAllViews()
         //coverView.ViewDestroy()
-        if (bitmap!=null&&!bitmap.isRecycled) {
+        if (bitmap != null && !bitmap.isRecycled) {
             bitmap.recycle()           //回收bitmap内存
         }
-        System.gc ()                 //提醒系统回收内存
+        System.gc()                 //提醒系统回收内存
         //removeView()
     }
 }

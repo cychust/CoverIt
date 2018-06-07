@@ -21,8 +21,10 @@
     <string name="title_hint">    请输入标题</string>
     <string name="content_hint">       请输入正文</string>
     <string name="recite_tip">请输入记背本名称</string>
-    <string name="delete_tip">提示:删除记背本不会删除记背本中的内容</string>
+    <string name="delete_tip">提示:删除记背本将会删除记背本中的内容</string>
     <string name="pic_guide">picGuide</string>
     <string name="text_guide">textGuide</string>
     <string name="date">获取资料</string>
+    <string name="push_text">参与活动的用户请在此输入自己的专属领取码，即可下载资料．\n如有问题，欢迎反馈</string>
+    <string name="push_confirm">您已下载过该资料，继续下载将会创建新的副本，是否继续？</string>
 </resources>

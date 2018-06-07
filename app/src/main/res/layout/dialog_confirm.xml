@@ -28,7 +28,7 @@
         android:paddingRight="33dp"
         android:textColor="@color/T_99"
         android:textSize="12sp"
-        android:text="含有相同记背本，点击下载将覆盖原记背本"
+        android:text="@string/push_confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />

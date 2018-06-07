@@ -2,6 +2,7 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Message
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
@@ -62,7 +63,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
 
     private lateinit var lcText: ConstraintLayout
     private lateinit var textGuide: ImageView
-    private lateinit var toast: Toast
+    private var toast: Toast? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_modify_text)
@@ -73,7 +74,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         content = intent.getStringExtra("content")
 
         textRealm = Realm.getDefaultInstance()
-        toast=Toast.makeText(this,"文本已锁定",Toast.LENGTH_SHORT)
+        //toast=Toast.makeText(this,"文本已锁定",Toast.LENGTH_SHORT)
 
         initView()
     }
@@ -338,8 +339,12 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     cbSee.isChecked = true
                     cbModify.isChecked = true
 
+                    if (cbModify.isChecked){
+                        showToast("文本可编辑")
+                    }
                     modifyText.drawBlack()
                     modifyText.drawRed()
+
 
                 }
 
@@ -349,22 +354,29 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     content = modifyText.text.toString()
                     modifyText.isCursorVisible = false
                     modifyText.setCanEdit(false)
+                    if (cbModify.isChecked){
+                        showToast("选中区域可编辑")
+                    }
                 }
             }
 
             R.id.modify_button -> {
                 if (p1) {
-                    toast.cancel()
-                    if (cbSee.isChecked)
+                    if (cbSee.isChecked) {
                         modifyText.setCanModify(true)
-                    else
+                        if (cbWrite.isChecked){
+                            showToast("文本可编辑")
+                        }else{
+                            showToast("选中区域可编辑")
+                        }
+                    } else
                         cbModify.isChecked = false
                 }
 
                 if (!p1) {
                     modifyText.setCanModify(false)
-                    cbWrite.isChecked=false
-                    toast.show()
+                    cbWrite.isChecked = false
+                    showToast("选中区域已锁定")
                 }
 
             }
@@ -441,8 +453,23 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         }
     }
 
+    private fun showToast(message: String) {
+        if (toast != null) {
+            toast!!.cancel()
+        }
+        toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+        toast!!.show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         textRealm.close()
+        if (toast!=null){
+            try {
+                toast!!.cancel()
+            }catch (e:KotlinNullPointerException){
+                e.printStackTrace()
+            }
+        }
     }
 }

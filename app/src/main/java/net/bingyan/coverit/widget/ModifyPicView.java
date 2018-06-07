@@ -117,7 +117,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     //  private String picPath;
 
     private final float lineLength = 25.0f;
-    private final float lineWidth = 15.0f;
+    private final float lineWidth = 11.0f;
 
     private ModifyPicActivity thisActivity;
 
