@@ -2,10 +2,8 @@ package net.bingyan.coverit.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -13,11 +11,9 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity;
-import net.bingyan.coverit.util.ToolScaleViewUtil;
 
 /**
  * Author       cychust
@@ -232,7 +228,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     public boolean performClick() {
         super.performClick();
         if (canClick) {
-            Log.d(TAG, "performClick: clicked!");
+           // Log.d(TAG, "performClick: clicked!");
             super.performClick();
             if (isTransparent) {
                 this.setAlpha(1.0f);
@@ -550,7 +546,7 @@ public class ModifyPicView extends android.support.v7.widget.AppCompatImageView 
     public void ViewDestroy() {
         if (bitmap != null) {
             bitmap.recycle();
-            Log.d("bitmap view", "destroy");
+           // Log.d("bitmap view", "destroy");
             bitmap=null;
         }
 

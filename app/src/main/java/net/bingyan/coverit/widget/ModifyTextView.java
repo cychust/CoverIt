@@ -9,7 +9,6 @@ import android.text.Selection;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -20,7 +19,6 @@ import net.bingyan.coverit.util.DelHtmlTag;
 
 import java.util.ArrayList;
 
-import static android.content.ContentValues.TAG;
 import static java.lang.Math.abs;
 
 /**
@@ -166,7 +164,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
             // Log.d(TAG, "onTextContextMenuItem: " + ss.toString());
             setText(stringBuilder.toString());
-            Log.d(TAG, "onTextContextMenuItem: " + getText().toString());
+          //Log.d(TAG, "onTextContextMenuItem: " + getText().toString());
             setSelection(getText().length());
             return true;
         }
@@ -222,7 +220,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             int line;
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.d(TAG, "onTouchEvent: action down");
+                //    Log.d(TAG, "onTouchEvent: action down");
 
                     oldX = (int) event.getX();
                     oldY = (int) event.getY();
@@ -235,11 +233,11 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if ((getScrollY() + (int) event.getY()) > layout.getHeight()) break;
-                    Log.d(TAG, "onTouchEvent: action move");
+                  //  Log.d(TAG, "onTouchEvent: action move");
                     newX = (int) event.getX();
                     newY = (int) event.getY();
-                    Log.d(TAG, "onTouchEvent: oldX" + oldX);
-                    Log.d(TAG, "onTouchEvent: newX" + newX);
+                  //  Log.d(TAG, "onTouchEvent: oldX" + oldX);
+                  //  Log.d(TAG, "onTouchEvent: newX" + newX);
                     if (abs(newX - oldX) < 10) {
                         oldX = newX;
                         if (getScrollY()==0&&newY>oldY){
@@ -272,7 +270,7 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
 
                 case MotionEvent.ACTION_UP:
                     if ((getScrollY() + (int) event.getY()) > layout.getHeight()) break;
-                    Log.d(TAG, "onTouchEvent: action up");
+                 //   Log.d(TAG, "onTouchEvent: action up");
                     line = layout.getLineForVertical(getScrollY() + (int) event.getY());
                     int curOffset = layout.getOffsetForHorizontal(line, (int) event.getX());
                     Selection.setSelection(getEditableText(), offset, curOffset);
@@ -297,10 +295,10 @@ public class ModifyTextView extends android.support.v7.widget.AppCompatEditText 
             if (spans.length != 0) {
                 ForegroundColorSpan span = spans[spans.length - 1];
                 if (span.getForegroundColor() == Color.RED) {
-                    Log.d(TAG, "changeRedText: " + i + "::" + next);
+                  //  Log.d(TAG, "changeRedText: " + i + "::" + next);
                     redList.add(new RedData(i, next));
                 } else {
-                    Log.d(TAG, "changeBlackText: " + i + "::" + next);
+                  //  Log.d(TAG, "changeBlackText: " + i + "::" + next);
                     blackList.add(new RedData(i, next));
                 }
             }

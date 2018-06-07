@@ -2,14 +2,12 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Message
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -346,7 +344,7 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
                     modifyText.setCanEdit(true)
                     modifyText.highlightColor = ContextCompat.getColor(this, R.color.colorPrimary)
 
-                    Log.d("write", "start")
+                  //  Log.d("write", "start")
 
                     cbSee.isChecked = true
                     cbModify.isChecked = true

@@ -2,18 +2,12 @@ package net.bingyan.coverit.ui.reciteother
 
 import android.content.Context
 import android.graphics.PointF
-import android.support.v4.widget.ViewDragHelper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import net.bingyan.coverit.util.ViewHelper
-import org.jetbrains.anko.margin
 import kotlin.math.sqrt
 
 
@@ -77,9 +71,9 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
         oriFrameLayoutTop = top
         oriFrameLayoutLeft = left
         oriFrameLayoutRight = right
-        Log.d("oriLeft", oriFrameLayoutLeft.toString())
-        Log.d("screenWidth", screenWidth.toString())
-        Log.d("oriRight", oriFrameLayoutRight.toString())
+      //  Log.d("oriLeft", oriFrameLayoutLeft.toString())
+      //  Log.d("screenWidth", screenWidth.toString())
+      //  Log.d("oriRight", oriFrameLayoutRight.toString())
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
@@ -237,7 +231,7 @@ class ScaleFrameLayout @JvmOverloads constructor(context: Context, attributeSet:
                     if (scale >= 1)
                         scale = -(previousSpan - currentSpan) / 1000 + preScale
                 }
-                Log.d("scale", scale.toString())
+               // Log.d("scale", scale.toString())
                 if (scale >= 1) {
                     ViewHelper.setScaleX(this@ScaleFrameLayout, scale);// x方向上缩放
                     ViewHelper.setScaleY(this@ScaleFrameLayout, scale);// y方向上缩放
