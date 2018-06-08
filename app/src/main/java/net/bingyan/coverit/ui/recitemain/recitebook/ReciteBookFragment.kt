@@ -46,6 +46,7 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
         }catch (e:UninitializedPropertyAccessException){
             e.printStackTrace()
             presenter=ReciteBookPresenter(this,activity as ReciteMainActivity)
+            presenter.start()
         }
         MobclickAgent.onPageStart("bookFragment")
     }

@@ -58,6 +58,7 @@ class ReciteListFragment : Fragment(), ReciteListContract.View {
             e.printStackTrace()
             Log.d("lati","crash")
             presenter=ReciteListPresenter(this,activity as ReciteMainActivity)
+            presenter.start()
         }
         MobclickAgent.onPageStart("listFragment")
     }
