@@ -25,6 +25,7 @@ import com.bigkoo.pickerview.builder.OptionsPickerBuilder
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener
 import com.bigkoo.pickerview.view.OptionsPickerView
 import com.bumptech.glide.Glide
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -104,6 +105,16 @@ class ModifyPicActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLis
 
         picRealm = Realm.getDefaultInstance()
         initView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onPageStart("picActivity")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("picActivity")
     }
 
     @SuppressLint("ClickableViewAccessibility")

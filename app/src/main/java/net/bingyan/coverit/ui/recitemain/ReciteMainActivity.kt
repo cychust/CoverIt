@@ -18,10 +18,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.RealmResults
 import net.bingyan.coverit.R
@@ -35,6 +37,7 @@ import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListFragment
 import net.bingyan.coverit.ui.recitemain.recitelist.ReciteListPresenter
 import net.bingyan.coverit.ui.reciteother.ModifyPicActivity
 import net.bingyan.coverit.util.BottomNavigationViewHelper
+import net.bingyan.coverit.util.UMengUtil
 import net.bingyan.coverit.widget.TitleBar
 import org.jetbrains.anko.intentFor
 import java.io.File
@@ -84,20 +87,42 @@ class ReciteMainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (currentItem != -1) viewPager.currentItem = currentItem
+        MobclickAgent.onPageStart("MainActivity")
+        MobclickAgent.onResume(this)
     }
 
     override fun onPause() {
         super.onPause()
         currentItem = viewPager.currentItem
+
+        MobclickAgent.onPageEnd("MainActivity")
+        MobclickAgent.onPause(this)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        MobclickAgent.onKillProcess(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ||ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)!=PackageManager.PERMISSION_GRANTED) {
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+            else if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), 2)
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE
+                        ,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE), 3)
+            }
         }
+
+
+        Log.d( "service",UMengUtil.getDeviceInfo(this))
 
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)//A
         window.decorView.fitsSystemWindows=true

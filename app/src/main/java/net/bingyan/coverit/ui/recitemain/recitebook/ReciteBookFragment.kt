@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mancj.materialsearchbar.MaterialSearchBar
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.RealmResults
 import net.bingyan.coverit.R
@@ -40,9 +41,19 @@ class ReciteBookFragment : Fragment(),ReciteBookContract.View, MaterialSearchBar
 
     override fun onResume() {
         super.onResume()
-        presenter.start()
+        try {
+            presenter.start()
+        }catch (e:UninitializedPropertyAccessException){
+            e.printStackTrace()
+            presenter=ReciteBookPresenter(this,activity as ReciteMainActivity)
+        }
+        MobclickAgent.onPageStart("bookFragment")
     }
 
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("bookFragment")
+    }
     override fun onDestroy() {
         super.onDestroy()
         reciteBookRealm.close()

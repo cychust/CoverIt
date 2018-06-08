@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import net.bingyan.coverit.R
 import net.bingyan.coverit.adapter.uiadapter.ReciteListAdapter
@@ -50,9 +52,20 @@ class ReciteListFragment : Fragment(), ReciteListContract.View {
     override fun onResume() {
         super.onResume()
         //synchronized(this) {
-        presenter.start()
+        try {
+            presenter.start()
+        }catch (e:UninitializedPropertyAccessException){
+            e.printStackTrace()
+            Log.d("lati","crash")
+            presenter=ReciteListPresenter(this,activity as ReciteMainActivity)
+        }
+        MobclickAgent.onPageStart("listFragment")
     }
 
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("listFragment")
+    }
     override fun onDestroy() {
         super.onDestroy()
         reciteListRealm.close()

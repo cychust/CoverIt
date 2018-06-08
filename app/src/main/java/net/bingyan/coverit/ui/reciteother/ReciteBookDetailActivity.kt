@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.WindowManager
 import android.widget.ImageView
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_recite_book_detail.*
@@ -60,8 +61,14 @@ class ReciteBookDetailActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         refreshListData()
+
+        MobclickAgent.onPageStart("BookDetailActivity")
     }
 
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("BookDetailActivity")
+    }
     private fun initView() {
         rvList = findViewById(R.id.rv_list)
         addNewView = findViewById(R.id.iv_add_new)

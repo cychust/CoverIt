@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.umeng.analytics.MobclickAgent
 import net.bingyan.coverit.R
 import net.bingyan.coverit.push.NetUtils
 import net.bingyan.coverit.util.DialogUtil.DialogUtil
@@ -48,6 +49,15 @@ class FeedBackActivity : AppCompatActivity() {
         initView()
     }
 
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onPageStart("feedbackActivity")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("feedbackActivity")
+    }
     private fun initView() {
         //titleBar=findViewById(R.id.titleBar)
         etSuggestion = findViewById(R.id.et_suggestion)

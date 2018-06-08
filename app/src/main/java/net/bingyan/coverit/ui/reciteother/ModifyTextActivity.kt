@@ -14,6 +14,7 @@ import android.widget.*
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener
 import com.bigkoo.pickerview.view.OptionsPickerView
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -77,6 +78,16 @@ class ModifyTextActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeLi
         //toast=Toast.makeText(this,"文本已锁定",Toast.LENGTH_SHORT)
 
         initView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onPageStart("textActivity")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("textActivity")
     }
 
     private fun initView() {

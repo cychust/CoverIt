@@ -17,6 +17,7 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import com.umeng.analytics.MobclickAgent
 import io.realm.Realm
 import io.realm.RealmResults
 import net.bingyan.coverit.R
@@ -105,6 +106,15 @@ class MineFragment : Fragment(), MineContract.View, View.OnClickListener {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onPageStart("MineFragment")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPageEnd("MineFragment")
+    }
 
     private fun showDialog() {
         val gson = Gson()
