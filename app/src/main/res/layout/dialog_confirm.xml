@@ -78,7 +78,7 @@
             android:layout_height="45dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="下载"
+            android:text="继续"
             android:textColor="@color/topic"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
